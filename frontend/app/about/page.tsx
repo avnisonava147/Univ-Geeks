@@ -14,11 +14,6 @@ import CallToAction from "../../components/About/CallToAction";
 UNIV-GEEKS ABOUT PAGE CONTENT
 ============================================================
 
-Edit the information in this object when the real content
-is ready.
-
-You don't need to change the individual components just
-because the text changes.
 */
 
 const aboutContent = {
