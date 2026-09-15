@@ -4,8 +4,10 @@ import { useState } from "react";
 import StreamSelector from "./components/StreamSelector";
 import ClassSelector from "./components/ClassSelector";
 import SubjectSelector from "./components/SubjectSelector";
+import ChapterSelector from "./components/ChapterSelector";
 import {
   getSubjects,
+  
   type ClassName,
   type Stream,
 } from "./data/notesData";
@@ -20,9 +22,15 @@ export default function NotesPage() {
   const [selectedSubject, setSelectedSubject] =
   useState<string | null>(null);
 
+  const [selectedChapter, setSelectedChapter] =
+  useState<string | null>(null);
+
   const subjects = getSubjects(
   selectedClass,
   selectedStream
+);
+  const selectedSubjectData = subjects.find(
+  (subject) => subject.name === selectedSubject
 );
 
   return (
@@ -212,8 +220,9 @@ export default function NotesPage() {
       <ClassSelector
         selectedClass={selectedClass}
          onClassChange={(className) => {
-    setSelectedClass(className);
-    setSelectedSubject(null);
+         setSelectedClass(className);
+         setSelectedSubject(null);
+         setSelectedChapter(null);
   }}
       />
 
@@ -224,20 +233,33 @@ export default function NotesPage() {
     onStreamChange={(stream) => {
       setSelectedStream(stream);
       setSelectedSubject(null);
+      setSelectedChapter(null);
     }}
   />
 )} 
 
 {/* STEP 3 - SUBJECT */}
-<SubjectSelector
+<SubjectSelector   
   selectedClass={selectedClass}
   selectedStream={selectedStream}
   subjects={subjects}
   selectedSubject={selectedSubject}
-  onSubjectChange={(subject) =>
-    setSelectedSubject(subject.name)
-  }
+  onSubjectChange={(subject) =>  {
+    setSelectedSubject(subject.name);
+    setSelectedChapter(null);
+  }}
 />
+
+{/* STEP 4 - CHAPTER */}
+{selectedSubjectData && (
+  <ChapterSelector
+    chapters={selectedSubjectData.chapters}
+    selectedChapter={selectedChapter}
+    onChapterChange={(chapter) =>
+      setSelectedChapter(chapter.id)
+    }
+  />
+)}
 
       
 
