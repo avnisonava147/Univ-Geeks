@@ -17,7 +17,7 @@ export default function OurStory({
         {/* Story visual */}
         <Reveal>
 
-          <div className="flex min-h-[320px] items-center justify-center rounded-3xl bg-gradient-to-br from-teal-50 to-slate-50">
+          <div className="flex min-h-80 items-center justify-center rounded-3xl bg-linear-to-br from-teal-50 to-slate-50">
 
             <div className="text-center">
 

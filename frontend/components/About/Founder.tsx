@@ -41,7 +41,7 @@ export default function Founder({
           <div className="grid overflow-hidden rounded-3xl bg-white shadow-sm md:grid-cols-2">
 
             {/* Photo */}
-            <div className="flex min-h-[320px] items-center justify-center bg-teal-50">
+            <div className="flex min-h-80 items-center justify-center bg-teal-50">
 
               {image ? (
                 <img
