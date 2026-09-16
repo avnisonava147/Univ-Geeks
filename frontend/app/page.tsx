@@ -119,12 +119,12 @@ export default function Home() {
 </header>
 
       {/* Hero */}
-{/* SIMPLE PYQ HERO BANNER */}
-<section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-800 to-slate-950 text-white">
-  <div className="mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12 lg:py-20">
-    <div className="max-w-4xl">
+{/* PYQ HERO BANNER */}
+<section className="relative overflow-hidden bg-gradient-to-br from-[#061c35] via-[#0a3153] to-[#071526] text-white">
+  <div className="mx-auto max-w-[1500px] px-5 py-10 sm:px-8 sm:py-12 lg:px-8 lg:py-14">
+    <div className="relative max-w-4xl">
       {/* Breadcrumb */}
-      <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-blue-200">
+      <div className="mb-5 flex flex-wrap items-center gap-2 text-sm text-cyan-200">
         <span>Home</span>
         <span>›</span>
         <span>PYQs</span>
@@ -132,48 +132,48 @@ export default function Home() {
         <span className="font-semibold text-white">Class 12</span>
       </div>
 
-      {/* Small Label */}
-      <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-300/30 bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+      {/* Label */}
+      <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur-sm">
         📚 Class 12 Resources
       </div>
 
-      {/* Main Heading */}
-      <h1 className="max-w-4xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+      {/* Heading */}
+      <h1 className="max-w-4xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
         Chapter-Wise RBSE
         <span className="block text-cyan-300">Class 12</span>
         <span className="block">Previous Year Question Papers</span>
       </h1>
 
       {/* Description */}
-      <p className="mt-6 max-w-3xl text-base leading-7 text-blue-100 sm:text-lg">
+      <p className="mt-5 max-w-3xl text-sm leading-6 text-blue-100 sm:text-base">
         Practice with chapter-wise previous year question papers for Physics,
         Chemistry, Mathematics, Biology and more. Prepare smarter with
         previous years’ board questions.
       </p>
 
       {/* Feature Cards */}
-      <div className="mt-10 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-sm">
+      <div className="mt-8 grid max-w-5xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-xl border border-white/15 bg-white/10 p-4 backdrop-blur-sm">
           <div className="text-2xl">📄</div>
-          <h3 className="mt-3 font-bold">Chapter-wise PDFs</h3>
+          <h3 className="mt-2 font-bold">Chapter-wise PDFs</h3>
           <p className="mt-1 text-sm text-blue-200">Well Organized</p>
         </div>
 
-        <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-sm">
+        <div className="rounded-xl border border-white/15 bg-white/10 p-4 backdrop-blur-sm">
           <div className="text-2xl">🗓️</div>
-          <h3 className="mt-3 font-bold">13+ Years of PYQs</h3>
+          <h3 className="mt-2 font-bold">13+ Years of PYQs</h3>
           <p className="mt-1 text-sm text-blue-200">2013 – 2025</p>
         </div>
 
-        <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-sm">
+        <div className="rounded-xl border border-white/15 bg-white/10 p-4 backdrop-blur-sm">
           <div className="text-2xl">⚡</div>
-          <h3 className="mt-3 font-bold">Quick Revision</h3>
+          <h3 className="mt-2 font-bold">Quick Revision</h3>
           <p className="mt-1 text-sm text-blue-200">Study Smarter</p>
         </div>
 
-        <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-sm">
+        <div className="rounded-xl border border-white/15 bg-white/10 p-4 backdrop-blur-sm">
           <div className="text-2xl">🎯</div>
-          <h3 className="mt-3 font-bold">Exam Ready</h3>
+          <h3 className="mt-2 font-bold">Exam Ready</h3>
           <p className="mt-1 text-sm text-blue-200">Score Higher</p>
         </div>
       </div>

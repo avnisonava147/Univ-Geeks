@@ -1,3 +1,4 @@
+import Link from "next/link";
 type PYQCardProps = {
   subject: string;
   className?: string;
@@ -69,14 +70,12 @@ export default function PYQCard({
         </div>
 
         {/* Button */}
-        <button
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-blue-700"
-        >
-          View Papers
-          <span className="text-lg transition-transform group-hover:translate-x-1">
-            →
-          </span>
-        </button>
+ <Link
+  href={`/pyqs/${subject.toLowerCase()}`}
+  className="block w-full rounded-xl bg-blue-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
+>
+  View Papers →
+</Link>
 
       </div>
     </div>
