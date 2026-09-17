@@ -33,6 +33,10 @@ export default function NotesPage() {
   (subject) => subject.name === selectedSubject
 );
 
+const selectedChapterData = selectedSubjectData?.chapters.find(
+  (chapter) => chapter.id === selectedChapter
+);
+
   return (
     <main className="min-h-screen bg-white">
       
@@ -259,6 +263,147 @@ export default function NotesPage() {
       setSelectedChapter(chapter.id)
     }
   />
+)}
+
+{/* STEP 5 - PDF NOTES */}
+{selectedChapterData && (
+  <section className="border-b border-slate-200 bg-white px-6 py-14">
+    <div className="mx-auto max-w-7xl">
+
+      {/* Heading */}
+      <div className="mb-8">
+        <h2 className="flex items-baseline gap-3 text-3xl font-semibold tracking-tight text-[#16213E]">
+          <span className="font-serif italic text-[#2F5FDE]">
+            5.
+          </span>
+
+          Your chapter notes
+        </h2>
+
+        <p className="mt-2 text-sm text-[#5B6478]">
+          Read online or download the notes for your selected chapter
+        </p>
+      </div>
+
+      {/* PDF Card */}
+      <div className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-8">
+
+        {/* Background glow */}
+        <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-blue-100/60 blur-3xl transition-all duration-500 group-hover:bg-blue-200/60" />
+
+        <div className="pointer-events-none absolute -bottom-20 -left-20 h-48 w-48 rounded-full bg-purple-100/40 blur-3xl" />
+
+        <div className="relative">
+
+          {/* Top information */}
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+
+            <div className="flex items-start gap-4">
+
+              {/* PDF Icon */}
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-3xl transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                📄
+              </div>
+
+              {/* Chapter Details */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#94A3B8]">
+                  Chapter Notes
+                </p>
+
+                <h3 className="mt-1 text-2xl font-semibold text-[#16213E]">
+                  {selectedChapterData.name}
+                </h3>
+
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-[#64748B]">
+
+                  <span className="rounded-full bg-blue-50 px-3 py-1 font-medium text-blue-600">
+                    Class {selectedClass}
+                  </span>
+
+                  {selectedClass !== "10" && (
+                    <span className="rounded-full bg-purple-50 px-3 py-1 font-medium text-purple-600">
+                      {selectedStream}
+                    </span>
+                  )}
+
+                  <span className="rounded-full bg-slate-100 px-3 py-1">
+                    PDF Notes
+                  </span>
+
+                </div>
+              </div>
+
+            </div>
+
+            {/* Status */}
+            <div className="flex items-center gap-2 self-start rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 lg:self-auto">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+              Notes available
+            </div>
+
+          </div>
+
+          {/* Divider */}
+          <div className="my-7 h-px bg-slate-100" />
+
+          {/* Description */}
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+
+            <div>
+              <p className="text-sm leading-6 text-[#64748B]">
+                Your notes for{" "}
+                <span className="font-semibold text-[#16213E]">
+                  {selectedChapterData.name}
+                </span>{" "}
+                are ready. You can open the PDF in a new tab or download it
+                for offline study.
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col gap-3 sm:flex-row">
+
+              {/* View PDF */}
+              <a
+                href={selectedChapterData.pdf}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group/button inline-flex items-center justify-center gap-2 rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2F5FDE] hover:shadow-lg"
+              >
+                <span className="text-base">
+                  👁
+                </span>
+
+                View PDF
+
+                <span className="transition-transform duration-300 group-hover/button:translate-x-1">
+                  →
+                </span>
+              </a>
+
+              {/* Download PDF */}
+              <a
+                href={selectedChapterData.pdf}
+                download
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-[#16213E] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-[#2F5FDE]"
+              >
+                <span className="text-base">
+                  ↓
+                </span>
+
+                Download PDF
+              </a>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
 )}
 
       
