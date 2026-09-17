@@ -1,5 +1,7 @@
+"use client";
+import Link from "next/link";
+import { useMemo, useState } from "react";
 import PYQCard from "../components/PYQCard";
-
 const pyqs = [
   {
     subject: "Physics",
@@ -36,7 +38,22 @@ const pyqs = [
 ];
 
 export default function Home() {
-  return (
+  const [selectedSubject, setSelectedSubject] = useState("All");
+const [search, setSearch] = useState("");
+const filteredPYQs = useMemo(() => {
+  return pyqs.filter((pyq) => {
+    const matchesSubject =
+      selectedSubject === "All" ||
+      pyq.subject === selectedSubject;
+
+    const matchesSearch = pyq.subject
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    return matchesSubject && matchesSearch;
+  });
+}, [selectedSubject, search]);  
+return (
     <main className="min-h-screen bg-slate-50">
       
       {/* Header */}
@@ -45,7 +62,8 @@ export default function Home() {
   <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
 
     {/* Logo */}
-    <a href="#" className="flex items-center gap-3">
+    <Link href="/" className="flex items-center gap-3">
+    
       <div className="flex h-11 w-11 items-center justify-center rounded-xl overflow-hidden">
   <img
     src="/logo_UnivGeeks.png"
@@ -60,17 +78,17 @@ export default function Home() {
         </h1>
         
       </div>
-    </a>
+   </Link>
 
     {/* Navigation */}
     <nav className="hidden items-center gap-8 md:flex">
 
-      <a
-        href="#"
-        className="text-sm font-medium text-slate-600 transition hover:text-blue-600"
-      >
-        Home
-      </a>
+   <Link
+  href="/"
+  className="text-sm font-medium text-slate-600 transition hover:text-blue-600"
+>
+  Home
+</Link>
 
       <a
         href="#"
@@ -79,13 +97,12 @@ export default function Home() {
         Courses
       </a>
 
-      <a
-        href="#"
-        className="rounded-lg bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600"
-      >
-        PYQs
-      </a>
-
+   <Link
+  href="/"
+  className="rounded-lg bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600"
+>
+  PYQs
+</Link>
       <a
         href="#"
         className="text-sm font-medium text-slate-600 transition hover:text-blue-600"
@@ -187,43 +204,43 @@ export default function Home() {
 <section className="border-b border-slate-200 bg-white">
   <div className="mx-auto flex max-w-7xl gap-3 overflow-x-auto px-6 py-4">
 
-    <button className="whitespace-nowrap rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm">
-      ▦ All Subjects
-    </button>
-
-    <button className="whitespace-nowrap rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
-      ⚛ Physics
-    </button>
-
-    <button className="whitespace-nowrap rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
-      🧪 Chemistry
-    </button>
-
-    <button className="whitespace-nowrap rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
-      ▣ Mathematics
-    </button>
-
-    <button className="whitespace-nowrap rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
-      🌿 Biology
-    </button>
-
-    <button className="whitespace-nowrap rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
-      📘 English
-    </button>
-
-    <button className="whitespace-nowrap rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
-      अ Hindi
-    </button>
-
-    <button className="whitespace-nowrap rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:border-blue-300 hover:text-blue-600">
-      ••• Other Subjects
-    </button>
+    {[
+      { name: "All", label: "▦ All Subjects" },
+      { name: "Physics", label: "⚛ Physics" },
+      { name: "Chemistry", label: "🧪 Chemistry" },
+      { name: "Mathematics", label: "▣ Mathematics" },
+    ].map((item) => (
+      <button
+        key={item.name}
+        type="button"
+        onClick={() => setSelectedSubject(item.name)}
+        className={`whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold transition ${
+          selectedSubject === item.name
+            ? "bg-blue-600 text-white shadow-sm"
+            : "border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
+        }`}
+      >
+        {item.label}
+      </button>
+    ))}
 
   </div>
 </section>
 
 
+{filteredPYQs.length === 0 && (
+  <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+    <div className="text-4xl">🔍</div>
 
+    <h3 className="mt-3 text-lg font-bold text-slate-900">
+      No subject found
+    </h3>
+
+    <p className="mt-1 text-sm text-slate-500">
+      Try searching for Physics, Chemistry or Mathematics.
+    </p>
+  </div>
+)}
       {/* PYQ Cards */}
       <section className="mx-auto max-w-7xl px-6 py-8">
         
@@ -231,7 +248,7 @@ export default function Home() {
 
   <div>
     <p className="text-sm font-medium text-slate-500">
-      Showing {pyqs.length} subjects
+  Showing {filteredPYQs.length} subjects
     </p>
 
     <h2 className="mt-1 text-2xl font-bold text-slate-900">
@@ -240,11 +257,13 @@ export default function Home() {
   </div>
 
   <div className="relative">
-    <input
-      type="text"
-      placeholder="Search subject..."
-      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pl-10 text-sm text-slate-700 outline-none transition focus:border-blue-400 sm:w-64"
-    />
+  <input
+  type="text"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  placeholder="Search subject..."
+  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pl-10 text-sm text-slate-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 sm:w-64"
+/>
 
     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
       🔍
@@ -254,7 +273,7 @@ export default function Home() {
 </div>
 
   <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-  {pyqs.map((pyq) => (
+  {filteredPYQs.map((pyq) => (
   <PYQCard
     key={`${pyq.className}-${pyq.subject}`}
     subject={pyq.subject}
