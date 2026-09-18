@@ -46,9 +46,15 @@ export default function SubjectSelector({
   subjects,
   selectedSubject,
   onSubjectChange,
-}: SubjectSelectorProps) {
+  sectionRef,
+}: SubjectSelectorProps & {
+  sectionRef: React.RefObject<HTMLElement | null>;
+}) {
   return (
-    <section className="border-b border-slate-200 bg-white px-6 py-14">
+    <section
+  ref={sectionRef}
+  className="border-b border-slate-200 bg-white px-6 py-14"
+>
       <div className="mx-auto max-w-7xl">
 
         {/* Heading */}

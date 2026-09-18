@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StreamSelector from "./components/StreamSelector";
 import ClassSelector from "./components/ClassSelector";
 import SubjectSelector from "./components/SubjectSelector";
@@ -24,6 +24,44 @@ export default function NotesPage() {
 
   const [selectedChapter, setSelectedChapter] =
   useState<string | null>(null);
+
+  const streamSectionRef =
+    useRef<HTMLElement | null>(null);
+
+  const subjectSectionRef =
+    useRef<HTMLElement | null>(null);
+
+  const chapterSectionRef =
+    useRef<HTMLElement | null>(null);
+
+  const pdfSectionRef =
+    useRef<HTMLElement | null>(null);  
+
+      const scrollToSection = (
+    ref: React.RefObject<HTMLElement | null>
+  ) => {
+    setTimeout(() => {
+      ref.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
+  };
+
+  useEffect(() => {
+  if (!selectedChapter) {
+    return;
+  }
+
+  const timer = setTimeout(() => {
+    pdfSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, 150);
+
+  return () => clearTimeout(timer);
+}, [selectedChapter]);
 
   const subjects = getSubjects(
   selectedClass,
@@ -222,28 +260,38 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
 
       {/* STEP 1 */}
       <ClassSelector
-        selectedClass={selectedClass}
-         onClassChange={(className) => {
-         setSelectedClass(className);
-         setSelectedSubject(null);
-         setSelectedChapter(null);
+  selectedClass={selectedClass}
+  onClassChange={(className) => {
+    setSelectedClass(className);
+    setSelectedSubject(null);
+    setSelectedChapter(null);
+
+    if (className === "10") {
+      scrollToSection(subjectSectionRef);
+    } else {
+      scrollToSection(streamSectionRef);
+    }
   }}
-      />
+/>
 
      {/* STEP 2 - STREAM */}
 {(selectedClass === "11" || selectedClass === "12") && (
   <StreamSelector
+     sectionRef={streamSectionRef}
     selectedStream={selectedStream}
     onStreamChange={(stream) => {
       setSelectedStream(stream);
       setSelectedSubject(null);
       setSelectedChapter(null);
+
+      scrollToSection(subjectSectionRef);
     }}
   />
 )} 
 
 {/* STEP 3 - SUBJECT */}
 <SubjectSelector   
+  sectionRef={subjectSectionRef}
   selectedClass={selectedClass}
   selectedStream={selectedStream}
   subjects={subjects}
@@ -251,12 +299,15 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
   onSubjectChange={(subject) =>  {
     setSelectedSubject(subject.name);
     setSelectedChapter(null);
+
+    scrollToSection(chapterSectionRef);
   }}
 />
 
 {/* STEP 4 - CHAPTER */}
 {selectedSubjectData && (
   <ChapterSelector
+    sectionRef={chapterSectionRef}
     chapters={selectedSubjectData.chapters}
     selectedChapter={selectedChapter}
     onChapterChange={(chapter) =>
@@ -267,7 +318,10 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
 
 {/* STEP 5 - PDF NOTES */}
 {selectedChapterData && (
-  <section className="border-b border-slate-200 bg-white px-6 py-14">
+  <section
+  ref={pdfSectionRef}
+  className="border-b border-slate-200 bg-white px-6 py-14"
+>
     <div className="mx-auto max-w-7xl">
 
       {/* Heading */}
