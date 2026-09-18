@@ -6,15 +6,20 @@ type ChapterSelectorProps = {
   chapters: Chapter[];
   selectedChapter: string | null;
   onChapterChange: (chapter: Chapter) => void;
+  sectionRef: React.RefObject<HTMLElement | null>;
 };
 
 export default function ChapterSelector({
   chapters,
   selectedChapter,
   onChapterChange,
+  sectionRef,
 }: ChapterSelectorProps) {
   return (
-    <section className="border-b border-slate-200 bg-[#F8FAFF] px-6 py-14">
+    <section
+  ref={sectionRef}
+  className="border-b border-slate-200 bg-[#F8FAFF] px-6 py-14"
+>
       <div className="mx-auto max-w-7xl">
 
         {/* Heading */}

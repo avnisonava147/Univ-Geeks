@@ -19,9 +19,15 @@ const streamColors: Record<Stream, string> = {
 export default function StreamSelector({
   selectedStream,
   onStreamChange,
-}: StreamSelectorProps) {
+  sectionRef,
+}: StreamSelectorProps & {
+  sectionRef: React.RefObject<HTMLElement | null>;
+}) {
   return (
-    <section className="border-b border-slate-200 bg-[#F8FAFF] px-6 py-14">
+   <section
+  ref={sectionRef}
+  className="border-b border-slate-200 bg-[#F8FAFF] px-6 py-14"
+>
       <div className="mx-auto max-w-7xl">
 
         {/* Heading */}
