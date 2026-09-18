@@ -12,6 +12,27 @@ import {
   type Stream,
 } from "./data/notesData";
 
+ const bannerSlides = [
+  {
+    title: "Study Smarter",
+    subtitle: "Learn · Practice · Grow",
+    description: "Simple notes designed to make your preparation easier.",
+    className: "from-[#F7A83B] to-[#F07A45]",
+  },
+  {
+    title: "Prepare Better",
+    subtitle: "Notes · Chapters · PDFs",
+    description: "Everything you need for focused exam preparation.",
+    className: "from-[#5B6FE8] to-[#7B5CE8]",
+  },
+  {
+    title: "Grow With Knowledge",
+    subtitle: "Understand · Revise · Succeed",
+    description: "Build strong concepts with chapter-wise study material.",
+    className: "from-[#2FA36B] to-[#249B91]",
+  },
+];
+
 export default function NotesPage() {
   const [selectedClass, setSelectedClass] =
     useState<ClassName>("10");
@@ -24,6 +45,9 @@ export default function NotesPage() {
 
   const [selectedChapter, setSelectedChapter] =
   useState<string | null>(null);
+
+  const [activeBanner, setActiveBanner] = useState(0);
+  const [isBannerHovered, setIsBannerHovered] = useState(false);
 
   const streamSectionRef =
     useRef<HTMLElement | null>(null);
@@ -62,6 +86,20 @@ export default function NotesPage() {
 
   return () => clearTimeout(timer);
 }, [selectedChapter]);
+
+useEffect(() => {
+  if (isBannerHovered) {
+    return;
+  }
+
+  const timer = setInterval(() => {
+    setActiveBanner((current) =>
+      (current + 1) % bannerSlides.length
+    );
+  }, 4200);
+
+  return () => clearInterval(timer);
+}, [isBannerHovered]);
 
   const subjects = getSubjects(
   selectedClass,
@@ -216,49 +254,112 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
             </div>
           </div>
 
-          {/* Illustration */}
-          <div className="relative hidden h-72 lg:block">
-            
-            <div className="absolute right-8 top-2 rotate-3 rounded-sm border border-[#EFD98C] bg-[#FFF4CF] px-5 py-4 font-serif text-sm leading-6 text-[#5B4B12] shadow-lg">
-              Small steps.
-              <br />
-              Big results.
+          {/* Banner Slider */}
+<div
+  className=" group relative hidden h-72 lg:block"
+  onMouseEnter={() => setIsBannerHovered(true)}
+  onMouseLeave={() => setIsBannerHovered(false)}
+>
+  <div className="relative h-full overflow-hidden rounded-[24px] shadow-xl">
+
+    {/* Slides */}
+    <div
+      className="flex h-full transition-transform duration-700 ease-in-out"
+      style={{
+        transform: `translateX(-${activeBanner * 100}%)`,
+      }}
+    >
+      {bannerSlides.map((slide, index) => (
+        <div
+          key={index}
+          className={`relative h-full min-w-full bg-gradient-to-br ${slide.className} p-8 text-white`}
+        >
+
+          {/* Decorative circles */}
+          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10" />
+
+          <div className="pointer-events-none absolute -bottom-16 -left-10 h-44 w-44 rounded-full bg-white/10" />
+
+          {/* Content */}
+          <div className="relative flex h-full flex-col justify-center">
+
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/75">
+              {slide.subtitle}
+            </p>
+
+            <h2 className="mt-3 max-w-sm font-serif text-4xl font-semibold leading-tight">
+              {slide.title}
+            </h2>
+
+            <p className="mt-4 max-w-sm text-sm leading-6 text-white/85">
+              {slide.description}
+            </p>
+
+            <div className="mt-6 inline-flex w-fit rounded-full bg-white/15 px-4 py-2 text-xs font-semibold backdrop-blur-sm">
+              Explore Notes →
             </div>
 
-            <div className="absolute left-4 top-5 -rotate-3 text-right font-serif text-lg italic leading-6 text-[#5B6478]">
-              Better notes,
-              <br />
-              brighter future
-            </div>
-
-            {/* Books */}
-            <div className="absolute bottom-4 right-10">
-              <div className="relative h-48 w-72">
-                
-                {/* Blue book */}
-                <div className="absolute bottom-20 right-0 h-9 w-52 rounded-md bg-[#2F5FDE] shadow-sm" />
-
-                {/* Cream book */}
-                <div className="absolute bottom-12 right-0 h-9 w-56 rounded-md bg-[#FBE7B5] shadow-sm" />
-
-                {/* Coral book */}
-                <div className="absolute bottom-4 right-0 h-10 w-56 rounded-md bg-[#E8604C] shadow-sm" />
-
-                {/* Purple books */}
-                <div className="absolute bottom-0 left-8 h-40 w-5 rounded bg-[#7B5CE8]" />
-
-                <div className="absolute bottom-0 left-16 h-36 w-5 rounded bg-[#7B5CE8]/60" />
-
-                {/* Plant stem */}
-                <div className="absolute bottom-28 right-24 h-28 w-1 rotate-[20deg] rounded-full bg-[#2FA36B]" />
-
-                {/* Leaves */}
-                <div className="absolute right-20 top-6 h-5 w-10 -rotate-12 rounded-full bg-[#2FA36B]" />
-
-                <div className="absolute right-32 top-16 h-5 w-9 rotate-[20deg] rounded-full bg-[#3EBE82]" />
-              </div>
-            </div>
           </div>
+
+          {/* Slide number */}
+          <div className="absolute right-6 top-6 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
+            0{index + 1}
+          </div>
+
+        </div>
+      ))}
+    </div>
+
+    {/* Previous button */}
+    <button
+      type="button"
+      aria-label="Previous banner"
+      onClick={() =>
+        setActiveBanner(
+          (current) =>
+            (current - 1 + bannerSlides.length) %
+            bannerSlides.length
+        )
+      }
+      className="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/15 text-lg text-white opacity-0 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 group-hover:opacity-100"
+    >
+      ←
+    </button>
+
+    {/* Next button */}
+    <button
+      type="button"
+      aria-label="Next banner"
+      onClick={() =>
+        setActiveBanner(
+          (current) =>
+            (current + 1) % bannerSlides.length
+        )
+      }
+      className="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/15 text-lg text-white opacity-0 backdrop-blur-sm transition-all duration-300 hover:bg-white/25"
+    >
+      →
+    </button>
+
+    {/* Dots */}
+    <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
+      {bannerSlides.map((_, index) => (
+        <button
+          key={index}
+          type="button"
+          aria-label={`Go to banner ${index + 1}`}
+          onClick={() => setActiveBanner(index)}
+          className={`h-2.5 rounded-full transition-all duration-300 ${
+            activeBanner === index
+              ? "w-8 bg-white"
+              : "w-2.5 bg-white/50 hover:bg-white/80"
+          }`}
+        />
+      ))}
+    </div>
+
+  </div>
+</div>
         </div>
       </section>
 
