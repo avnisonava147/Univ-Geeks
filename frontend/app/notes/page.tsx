@@ -83,9 +83,13 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
           
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-lg">
-              🎓
-            </div>
+            <div className="flex h-10 w-10 items-center justify-center">
+  <img
+    src="/logo.png"
+    alt="Univ-Geeks logo"
+    className="h-10 w-10 rounded-full object-contain transition-transform duration-300 hover:scale-105"
+  />
+</div>
 
             <span className="font-serif text-xl font-semibold text-[#16213E]">
               Univ-Geeks
