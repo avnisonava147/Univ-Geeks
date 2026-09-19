@@ -1,75 +1,79 @@
+"use client";
+
 import Reveal from "./Reveal";
 
-interface Feature {
-  title: string;
-  description: string;
-  icon: string;
-}
+const features = [
+  {
+    icon: "📚",
+    title: "Chapter-wise Notes",
+    description: "Easy-to-understand notes organized chapter by chapter.",
+  },
+  {
+    icon: "📝",
+    title: "Previous Year Questions",
+    description: "Practice PYQs to understand exam patterns better.",
+  },
+  {
+    icon: "🎯",
+    title: "Multiple Boards",
+    description: "Study resources for CBSE, ICSE, and state boards.",
+  },
+  {
+    icon: "📱",
+    title: "Mobile Friendly",
+    description: "Access your study material anytime, anywhere.",
+  },
+  {
+    icon: "🆓",
+    title: "Free Access",
+    description: "Quality educational resources without unnecessary barriers.",
+  },
+  {
+    icon: "✅",
+    title: "Organized Learning",
+    description: "Find the right subject, chapter, and resource easily.",
+  },
+];
 
-interface WhatYouGetProps {
-  heading: string;
-  description: string;
-  features: Feature[];
-}
-
-export default function WhatYouGet({
-  heading,
-  description,
-  features,
-}: WhatYouGetProps) {
+export default function WhatYouGet() {
   return (
-    <section className="px-6 py-16 sm:py-20 lg:py-24">
-
-      <div className="mx-auto max-w-6xl">
-
-        {/* Section heading */}
+    <section className="bg-white px-6 py-24 md:px-12 lg:px-20">
+      <div className="mx-auto max-w-7xl">
         <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
+          <div className="mb-14 max-w-2xl">
+            <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-bold text-blue-600">
+              WHAT STUDENTS GET
+            </span>
 
-            <p className="text-sm font-semibold uppercase tracking-widest text-teal-600">
-              Resources
-            </p>
-
-            <h2 className="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">
-              {heading}
+            <h2 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
+              Everything you need to learn better.
             </h2>
 
-            <p className="mt-4 leading-7 text-slate-600">
-              {description}
+            <p className="mt-5 text-lg leading-8 text-slate-600">
+              From notes to previous year questions, UNIV GEEKS brings
+              essential study resources together in one place.
             </p>
-
           </div>
         </Reveal>
 
-        {/* Feature cards */}
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
-            <Reveal
-              key={feature.title}
-              delay={index * 80}
-            >
-              <div className="group h-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-lg">
-
-                {/* Icon */}
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-2xl transition-transform duration-300 group-hover:scale-110">
+            <Reveal key={feature.title} delay={index * 80}>
+              <div className="group h-full rounded-3xl border border-slate-200 bg-slate-50 p-7 transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:bg-white hover:shadow-xl">
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
                   {feature.icon}
                 </div>
 
-                {/* Title */}
-                <h3 className="mt-5 text-xl font-semibold text-slate-900">
+                <h3 className="text-xl font-bold text-slate-900">
                   {feature.title}
                 </h3>
 
-                {/* Description */}
                 <p className="mt-3 leading-7 text-slate-600">
                   {feature.description}
                 </p>
-
               </div>
             </Reveal>
           ))}
-
         </div>
       </div>
     </section>

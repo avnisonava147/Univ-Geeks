@@ -10,16 +10,16 @@ export default function OurPurpose({
   description,
 }: OurPurposeProps) {
   return (
-    <section className="bg-teal-50 px-6 py-16 sm:py-20 lg:py-24">
+    <section className="bg-blue-50 px-6 py-16 sm:py-20 lg:py-24">
 
       <div className="mx-auto max-w-5xl">
 
         <Reveal>
 
-          <div className="rounded-3xl border border-teal-100 bg-white p-8 text-center shadow-sm sm:p-12">
+          <div className="rounded-3xl border border-blue-100 bg-white p-8 text-center shadow-sm sm:p-12">
 
             {/* Small label */}
-            <p className="text-sm font-semibold uppercase tracking-widest text-teal-600">
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               Our Mission
             </p>
 

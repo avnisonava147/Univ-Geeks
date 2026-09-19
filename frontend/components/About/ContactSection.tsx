@@ -22,7 +22,7 @@ export default function ContactSection({
 
           <div className="text-center">
 
-            <p className="text-sm font-semibold uppercase tracking-widest text-teal-600">
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               Get In Touch
             </p>
 
@@ -36,7 +36,7 @@ export default function ContactSection({
 
             <a
               href={`mailto:${email}`}
-              className="mt-8 inline-flex items-center justify-center rounded-xl bg-teal-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-teal-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              className="mt-8 inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               {buttonText}
             </a>
