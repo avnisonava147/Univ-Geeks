@@ -1,3 +1,8 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useState } from "react";
+
 interface HeroProps {
   title: string;
   tagline: string;
@@ -9,31 +14,74 @@ export default function Hero({
   tagline,
   badge,
 }: HeroProps) {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setVisible(true);
+  }, []);
+
   return (
-    <section className="relative overflow-hidden bg-slate-50 px-6 py-20 sm:py-24 lg:py-32">
-      
-      {/* Decorative background shapes */}
-      <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-teal-100/60 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-blue-100/50 blur-3xl" />
+    <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-24 text-center">
 
-      <div className="relative mx-auto max-w-5xl text-center">
+      {/* Background image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/about-hero.jpg')",
+        }}
+      />
 
-        {/* Small badge */}
-        <span className="inline-flex rounded-full border border-teal-100 bg-white px-4 py-2 text-sm font-medium text-teal-700 shadow-sm">
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-blue-950/75" />
+
+      {/* Decorative blue gradient */}
+      <div className="absolute inset-0 bg-linear-to-br from-blue-950/80 via-blue-900/40 to-blue-600/40" />
+
+      {/* Main content */}
+      <div
+        className={`relative z-10 mx-auto max-w-5xl text-white transition-all duration-1000 ${
+          visible
+            ? "translate-y-0 opacity-100"
+            : "translate-y-10 opacity-0"
+        }`}
+      >
+
+        <span className="inline-flex rounded-full border border-blue-200/40 bg-white/10 px-5 py-2 text-sm font-medium text-blue-100 backdrop-blur-sm">
           {badge}
         </span>
 
-        {/* Main heading */}
-        <h1 className="mt-6 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+        <h1 className="mt-8 text-5xl font-bold tracking-tight sm:text-6xl lg:text-8xl">
           {title}
         </h1>
 
-        {/* Tagline */}
-        <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
+        <p className="mx-auto mt-7 max-w-3xl text-lg leading-8 text-blue-50 sm:text-xl lg:text-2xl">
           {tagline}
         </p>
 
+        <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+
+          <Link
+            href="/notes"
+            className="rounded-xl bg-white px-8 py-4 font-semibold text-blue-700 transition duration-300 hover:-translate-y-1 hover:bg-blue-50 hover:shadow-xl"
+          >
+            Explore Notes
+          </Link>
+
+          <Link
+            href="/pyqs"
+            className="rounded-xl border border-white/70 px-8 py-4 font-semibold text-white transition duration-300 hover:-translate-y-1 hover:bg-white hover:text-blue-700"
+          >
+            Practice PYQs
+          </Link>
+
+        </div>
       </div>
+
+      {/* Scroll indicator */}
+      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 animate-bounce text-2xl text-white">
+        ↓
+      </div>
+
     </section>
   );
 }

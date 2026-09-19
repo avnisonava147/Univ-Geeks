@@ -25,7 +25,7 @@ export default function WhyChooseUs({
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
 
-            <p className="text-sm font-semibold uppercase tracking-widest text-teal-600">
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               Why UNIV-GEEKS
             </p>
 
@@ -51,7 +51,7 @@ export default function WhyChooseUs({
               <div className="h-full rounded-2xl bg-white p-7 text-center shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
 
                 {/* Check */}
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-xl font-bold text-teal-600">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-xl font-bold text-blue-600">
                   ✓
                 </div>
 

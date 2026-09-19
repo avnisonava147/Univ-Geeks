@@ -17,7 +17,7 @@ export default function WhoWeAre({
         <Reveal>
           <div className="text-center">
 
-            <p className="text-sm font-semibold uppercase tracking-widest text-teal-600">
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               About Us
             </p>
 

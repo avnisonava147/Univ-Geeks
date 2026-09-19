@@ -17,7 +17,7 @@ export default function OurStory({
         {/* Story visual */}
         <Reveal>
 
-          <div className="flex min-h-80 items-center justify-center rounded-3xl bg-linear-to-br from-teal-50 to-slate-50">
+          <div className="flex min-h-80 items-center justify-center rounded-3xl bg-linear-to-br from-blue-50 to-slate-50">
 
             <div className="text-center">
 
@@ -40,7 +40,7 @@ export default function OurStory({
 
           <div>
 
-            <p className="text-sm font-semibold uppercase tracking-widest text-teal-600">
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               Our Journey
             </p>
 

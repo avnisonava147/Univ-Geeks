@@ -24,7 +24,7 @@ export default function Founder({
         <Reveal>
           <div className="mb-10 text-center">
 
-            <p className="text-sm font-semibold uppercase tracking-widest text-teal-600">
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               The Person Behind The Platform
             </p>
 
@@ -41,7 +41,7 @@ export default function Founder({
           <div className="grid overflow-hidden rounded-3xl bg-white shadow-sm md:grid-cols-2">
 
             {/* Photo */}
-            <div className="flex min-h-80 items-center justify-center bg-teal-50">
+            <div className="flex min-h-80 items-center justify-center bg-blue-50">
 
               {image ? (
                 <img
@@ -68,7 +68,7 @@ export default function Founder({
             {/* Founder information */}
             <div className="flex flex-col justify-center p-8 sm:p-10">
 
-              <p className="text-sm font-semibold uppercase tracking-wider text-teal-600">
+              <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
                 {role}
               </p>
 

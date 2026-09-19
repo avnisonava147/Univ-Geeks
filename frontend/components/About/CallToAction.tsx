@@ -24,13 +24,13 @@ export default function CallToAction({
 
         <Reveal>
 
-          <div className="rounded-3xl bg-teal-600 px-6 py-12 text-center shadow-lg sm:px-10 sm:py-16">
+          <div className="rounded-3xl bg-blue-600 px-6 py-12 text-center shadow-lg sm:px-10 sm:py-16">
 
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
               {heading}
             </h2>
 
-            <p className="mx-auto mt-4 max-w-2xl leading-7 text-teal-50">
+            <p className="mx-auto mt-4 max-w-2xl leading-7 text-blue-50">
               {description}
             </p>
 
@@ -39,14 +39,14 @@ export default function CallToAction({
 
               <a
                 href={notesLink}
-                className="rounded-xl bg-white px-6 py-3 font-semibold text-teal-700 transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-md"
+                className="rounded-xl bg-white px-6 py-3 font-semibold text-blue-700 transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-100 hover:shadow-md"
               >
                 {notesButton}
               </a>
 
               <a
                 href={pyqLink}
-                className="rounded-xl border border-white px-6 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-teal-700"
+                className="rounded-xl border border-white px-6 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-blue-700"
               >
                 {pyqButton}
               </a>
