@@ -7,7 +7,7 @@ import SubjectSelector from "./components/SubjectSelector";
 import ChapterSelector from "./components/ChapterSelector";
 import {
   getSubjects,
-  
+  streams,
   type ClassName,
   type Stream,
 } from "./data/notesData";
@@ -45,6 +45,10 @@ export default function NotesPage() {
 
   const [selectedChapter, setSelectedChapter] =
   useState<string | null>(null);
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchMessage, setSearchMessage] = useState("");
 
   const [activeBanner, setActiveBanner] = useState(0);
   const [isBannerHovered, setIsBannerHovered] = useState(false);
@@ -108,6 +112,126 @@ useEffect(() => {
   const selectedSubjectData = subjects.find(
   (subject) => subject.name === selectedSubject
 );
+
+
+  // Search function
+  const handleSearch = () => {
+    const term = searchQuery.trim().toLowerCase();
+
+    // Check if the search box is empty
+    if (!term) {
+      setSearchMessage(
+        "Please enter a class, subject, or chapter."
+      );
+      return;
+    }
+
+    // Search for Class 10, Class 11, or Class 12
+    const classMatch = term.match(
+      /^(?:class\s*)?(10|11|12)$/
+    );
+
+    if (classMatch) {
+      const className = classMatch[1] as ClassName;
+
+      setSelectedClass(className);
+      setSelectedSubject(null);
+      setSelectedChapter(null);
+
+      setSearchMessage(`Showing Class ${className}`);
+      return;
+    }
+
+    // Search for a stream: Science, Commerce, Arts
+    const streamMatch = streams.find(
+      (stream) => stream.toLowerCase() === term
+    );
+
+    if (classMatch) {
+  const className = classMatch[1] as ClassName;
+
+  setSelectedClass(className);
+  setSelectedSubject(null);
+  setSelectedChapter(null);
+
+  setSearchMessage(`Showing Class ${className}`);
+
+  // Automatically scroll to the correct section
+  if (className === "10") {
+    scrollToSection(subjectSectionRef);
+  } else {
+    scrollToSection(streamSectionRef);
+  }
+
+  return;
+}
+
+    // Search through subjects and chapters
+    const allClasses: ClassName[] = ["10", "11", "12"];
+    const allStreams: Stream[] = [
+      "Science",
+      "Commerce",
+      "Arts",
+    ];
+
+    for (const className of allClasses) {
+      const streamsToCheck: Stream[] =
+        className === "10" ? ["Science"] : allStreams;
+
+      for (const stream of streamsToCheck) {
+        const availableSubjects = getSubjects(
+          className,
+          stream
+        );
+
+        for (const subject of availableSubjects) {
+          // Search for a matching chapter
+          const matchingChapter = subject.chapters.find(
+            (chapter) =>
+              chapter.name.toLowerCase().includes(term)
+          );
+
+          if (matchingChapter) {
+            setSelectedClass(className);
+            setSelectedStream(stream);
+            setSelectedSubject(subject.name);
+            setSelectedChapter(matchingChapter.id);
+
+            setSearchMessage(
+              `Found chapter: ${matchingChapter.name}`
+            );
+            return;
+          }
+
+          // Search for a matching subject
+          
+if (
+  subject.name.toLowerCase().includes(term)
+) {
+  setSelectedClass(className);
+  setSelectedStream(stream);
+  setSelectedSubject(subject.name);
+  setSelectedChapter(null);
+
+  setSearchMessage(
+    `Found subject: ${subject.name}`
+  );
+
+  // Automatically scroll to the subject section
+  scrollToSection(subjectSectionRef);
+
+  return;
+}
+        }
+      }
+    }
+
+    // If nothing matches
+    setSearchMessage(
+      `No results found for "${searchQuery}".`
+    );
+  };
+
 
 const selectedChapterData = selectedSubjectData?.chapters.find(
   (chapter) => chapter.id === selectedChapter
@@ -234,25 +358,45 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
             </p>
 
             {/* Search */}
-            <div className="mt-8 flex max-w-2xl items-center rounded-full border border-slate-200 bg-white p-1.5 shadow-sm transition focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100">
+            <form
+               onSubmit={(e) => {
+                 e.preventDefault();
+                 handleSearch();
+                }}
+             className="mt-8 flex max-w-2xl items-center rounded-full border border-slate-200 bg-white p-1.5 shadow-sm transition focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100">
               <span className="ml-4 text-lg text-[#5B6478]">
                 🔍
               </span>
 
               <input
                 type="text"
+                 value={searchQuery}
+                 onChange={(e) => setSearchQuery(e.target.value)} 
                 placeholder="Search for class, subject or chapter..."
+                aria-label="Search for class, subject or chapter"
                 className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm outline-none"
               />
 
               <button
-                type="button"
+                type="submit"
                 className="rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#2F5FDE]"
               >
                 Search
               </button>
+            </form>
             </div>
-          </div>
+
+            
+{searchMessage && (
+  <p
+    aria-live="polite"
+    className="mt-3 px-4 text-sm font-medium text-[#2F5FDE]"
+  >
+    {searchMessage}
+  </p>
+)}
+
+          
 
           {/* Banner Slider */}
 <div
@@ -367,6 +511,8 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
       <ClassSelector
   selectedClass={selectedClass}
   onClassChange={(className) => {
+    setSearchQuery("");
+    setSearchMessage("");
     setSelectedClass(className);
     setSelectedSubject(null);
     setSelectedChapter(null);
@@ -385,6 +531,8 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
      sectionRef={streamSectionRef}
     selectedStream={selectedStream}
     onStreamChange={(stream) => {
+      setSearchQuery("");
+      setSearchMessage("");
       setSelectedStream(stream);
       setSelectedSubject(null);
       setSelectedChapter(null);
@@ -402,6 +550,8 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
   subjects={subjects}
   selectedSubject={selectedSubject}
   onSubjectChange={(subject) =>  {
+    setSearchQuery("");
+    setSearchMessage("");
     setSelectedSubject(subject.name);
     setSelectedChapter(null);
 
