@@ -10,7 +10,7 @@ export default function WhoWeAre({
   description,
 }: WhoWeAreProps) {
   return (
-    <section className="px-6 py-16 sm:py-20 lg:py-24">
+    <section className="soft-grid px-6 py-16 sm:py-20 lg:py-24">
 
       <div className="mx-auto max-w-4xl">
 

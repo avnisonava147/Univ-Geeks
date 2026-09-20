@@ -14,7 +14,7 @@ export default function ContactSection({
   buttonText,
 }: ContactSectionProps) {
   return (
-    <section className="bg-slate-50 px-6 py-16 sm:py-20 lg:py-24">
+    <section className="bg-blue-50/60 px-6 py-20 sm:py-24">
 
       <div className="mx-auto max-w-3xl">
 
