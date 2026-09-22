@@ -1,28 +1,29 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { saveAdminSession } from "../(protected)/_lib/session";
 
-const page = () => {
+function LoginPageInner() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
   const [rememberMe,setRememberMe] = useState(false);
-  
+  const [signingIn,setSigningIn] = useState(false);
+
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault();
+    if (signingIn) return;
 
-    const data = {
-      email,
-      password,
-      rememberMe
-    }
+    // Frontend-only demo auth: any credentials are accepted until the
+    // backend login endpoint is wired up.
+    setSigningIn(true);
+    saveAdminSession(email.trim() || "admin@univgeeks.in");
 
-
-    console.log("the data is: ",data);
-
-    setPassword("");
-    setEmail("");
-    setRememberMe(false);
+    window.setTimeout(() => {
+      router.push("/admin/dashboard");
+    }, 500);
   }
 
   return (
@@ -317,25 +318,32 @@ const page = () => {
               {/* Login */}
               <button
                 type="submit"
-                className="flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-blue-500 text-base font-semibold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-600 hover:shadow-xl active:scale-[0.99]"
+                disabled={signingIn}
+                className="flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-blue-500 text-base font-semibold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-600 hover:shadow-xl active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                Login
+                {signingIn ? "Signing in…" : "Login"}
 
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 12h14M13 6l6 6-6 6"
-                  />
-                </svg>
+                {!signingIn && (
+                  <svg
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 12h14M13 6l6 6-6 6"
+                    />
+                  </svg>
+                )}
               </button>
             </form>
+
+            <p className="mt-6 text-center text-xs text-slate-400">
+              Frontend demo — any email &amp; password signs you in.
+            </p>
 
 
           </div>
@@ -346,4 +354,4 @@ const page = () => {
 }
 
 
-export default page
+export default LoginPageInner;

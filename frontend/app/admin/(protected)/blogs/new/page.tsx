@@ -1,8 +1,8 @@
 // app/admin/(protected)/blogs/new/page.tsx
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   UploadCloud,
@@ -13,15 +13,20 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-export default function NewBlogPage() {
-  const router = useRouter();
+import { findBlogById } from "../_lib/data";
 
-  const [title, setTitle] = useState("");
-  const [slug, setSlug] = useState("");
-  const [status, setStatus] = useState<"draft" | "published">("draft");
-  const [author, setAuthor] = useState("UnivGeeks Editorial");
+function BlogEditor() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
+  const editingBlog = editId ? findBlogById(editId) : undefined;
+
+  const [title, setTitle] = useState(editingBlog?.title ?? "");
+  const [slug, setSlug] = useState(editingBlog?.slug ?? "");
+  const [status, setStatus] = useState<"draft" | "published">(editingBlog?.status ?? "draft");
+  const [author, setAuthor] = useState(editingBlog?.author ?? "UnivGeeks Editorial");
   const [tagInput, setTagInput] = useState("");
-  const [tags, setTags] = useState<string[]>(["Strategy", "Boards"]);
+  const [tags, setTags] = useState<string[]>(editingBlog?.tags ?? ["Strategy", "Boards"]);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [previewMode, setPreviewMode] = useState<"write" | "preview">("write");
 
@@ -74,7 +79,9 @@ export default function NewBlogPage() {
               {title.trim() ? title : "Untitled Article"}
             </h1>
             <p className="text-sm text-[#6B7280] mt-0.5">
-              Markdown Editor &amp; Content Management
+              {editingBlog
+                ? `Editing “${editingBlog.slug}”`
+                : "Markdown Editor & Content Management"}
             </p>
           </div>
         </div>
@@ -93,7 +100,11 @@ export default function NewBlogPage() {
             className="bg-[#1C2B3A] text-white text-sm px-5 py-2 rounded-md hover:bg-[#28394D] transition-colors font-medium flex items-center gap-2"
           >
             <CheckCircle2 size={15} />
-            {status === "published" ? "Publish Article" : "Save Draft"}
+            {editingBlog
+              ? "Save Changes"
+              : status === "published"
+                ? "Publish Article"
+                : "Save Draft"}
           </button>
         </div>
       </div>
@@ -307,5 +318,17 @@ export default function NewBlogPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NewBlogPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="py-24 text-center text-sm text-[#9CA3AF]">Loading editor…</div>
+      }
+    >
+      <BlogEditor />
+    </Suspense>
   );
 }
