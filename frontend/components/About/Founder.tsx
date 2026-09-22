@@ -16,14 +16,12 @@ export default function Founder({
   image,
 }: FounderProps) {
   return (
-    <section className="bg-slate-50 px-6 py-16 sm:py-20 lg:py-24">
-
+    <section className="soft-glow px-6 py-16 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-5xl">
 
         {/* Heading */}
         <Reveal>
           <div className="mb-10 text-center">
-
             <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
               The Person Behind The Platform
             </p>
@@ -31,27 +29,23 @@ export default function Founder({
             <h2 className="mt-3 text-3xl font-bold text-slate-900 sm:text-4xl">
               {heading}
             </h2>
-
           </div>
         </Reveal>
 
-        {/* Founder card */}
+        {/* Founder Card */}
         <Reveal delay={100}>
-
           <div className="grid overflow-hidden rounded-3xl bg-white shadow-sm md:grid-cols-2">
 
-            {/* Photo */}
-            <div className="flex min-h-80 items-center justify-center bg-blue-50">
-
+            {/* Founder Photo */}
+            <div className="relative min-h-80 overflow-hidden bg-blue-50">
               {image ? (
                 <img
                   src={image}
-                  alt={name}
-                  className="h-full w-full object-cover"
+                  alt={`${name} - Founder of UNIV GEEKS`}
+                  className="h-full min-h-80 w-full object-cover"
                 />
               ) : (
-                <div className="text-center">
-
+                <div className="flex min-h-80 flex-col items-center justify-center text-center">
                   <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-white text-6xl shadow-sm">
                     👤
                   </div>
@@ -59,15 +53,12 @@ export default function Founder({
                   <p className="mt-4 text-sm text-slate-500">
                     Founder Photo
                   </p>
-
                 </div>
               )}
-
             </div>
 
-            {/* Founder information */}
+            {/* Founder Information */}
             <div className="flex flex-col justify-center p-8 sm:p-10">
-
               <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
                 {role}
               </p>
@@ -79,11 +70,9 @@ export default function Founder({
               <p className="mt-5 leading-8 text-slate-600">
                 {bio}
               </p>
-
             </div>
 
           </div>
-
         </Reveal>
 
       </div>

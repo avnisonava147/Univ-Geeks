@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Founder from "@/components/About/Founder";
+import StudentSuccess from "@/components/About/StudentSuccess";
 
 
 // =====================================================
@@ -267,7 +269,7 @@ export default function AboutPage() {
           2. WHO WE ARE
       ================================================= */}
 
-      <section className="relative z-10 -mt-16 rounded-t-[3rem] bg-slate-50 px-6 py-20 md:px-12 lg:px-20">
+      <section className="relative z-10 -mt-16 rounded-t-[3rem] sofy-grid-50 px-6 py-20 md:px-12 lg:px-20">
         <div className="pointer-events-none absolute right-10 top-10 h-40 w-40 rounded-full bg-blue-100/50 blur-3xl" />
 
 <div className="pointer-events-none absolute bottom-10 left-10 h-32 w-32 rounded-full bg-indigo-100/40 blur-3xl" />
@@ -369,7 +371,7 @@ export default function AboutPage() {
           3. MISSION AND VISION
       ================================================= */}
 
-      <section className="bg-slate-50 px-6 py-20 sm:py-24">
+      <section className="bg-white-50 px-6 py-20 sm:py-24">
 
         <div className="mx-auto max-w-6xl">
 
@@ -449,7 +451,7 @@ export default function AboutPage() {
           4. WHAT STUDENTS GET
       ================================================= */}
 
-      <section className="px-6 py-20 sm:py-24">
+      <section className="soft-glow px-6 py-20 sm:py-24">
 
         <div className="mx-auto max-w-6xl">
 
@@ -625,7 +627,7 @@ export default function AboutPage() {
           6. OUR JOURNEY
       ================================================= */}
 
-      <section className="px-6 py-20 sm:py-24">
+      <section className="bg-white px-6 py-20 sm:py-24">
 
         <div className="mx-auto max-w-6xl">
 
@@ -698,73 +700,68 @@ export default function AboutPage() {
 
       </section>
 
+      <StudentSuccess />
+
 
       {/* =================================================
           7. FOUNDER
       ================================================= */}
+      {/* Founder Section */}
+<section className="soft-glow-50 px-6 py-20 sm:py-24">
+  <div className="mx-auto max-w-5xl">
 
-      <section className="bg-slate-50 px-6 py-20 sm:py-24">
+    {/* Heading */}
+    <Reveal>
+      <div className="text-center">
+        <SectionLabel>
+          Founder
+        </SectionLabel>
 
-        <div className="mx-auto max-w-5xl">
+        <h2 className="mt-5 text-4xl font-bold text-slate-900">
+          Built with a purpose.
+        </h2>
+      </div>
+    </Reveal>
 
-          <Reveal>
+    {/* Founder Card */}
+    <Reveal delay={150}>
+      <div className="mt-12 grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm md:grid-cols-2">
 
-            <div className="text-center">
+        {/* Founder Photo */}
+        <div className="relative min-h-80 overflow-hidden bg-blue-50">
+          <img
+            src="/founder.jpg"
+            alt="Founder of UNIV GEEKS"
+            className="h-full min-h-80 w-full object-cover"
+          />
+        </div>
 
-              <SectionLabel>
-                Founder
-              </SectionLabel>
+        {/* Founder Information */}
+        <div className="flex flex-col justify-center p-8 sm:p-10">
 
-              <h2 className="mt-5 text-4xl font-bold text-slate-900">
-                Built with a purpose.
-              </h2>
+          <p className="text-sm font-bold uppercase tracking-wider text-blue-600">
+            Founder, UNIV GEEKS
+          </p>
 
-            </div>
+          <h3 className="mt-4 text-3xl font-bold text-slate-900">
+            Himanshu Shekhawat
+          </h3>
 
-          </Reveal>
+          <p className="mt-5 leading-8 text-slate-600">
+           UNIV GEEKS was born from a simple idea: learning should be easier and study resources should be accessible to everyone. Our founder envisioned a platform where students can find organized notes, previous year questions, and useful academic resources in one place. With a student-first approach, UNIV GEEKS aims to make everyday learning more convenient and meaningful.
+          </p>
 
-
-          <Reveal delay={150}>
-
-            <div className="mt-12 grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm md:grid-cols-2">
-
-              <div className="flex min-h-72 items-center justify-center bg-blue-50">
-
-                <div className="flex h-32 w-32 items-center justify-center rounded-full bg-white text-6xl shadow-sm">
-                  👤
-                </div>
-
-              </div>
-
-              <div className="flex flex-col justify-center p-8 sm:p-10">
-
-                <p className="text-sm font-bold uppercase tracking-wider text-blue-600">
-                  Founder, UNIV GEEKS
-                </p>
-
-                <h3 className="mt-4 text-3xl font-bold text-slate-900">
-                  Founder Name
-                </h3>
-
-                <p className="mt-5 leading-8 text-slate-600">
-                  UNIV GEEKS was created with the goal of
-                  making academic resources easier to access
-                  for school students.
-                </p>
-
-                <p className="mt-4 text-sm text-slate-500">
-                  Replace this with the actual founder details.
-                </p>
-
-              </div>
-
-            </div>
-
-          </Reveal>
+          <p className="mt-4 text-sm text-slate-500">
+           
+          </p>
 
         </div>
 
-      </section>
+      </div>
+    </Reveal>
+
+  </div>
+</section>
 
 
       {/* =================================================
@@ -844,7 +841,7 @@ export default function AboutPage() {
           9. CONTACT
       ================================================= */}
 
-      <section className="bg-slate-50 px-6 py-20 sm:py-24">
+      <section className="bg-blue-50/60 px-6 py-20 sm:py-24">
 
         <div className="mx-auto max-w-5xl">
 

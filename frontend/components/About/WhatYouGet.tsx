@@ -37,7 +37,7 @@ const features = [
 
 export default function WhatYouGet() {
   return (
-    <section className="bg-white px-6 py-24 md:px-12 lg:px-20">
+    <section className="soft-grid px-6 py-24 md:px-12 lg:px-20">
       <div className="mx-auto max-w-7xl">
         <Reveal>
           <div className="mb-14 max-w-2xl">
