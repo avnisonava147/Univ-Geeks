@@ -71,3 +71,70 @@ button {
     ),
     #f8fafc;
 }
+
+/* =================================================
+   HERO CONNECTION LINES
+================================================= */
+
+@keyframes heroLineDraw {
+  from {
+    stroke-dashoffset: 260;
+    opacity: 0;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.hero-connection-line {
+  fill: none;
+  stroke: rgba(103, 232, 249, 0.45);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  animation: heroLineDraw 1.2s ease-out forwards;
+}
+
+.hero-connection-line-1 {
+  animation-delay: 0.4s;
+}
+
+.hero-connection-line-2 {
+  animation-delay: 0.55s;
+}
+
+.hero-connection-line-3 {
+  animation-delay: 0.7s;
+}
+
+.hero-connection-line-4 {
+  animation-delay: 0.85s;
+}
+
+.hero-connection-dot {
+  fill: #67e8f9;
+  filter: drop-shadow(0 0 6px rgba(103, 232, 249, 0.8));
+  opacity: 0;
+  animation: heroDotAppear 0.5s ease-out forwards;
+}
+
+@keyframes heroDotAppear {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 1023px) {
+  .hero-connection-lines {
+    display: none;
+  }
+}

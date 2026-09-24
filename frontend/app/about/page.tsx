@@ -180,88 +180,164 @@ export default function AboutPage() {
     <main className="overflow-hidden bg-white text-slate-800">
 
       {/* =================================================
-          1. FULL-SCREEN SHRINKING HERO
+          1. HERO - ABOUT UNIV GEEKS
       ================================================= */}
 
-      <div className="relative h-[110vh]">
-
+      <div className="relative h-screen">
         <section
-          className="sticky top-0 z-20 flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-6 py-24 text-center"
+          className="sticky top-0 z-20 flex min-h-screen items-center justify-center overflow-hidden px-5 py-8 text-center text-white"
           style={{
-            transform: `translateY(${-scrollProgress * 55}px) scale(${
-              1 - scrollProgress * 0.12
-            })`,
-            borderRadius: `${scrollProgress * 28}px`,
+            transform: `translateY(${-scrollProgress * 30}px) scale(${1 - scrollProgress * 0.06})`,
+            borderRadius: `${scrollProgress * 24}px`,
             transformOrigin: "top center",
           }}
         >
+          {/* Dark blue gradient background */}
+          <div className="absolute inset-0 bg-linear-to-br from-[#010617] via-[#061735] to-[#0a3970]" />
 
-          {/* Background decoration */}
-          <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue-900/30 blur-3xl" />
+          {/* Soft central glow */}
+          <div className="absolute left-1/2 top-1/2 h-130 w-130 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/15 blur-[130px]" />
 
-          <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-blue-800/20 blur-3xl" />
+          <div className="relative z-10 mx-auto grid w-full max-w-375 items-center gap-5 lg:grid-cols-[1fr_360px_1fr]">
+                        {/* =================================================
+                CONNECTION LINES
+            ================================================= */}
 
-          {/* Hero content */}
-          <div
-            className="relative z-10 mx-auto max-w-5xl text-white transition-opacity duration-300"
-            style={{
-              opacity: 1 - scrollProgress * 0.25,
-            }}
-          >
+            <svg
+              className="hero-connection-lines pointer-events-none absolute inset-0 z-0 h-full w-full"
+              viewBox="0 0 1500 700"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              {/* Mission → Logo */}
+              <path
+                d="M 390 175 C 500 175, 535 270, 620 315"
+                className="hero-connection-line hero-connection-line-1"
+              />
 
-            <SectionLabel>
-              Learn • Practice • Succeed
-            </SectionLabel>
+              {/* Resources → Logo */}
+              <path
+                d="M 390 525 C 500 525, 535 430, 620 385"
+                className="hero-connection-line hero-connection-line-2"
+              />
 
-            <h1 className="mt-8 text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-8xl">
-              About{" "}
-              <span className="text-blue-400">
-                UNIV GEEKS
-              </span>
-            </h1>
+              {/* Student First → Logo */}
+              <path
+                d="M 1110 175 C 1000 175, 965 270, 880 315"
+                className="hero-connection-line hero-connection-line-3"
+              />
 
-            <h2 className="mt-6 text-xl font-medium text-slate-200 sm:text-2xl">
-              Making exam preparation simpler.
-            </h2>
+              {/* Vision → Logo */}
+              <path
+                d="M 1110 525 C 1000 525, 965 430, 880 385"
+                className="hero-connection-line hero-connection-line-4"
+              />
 
-            <p className="mx-auto mt-7 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
-              Explore notes, previous year questions and
-              useful study resources designed to support
-              your learning journey.
-            </p>
+              {/* Central connection points */}
+              <circle cx="620" cy="315" r="3" className="hero-connection-dot" />
+              <circle cx="620" cy="385" r="3" className="hero-connection-dot" />
+              <circle cx="880" cy="315" r="3" className="hero-connection-dot" />
+              <circle cx="880" cy="385" r="3" className="hero-connection-dot" />
+            </svg>
 
-            <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+            {/* LEFT CARDS */}
+            <div className="hidden space-y-5 lg:block">
+              <Reveal delay={150}>
+                <div className="hero-popup rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-left backdrop-blur-md transition duration-300 hover:-translate-y-2 hover:border-cyan-400/30">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-400/10 text-2xl">🎯</div>
+                    <h2 className="text-2xl font-bold">Mission</h2>
+                  </div>
+                  <p className="mt-5 leading-7 text-slate-300">
+                    To make useful study resources easier to access and help students prepare with greater clarity and confidence.
+                  </p>
+                </div>
+              </Reveal>
 
-              <Link
-                href="/notes"
-                className="rounded-xl bg-blue-600 px-8 py-4 font-semibold text-white transition duration-300 hover:-translate-y-1 hover:bg-blue-500"
-              >
-                Explore Notes
-              </Link>
-
-              <Link
-                href="/pyqs"
-                className="rounded-xl border border-slate-500 px-8 py-4 font-semibold text-white transition duration-300 hover:-translate-y-1 hover:border-white hover:bg-white hover:text-slate-900"
-              >
-                Practice PYQs
-              </Link>
-
+              <Reveal delay={300}>
+                <div className="hero-popup rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-left backdrop-blur-md transition duration-300 hover:-translate-y-2 hover:border-cyan-400/30">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-400/10 text-2xl">✦</div>
+                    <h2 className="text-2xl font-bold">Resources</h2>
+                  </div>
+                                  <p className="mt-5 leading-7 text-slate-300">
+                  Organized notes, previous year questions, and study
+                  material designed to make preparation easier.
+                </p>
+                </div>
+              </Reveal>
             </div>
 
+            {/* CENTER LOGO */}
+            <div className="flex flex-col items-center justify-center">
+              <p className="mb-5 text-base font-semibold uppercase tracking-[0.3em] text-blue-100 sm:text-lg md:text-xl">
+                ABOUT UNIV GEEKS
+              </p>
+
+              <div className="relative flex items-center justify-center">
+                <div className="absolute h-72 w-72 rounded-full bg-blue-500/20 blur-[90px]" />
+                <div className="relative h-56 w-56 overflow-hidden rounded-full border border-white/15 bg-black shadow-2xl sm:h-64 sm:w-64">
+                  <img
+                    src="/logo_UnivGeeks.png"
+                    alt="UNIV GEEKS"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+
+              <h1 className="mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">
+                Making learning
+                <span className="block text-blue-400">simpler for students.</span>
+              </h1>
+            </div>
+
+            {/* RIGHT CARDS */}
+            <div className="hidden space-y-5 lg:block">
+              <Reveal delay={450}>
+                <div className="hero-popup rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-left backdrop-blur-md transition duration-300 hover:-translate-y-2 hover:border-cyan-400/30">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-400/10 text-2xl">🎓</div>
+                    <h2 className="text-2xl font-bold">Student First</h2>
+                  </div>
+                  <p className="mt-5 leading-7 text-slate-300">
+                      Everything is designed around what students actually
+                      need for their everyday preparation.
+                    </p>
+                </div>
+              </Reveal>
+
+              <Reveal delay={600}>
+                <div className="hero-popup rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-left backdrop-blur-md transition duration-300 hover:-translate-y-2 hover:border-cyan-400/30">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-400/10 text-2xl">💡</div>
+                    <h2 className="text-2xl font-bold">Vision</h2>
+                  </div>
+                  <p className="mt-5 leading-7 text-slate-300">
+                    To create a dependable learning platform where students can discover useful study material without unnecessary searching.
+                  </p>
+                </div>
+              </Reveal>
+            </div>
           </div>
 
-          {/* Scroll indicator */}
-          <div
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 text-2xl text-slate-300 transition-opacity duration-300"
-            style={{
-              opacity: 1 - scrollProgress * 3,
-            }}
-          >
-            ↓
+          {/* Mobile Mission / Vision */}
+          <div className="absolute bottom-10 left-1/2 flex w-[92%] -translate-x-1/2 gap-3 lg:hidden">
+            <Reveal delay={150}>
+              <div className="hero-popup rounded-2xl border border-white/10 bg-slate-950/50 p-4 text-left backdrop-blur-md">
+                <p className="text-sm font-bold">🎯 Mission</p>
+                <p className="mt-2 text-xs leading-5 text-slate-400">Making useful study resources easier to access.</p>
+              </div>
+            </Reveal>
+            <Reveal delay={300}>
+              <div className="hero-popup rounded-2xl border border-white/10 bg-slate-950/50 p-4 text-left backdrop-blur-md">
+                <p className="text-sm font-bold">💡 Vision</p>
+                <p className="mt-2 text-xs leading-5 text-slate-400">A dependable platform for student learning.</p>
+              </div>
+            </Reveal>
           </div>
 
+          <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2 text-lg text-white/40" style={{ opacity: 1 - scrollProgress * 3 }}>↓</div>
         </section>
-
       </div>
 
 
@@ -368,87 +444,7 @@ export default function AboutPage() {
 
 
       {/* =================================================
-          3. MISSION AND VISION
-      ================================================= */}
-
-      <section className="bg-white-50 px-6 py-20 sm:py-24">
-
-        <div className="mx-auto max-w-6xl">
-
-          <Reveal>
-
-            <div className="text-center">
-
-              <SectionLabel>
-                Our Mission & Vision
-              </SectionLabel>
-
-              <h2 className="mt-5 text-4xl font-bold text-slate-900">
-                Supporting better preparation.
-              </h2>
-
-            </div>
-
-          </Reveal>
-
-
-          <div className="mt-12 grid gap-8 md:grid-cols-2">
-
-            <Reveal>
-
-              <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-
-                <div className="text-5xl">
-                  🚀
-                </div>
-
-                <h3 className="mt-6 text-2xl font-bold text-blue-600">
-                  Our Mission
-                </h3>
-
-                <p className="mt-4 leading-8 text-slate-600">
-                  To make useful study resources easier to
-                  access and help students prepare for their
-                  examinations with greater clarity and
-                  confidence.
-                </p>
-
-              </div>
-
-            </Reveal>
-
-
-            <Reveal delay={150}>
-
-              <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-
-                <div className="text-5xl">
-                  🌟
-                </div>
-
-                <h3 className="mt-6 text-2xl font-bold text-blue-600">
-                  Our Vision
-                </h3>
-
-                <p className="mt-4 leading-8 text-slate-600">
-                  To create a dependable learning platform
-                  where students can discover study material
-                  without spending unnecessary time searching.
-                </p>
-
-              </div>
-
-            </Reveal>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      {/* =================================================
-          4. WHAT STUDENTS GET
+          3. WHAT STUDENTS GET
       ================================================= */}
 
       <section className="soft-glow px-6 py-20 sm:py-24">
@@ -550,7 +546,7 @@ export default function AboutPage() {
 
 
       {/* =================================================
-          5. WHY CHOOSE US
+          4. WHY CHOOSE US
       ================================================= */}
 
       <section className="bg-slate-900 px-6 py-20 text-white sm:py-24">
@@ -623,88 +619,13 @@ export default function AboutPage() {
       </section>
 
 
-      {/* =================================================
-          6. OUR JOURNEY
-      ================================================= */}
-
-      <section className="bg-white px-6 py-20 sm:py-24">
-
-        <div className="mx-auto max-w-6xl">
-
-          <Reveal>
-
-            <div className="text-center">
-
-              <SectionLabel>
-                Our Journey
-              </SectionLabel>
-
-              <h2 className="mt-5 text-4xl font-bold text-slate-900">
-                Growing through every step.
-              </h2>
-
-            </div>
-
-          </Reveal>
-
-
-          <div className="mx-auto mt-12 max-w-4xl space-y-6">
-
-            {[
-              {
-                number: "01",
-                title: "The Idea",
-                text: "The idea of bringing study resources together begins.",
-              },
-              {
-                number: "02",
-                title: "Building UNIV GEEKS",
-                text: "We work on developing a simple and useful learning platform.",
-              },
-              {
-                number: "03",
-                title: "Moving Forward",
-                text: "We continue improving the platform through feedback and learning.",
-              },
-            ].map((item, index) => (
-
-              <Reveal key={item.number} delay={index * 150}>
-
-                <div className="flex gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-                  <div className="flex h-12 w-12 min-w-12 items-center justify-center rounded-full bg-blue-600 font-bold text-white">
-                    {item.number}
-                  </div>
-
-                  <div>
-
-                    <h3 className="text-xl font-bold text-slate-900">
-                      {item.title}
-                    </h3>
-
-                    <p className="mt-3 leading-7 text-slate-600">
-                      {item.text}
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </Reveal>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
+      
 
       <StudentSuccess />
 
 
       {/* =================================================
-          7. FOUNDER
+          6. FOUNDER
       ================================================= */}
       {/* Founder Section */}
 <section className="soft-glow-50 px-6 py-20 sm:py-24">
@@ -765,7 +686,7 @@ export default function AboutPage() {
 
 
       {/* =================================================
-          8. ANIMATED STATISTICS
+          7. ANIMATED STATISTICS
       ================================================= */}
 
       <section className="px-6 py-20 sm:py-24">
@@ -838,7 +759,7 @@ export default function AboutPage() {
 
 
       {/* =================================================
-          9. CONTACT
+          8. CONTACT
       ================================================= */}
 
       <section className="bg-blue-50/60 px-6 py-20 sm:py-24">
@@ -892,7 +813,7 @@ export default function AboutPage() {
 
 
       {/* =================================================
-          10. FINAL CTA
+          9. FINAL CTA
       ================================================= */}
 
       <section className="px-6 py-20 sm:py-24">
