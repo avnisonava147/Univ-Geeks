@@ -1,5 +1,6 @@
 import Link from "next/link";
 import PaperActions from "../../../../components/PaperActions";
+import Navbar from "@/components/Navbar";
 type PageProps = {
   params: Promise<{
     subject: string;
@@ -49,6 +50,7 @@ export default async function YearPYQPage({
 
   return (
     <main className="min-h-screen bg-slate-50">
+      <Navbar />
 
       {/* Breadcrumb */}
       <div className="border-b border-slate-200 bg-white">

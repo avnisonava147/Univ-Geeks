@@ -190,8 +190,9 @@ button {
   .admin-anim-grow-col {
     animation: none;
   }
-/* UNIV GEEKS Background Styles */
+}
 
+/* UNIV GEEKS Background Styles */
 .soft-grid {
   background-color: #f8fafc;
   background-image:
@@ -209,3 +210,31 @@ button {
     ),
     #f8fafc;
 }
+
+/* Glassmorphism effects */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.glass-effect-dark {
+  background: rgba(6, 28, 53, 0.75);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.glow-pill {
+  box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.4);
+}
+
