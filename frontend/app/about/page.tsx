@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Founder from "@/components/About/Founder";
 import StudentSuccess from "@/components/About/StudentSuccess";
+import Navbar from "@/components/Navbar";
 
 
 // =====================================================
@@ -178,6 +179,7 @@ export default function AboutPage() {
 
   return (
     <main className="overflow-hidden bg-white text-slate-800">
+      <Navbar />
 
       {/* =================================================
           1. FULL-SCREEN SHRINKING HERO

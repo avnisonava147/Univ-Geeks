@@ -11,6 +11,7 @@ import {
   type ClassName,
   type Stream,
 } from "./data/notesData";
+import Navbar from "@/components/Navbar";
 
  const bannerSlides = [
   {
@@ -240,80 +241,8 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
   return (
     <main className="min-h-screen bg-white">
       
-      {/* Page Header */}
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
-          
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center">
-  <img
-    src="/logo.png"
-    alt="Univ-Geeks logo"
-    className="h-10 w-10 rounded-full object-contain transition-transform duration-300 hover:scale-105"
-  />
-</div>
-
-            <span className="font-serif text-xl font-semibold text-[#16213E]">
-              Univ-Geeks
-            </span>
-          </div>
-
-          <nav className="hidden items-center gap-8 text-sm font-medium text-[#5B6478] md:flex">
-            <a
-              href="/"
-              className="transition-colors hover:text-[#2F5FDE]"
-            >
-              Home
-            </a>
-
-            <a
-              href="/notes"
-              className="font-semibold text-[#2F5FDE]"
-            >
-              Notes
-            </a>
-
-            <a
-              href="#"
-              className="transition-colors hover:text-[#2F5FDE]"
-            >
-              PYQs
-            </a>
-
-            <a
-              href="#"
-              className="transition-colors hover:text-[#2F5FDE]"
-            >
-              Books
-            </a>
-
-            <a
-              href="#"
-              className="transition-colors hover:text-[#2F5FDE]"
-            >
-              Quiz
-            </a>
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 transition hover:bg-slate-50"
-              aria-label="Search"
-            >
-              🔍
-            </button>
-
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100">
-              👤
-            </div>
-
-            <span className="hidden text-sm text-[#5B6478] sm:block">
-              Hello, Student
-            </span>
-          </div>
-        </div>
-      </header>
+      {/* Unified Glassy Navbar */}
+      <Navbar />
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-slate-200 bg-white">
