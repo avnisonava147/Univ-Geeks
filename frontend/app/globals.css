@@ -27,6 +27,7 @@ body {
   color: #0f172a;
   font-family: Arial, Helvetica, sans-serif;
 }
+
 button,
 a,
 input {
@@ -54,7 +55,7 @@ button {
 }
 
 /* ============================================================
-   Admin section animations (additive — used by /admin pages only)
+   Admin section animations
    ============================================================ */
 
 @keyframes admin-fade-up {
@@ -62,6 +63,7 @@ button {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -72,6 +74,7 @@ button {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -82,6 +85,7 @@ button {
     opacity: 0;
     transform: scale(0.94) translateY(8px);
   }
+
   100% {
     opacity: 1;
     transform: scale(1) translateY(0);
@@ -93,6 +97,7 @@ button {
     transform: translateX(24px);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -104,6 +109,7 @@ button {
     opacity: 0;
     transform: translateY(16px) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -114,6 +120,7 @@ button {
   from {
     background-position: 200% 0;
   }
+
   to {
     background-position: -200% 0;
   }
@@ -123,6 +130,7 @@ button {
   from {
     transform: scaleY(0);
   }
+
   to {
     transform: scaleY(1);
   }
@@ -132,6 +140,7 @@ button {
   from {
     transform: scaleX(0);
   }
+
   to {
     transform: scaleX(1);
   }
@@ -144,6 +153,7 @@ button {
     transform: scale(0.6);
     opacity: 0.5;
   }
+
   40% {
     transform: scale(1);
     opacity: 1;
@@ -192,7 +202,10 @@ button {
   }
 }
 
-/* UNIV GEEKS Background Styles */
+/* ============================================================
+   UNIV GEEKS Background Styles
+   ============================================================ */
+
 .soft-grid {
   background-color: #f8fafc;
   background-image:
@@ -211,7 +224,10 @@ button {
     #f8fafc;
 }
 
-/* Glassmorphism effects */
+/* ============================================================
+   Glassmorphism
+   ============================================================ */
+
 .glass-effect {
   background: rgba(255, 255, 255, 0.72);
   backdrop-filter: blur(16px);
@@ -237,4 +253,70 @@ button {
 .glow-pill {
   box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.4);
 }
-
+
+/* =================================================
+   HERO CONNECTION LINES
+   ================================================= */
+
+@keyframes heroLineDraw {
+  from {
+    stroke-dashoffset: 260;
+    opacity: 0;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.hero-connection-line {
+  fill: none;
+  stroke: rgba(103, 232, 249, 0.45);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  animation: heroLineDraw 1.2s ease-out forwards;
+}
+
+.hero-connection-line-1 {
+  animation-delay: 0.4s;
+}
+
+.hero-connection-line-2 {
+  animation-delay: 0.55s;
+}
+
+.hero-connection-line-3 {
+  animation-delay: 0.7s;
+}
+
+.hero-connection-line-4 {
+  animation-delay: 0.85s;
+}
+
+.hero-connection-dot {
+  fill: #67e8f9;
+  filter: drop-shadow(0 0 6px rgba(103, 232, 249, 0.8));
+  opacity: 0;
+  animation: heroDotAppear 0.5s ease-out forwards;
+}
+
+@keyframes heroDotAppear {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 1023px) {
+  .hero-connection-lines {
+    display: none;
+  }
+}
