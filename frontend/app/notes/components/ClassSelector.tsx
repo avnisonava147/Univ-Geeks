@@ -1,6 +1,7 @@
 "use client";
 
 import type { ClassName } from "../data/notesData";
+import { BookOpen, GraduationCap, ScrollText } from "lucide-react";
 import { classInfo } from "../data/notesData";
 
 type ClassSelectorProps = {
@@ -87,7 +88,14 @@ export default function ClassSelector({
                       color,
                     }}
                   >
-                    📖
+                      {className === "10" ? (
+    <BookOpen size={22} strokeWidth={2} />
+  ) : className === "11" ? (
+    <GraduationCap size={22} strokeWidth={2} />
+  ) : (
+    <ScrollText size={22} strokeWidth={2} />
+  )}
+  
                   </div>
 
                   {/* Arrow */}

@@ -2,6 +2,7 @@
 
 import type { Stream } from "../data/notesData";
 import { streamInfo } from "../data/notesData";
+import { Atom, BarChart3, Palette } from "lucide-react";
 
 type StreamSelectorProps = {
   selectedStream: Stream;
@@ -87,7 +88,13 @@ export default function StreamSelector({
                       color,
                     }}
                   >
-                    {info.icon}
+                    {stream === "Science" ? (
+  <Atom size={26} strokeWidth={2} />
+) : stream === "Commerce" ? (
+  <BarChart3 size={26} strokeWidth={2} />
+) : (
+  <Palette size={26} strokeWidth={2} />
+)}
                   </div>
 
                   {/* Arrow */}
