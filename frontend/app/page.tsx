@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PYQCard from "../components/PYQCard";
 const pyqs = [
   {
@@ -35,11 +35,36 @@ const pyqs = [
     thumbnail:
       "/mathematics-thumbnail.png",
   },
+{
+  subject: "Biology",
+  years: [
+    2013, 2014, 2015, 2016, 2017,
+    2018, 2019, 2020, 2021, 2022,
+    2023, 2024, 2025
+  ],
+  thumbnail: "/biology-thumbnail.png",
+},
 ];
+
 
 export default function Home() {
   const [selectedSubject, setSelectedSubject] = useState("All");
 const [search, setSearch] = useState("");
+const [bannerText, setBannerText] = useState(0);
+
+const bannerMessages = [
+  "Practice Previous Year Questions",
+  "Prepare Smarter with UnivGeeks",
+  "Master Your Class 12 Exams",
+];
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setBannerText((prev) => (prev + 1) % bannerMessages.length);
+  }, 2500);
+
+  return () => clearInterval(interval);
+}, []);
 const filteredPYQs = useMemo(() => {
   return pyqs.filter((pyq) => {
     const matchesSubject =
@@ -155,11 +180,12 @@ return (
       </div>
 
       {/* Heading */}
-      <h1 className="max-w-4xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-        Chapter-Wise RBSE
-        <span className="block text-cyan-300">Class 12</span>
-        <span className="block">Previous Year Question Papers</span>
-      </h1>
+     <h1
+  key={bannerText}
+  className="max-w-4xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl animate-banner-text"
+>
+  {bannerMessages[bannerText]}
+</h1>
 
       {/* Description */}
       <p className="mt-5 max-w-3xl text-sm leading-6 text-blue-100 sm:text-base">
@@ -201,28 +227,54 @@ return (
 
 
 {/* Subject Filters */}
+{/* Subject Filters */}
 <section className="border-b border-slate-200 bg-white">
-  <div className="mx-auto flex max-w-7xl gap-3 overflow-x-auto px-6 py-4">
+  <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-x-auto px-6 py-4">
 
-    {[
-      { name: "All", label: "▦ All Subjects" },
-      { name: "Physics", label: "⚛ Physics" },
-      { name: "Chemistry", label: "🧪 Chemistry" },
-      { name: "Mathematics", label: "▣ Mathematics" },
-    ].map((item) => (
-      <button
-        key={item.name}
-        type="button"
-        onClick={() => setSelectedSubject(item.name)}
-        className={`whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold transition ${
-          selectedSubject === item.name
-            ? "bg-blue-600 text-white shadow-sm"
-            : "border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
-        }`}
-      >
-        {item.label}
-      </button>
-    ))}
+    {/* Subject Buttons */}
+    <div className="flex shrink-0 gap-3">
+
+      {[
+        { name: "All", label: "▦ All Subjects" },
+        { name: "Physics", label: "⚛ Physics" },
+        { name: "Chemistry", label: "🧪 Chemistry" },
+        { name: "Mathematics", label: "▣ Mathematics" },
+        { name: "Biology", label: "🧬 Biology" },
+      ].map((item) => (
+        <button
+          key={item.name}
+          type="button"
+          onClick={() => setSelectedSubject(item.name)}
+          className={`whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold transition ${
+            selectedSubject === item.name
+              ? "bg-blue-600 text-white shadow-sm"
+              : "border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
+          }`}
+        >
+          {item.label}
+        </button>
+      ))}
+
+    </div>
+
+    {/* Search */}
+    <div className="ml-auto min-w-[220px] shrink-0 sm:min-w-[260px]">
+      <div className="relative">
+
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+          🔍
+        </span>
+
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search subject..."
+          className="w-full rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 pl-10 text-sm text-slate-700 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100"
+        />
+
+      </div>
+    </div>
 
   </div>
 </section>
@@ -254,21 +306,10 @@ return (
     <h2 className="mt-1 text-2xl font-bold text-slate-900">
       Class 12 PYQs
     </h2>
+    
   </div>
 
-  <div className="relative">
-  <input
-  type="text"
-  value={search}
-  onChange={(e) => setSearch(e.target.value)}
-  placeholder="Search subject..."
-  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pl-10 text-sm text-slate-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 sm:w-64"
-/>
-
-    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-      🔍
-    </span>
-  </div>
+  
 
 </div>
 

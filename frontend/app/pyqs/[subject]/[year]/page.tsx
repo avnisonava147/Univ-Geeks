@@ -229,7 +229,10 @@ export default async function YearPYQPage({
                 </div>
 
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
-<PaperActions title={paper.title} />
+<PaperActions
+  title={paper.title}
+  pdfUrl=""
+/>
 
                 </div>
 

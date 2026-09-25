@@ -11,12 +11,14 @@ const subjectData: Record<
   {
     name: string;
     thumbnail: string;
+     theme: string;
     chapters: string[];
   }
 > = {
   chemistry: {
     name: "Chemistry",
     thumbnail: "/chemistry-thumbnail.png",
+    theme: "chemistry",
     chapters: [
       "Solid State",
       "Solutions",
@@ -36,6 +38,7 @@ const subjectData: Record<
   physics: {
     name: "Physics",
     thumbnail: "/physics-thumbnail.png",
+    theme: "physics",
     chapters: [
       "Electric Charges and Fields",
       "Electrostatic Potential and Capacitance",
@@ -56,6 +59,7 @@ const subjectData: Record<
   mathematics: {
     name: "Mathematics",
     thumbnail: "/mathematics-thumbnail.png",
+    theme: "mathematics",
     chapters: [
       "Relations and Functions",
       "Inverse Trigonometric Functions",
@@ -72,6 +76,27 @@ const subjectData: Record<
       "Probability",
     ],
   },
+  biology: {
+  name: "Biology",
+  thumbnail: "/biology-thumbnail.png",
+  theme: "biology",
+  chapters: [
+    "Sexual Reproduction in Flowering Plants",
+    "Human Reproduction",
+    "Reproductive Health",
+    "Principles of Inheritance and Variation",
+    "Molecular Basis of Inheritance",
+    "Evolution",
+    "Human Health and Disease",
+    "Microbes in Human Welfare",
+    "Biotechnology: Principles and Processes",
+    "Biotechnology and its Applications",
+    "Organisms and Populations",
+    "Ecosystem",
+    "Biodiversity and Conservation",
+  ],
+},
+
 };
 
 export default async function SubjectPage({ params }: PageProps) {
@@ -81,6 +106,24 @@ export default async function SubjectPage({ params }: PageProps) {
     subjectData[subject.toLowerCase()] || subjectData.chemistry;
 
   const subjectName = data.name;
+const bannerThemes = {
+  chemistry:
+    "from-emerald-950 via-teal-900 to-slate-950",
+
+  physics:
+    "from-blue-950 via-indigo-900 to-slate-950",
+
+  mathematics:
+    "from-violet-950 via-purple-900 to-slate-950",
+
+  biology:
+    "from-green-950 via-emerald-900 to-slate-950",
+};
+
+
+const currentTheme =
+  bannerThemes[data.theme as keyof typeof bannerThemes];
+
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
@@ -88,11 +131,17 @@ export default async function SubjectPage({ params }: PageProps) {
       {/* =====================================================
           HERO
       ====================================================== */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#06233f] via-[#0a3558] to-[#061728] text-white">
+<section
+  className={`relative overflow-hidden bg-gradient-to-br ${currentTheme} text-white`}
+>
 
         {/* Background glow */}
-        <div className="pointer-events-none absolute -right-32 top-0 h-72 w-72 rounded-full bg-cyan-400/10 blur-3xl" />
-        <div className="pointer-events-none absolute left-1/3 top-20 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl" />
+        {/* Background effects */}
+<div className="pointer-events-none absolute -right-32 -top-20 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
+
+<div className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-white/5 blur-3xl" />
+
+<div className="pointer-events-none absolute right-1/3 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full border border-white/5 bg-white/5 blur-2xl" />
 
         <div className="relative mx-auto max-w-[1400px] px-5 py-10 sm:px-8 lg:px-10 lg:py-12">
 
@@ -173,13 +222,15 @@ export default async function SubjectPage({ params }: PageProps) {
               <div className="flex h-60 w-80 items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-center backdrop-blur-sm">
 
                 <div>
-                  <div className="text-7xl">
-                    {subjectName === "Chemistry"
-                      ? "🧪"
-                      : subjectName === "Physics"
-                      ? "⚛️"
-                      : "📐"}
-                  </div>
+                <div className="text-7xl">
+  {subjectName === "Chemistry"
+    ? "🧪"
+    : subjectName === "Physics"
+    ? "⚛️"
+    : subjectName === "Mathematics"
+    ? "📐"
+    : "🧬"}
+</div>
 
                   <p className="mt-4 text-lg font-bold text-cyan-200">
                     Better Preparation.
