@@ -1,657 +1,889 @@
 "use client";
 
-import { useState } from "react";
+import { useState, FormEvent } from "react";
+
+const notes = [
+  {
+    title: "Science Notes",
+    text: "Physics, Chemistry, Mathematics & Biology",
+    icon: "🔬",
+  },
+  {
+    title: "Commerce Notes",
+    text: "Accounts, Business Studies & Economics",
+    icon: "📊",
+  },
+  {
+    title: "Arts Notes",
+    text: "History, Political Science & Humanities",
+    icon: "📚",
+  },
+];
+
+const pyqs = [
+  {
+    title: "Rajasthan Board PYQs",
+    text: "RBSE Class 12 previous year question papers",
+    icon: "📖",
+  },
+  {
+    title: "Science PYQs",
+    text: "PCM, PCB & PCMB previous year questions",
+    icon: "🧪",
+  },
+  {
+    title: "Commerce & Arts PYQs",
+    text: "Practice previous year question papers",
+    icon: "📝",
+  },
+];
 
 export default function Home() {
-    const [darkMode, setDarkMode] = useState(false);
-    const [loginOpen, setLoginOpen] = useState(false);
-    const [searchOpen, setSearchOpen] = useState(false);
-    const [streamOpen, setStreamOpen] = useState(false);
-    const [scienceOpen, setScienceOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [streamOpen, setStreamOpen] = useState(false);
+  const [scienceOpen, setScienceOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
-    const scrollTo = (id: string) => {
-        document.getElementById(id)?.scrollIntoView({
-            behavior: "smooth",
-        });
-        setStreamOpen(false);
-        setScienceOpen(false);
-    };
+  // Login & Student Form
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [studentOpen, setStudentOpen] = useState(false);
 
-    const handleForm = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        e.currentTarget.reset();
-    };
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
 
-    return (
-        <main className={darkMode ? "site dark" : "site"}>
+  const [studentName, setStudentName] = useState("");
+  const [studentEmail, setStudentEmail] = useState("");
+  const [studentClass, setStudentClass] = useState("");
+  const [studentStream, setStudentStream] = useState("");
 
-            {/* HEADER */}
-            <header className="header">
-                <div className="header-inner">
+  // ================= SEARCH =================
 
-                    <button className="logo" onClick={() => scrollTo("home")}>
-                        <img src="/logo.jpg" alt="univGreeks Logo" />
-                    </button>
+  const handleSearch = () => {
+    const value = search.trim().toLowerCase();
 
-                    <nav className="nav">
+    if (!value) {
+      alert("Please enter something to search.");
+      return;
+    }
 
-                        <button onClick={() => scrollTo("home")}>
-                            Home
-                        </button>
+    if (
+      value.includes("note") ||
+      value.includes("science") ||
+      value.includes("commerce") ||
+      value.includes("arts")
+    ) {
+      document
+        .getElementById("notes")
+        ?.scrollIntoView({ behavior: "smooth" });
 
-                        {/* STREAM */}
-                        <div className="nav-dropdown">
+      return;
+    }
 
-                            <button
-                                className="nav-button stream-toggle"
-                                onClick={() => {
-                                    setStreamOpen(!streamOpen);
-                                    setScienceOpen(false);
-                                }}
-                            >
-                                <span>Stream</span>
-                                <span className={`stream-arrow ${streamOpen ? "open" : ""}`}>
-                                    ▾
-                                </span>
-                            </button>
+    if (
+      value.includes("pyq") ||
+      value.includes("question") ||
+      value.includes("paper")
+    ) {
+      document
+        .getElementById("pyqs")
+        ?.scrollIntoView({ behavior: "smooth" });
 
+      return;
+    }
 
+    if (
+      value.includes("rajasthan") ||
+      value.includes("rbse") ||
+      value.includes("board")
+    ) {
+      document
+        .getElementById("rbse")
+        ?.scrollIntoView({ behavior: "smooth" });
 
-                            {streamOpen && (
-                                <div className="dropdown-menu">
+      return;
+    }
 
-                                    <div className="dropdown-title">
-                                        Class 12
-                                    </div>
+    if (value.includes("contact")) {
+      document
+        .getElementById("contact")
+        ?.scrollIntoView({ behavior: "smooth" });
 
-                                    <div className="science-dropdown">
+      return;
+    }
 
-                                        <button
-                                            className="dropdown-item"
-                                            onClick={() =>
-                                                setScienceOpen(!scienceOpen)
-                                            }
-                                        >
-                                            <span>Science</span>
-                                            <span className="right-arrow">›</span>
-                                        </button>
+    alert(`No result found for "${search}"`);
+  };
 
-                                        {scienceOpen && (
-                                            <div className="science-menu">
+  // ================= LOGIN =================
 
-                                                <button onClick={() => scrollTo("streams")}>
-                                                    PCM
-                                                </button>
+  const handleLogin = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-                                                <button onClick={() => scrollTo("streams")}>
-                                                    PCB
-                                                </button>
+    if (!loginEmail || !loginPassword) {
+      alert("Please enter email and password.");
+      return;
+    }
 
-                                                <button onClick={() => scrollTo("streams")}>
-                                                    PCMB
-                                                </button>
+    alert(`Login submitted for ${loginEmail}`);
 
-                                            </div>
-                                        )}
+    setLoginEmail("");
+    setLoginPassword("");
+    setLoginOpen(false);
+  };
 
-                                    </div>
+  // ================= STUDENT FORM =================
 
-                                    <button
-                                        className="dropdown-item"
-                                        onClick={() => scrollTo("streams")}
-                                    >
-                                        Arts
-                                    </button>
+  const handleStudentSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-                                    <button
-                                        className="dropdown-item"
-                                        onClick={() => scrollTo("streams")}
-                                    >
-                                        Commerce
-                                    </button>
+    if (
+      !studentName ||
+      !studentEmail ||
+      !studentClass ||
+      !studentStream
+    ) {
+      alert("Please fill all student details.");
+      return;
+    }
 
-                                </div>
-                            )}
+    alert(
+      `Student Form submitted successfully for ${studentName}!`
+    );
 
-                        </div>
+    setStudentName("");
+    setStudentEmail("");
+    setStudentClass("");
+    setStudentStream("");
+    setStudentOpen(false);
+  };
 
-                        <button onClick={() => scrollTo("pyqs")}>
-                            PYQs
-                        </button>
+  return (
+    <main className={darkMode ? "dark-page" : "light-page"}>
 
-                        <button onClick={() => scrollTo("notes")}>
-                            Notes
-                        </button>
+      {/* ================= NAVBAR ================= */}
 
-                        <button onClick={() => scrollTo("contact")}>
-                            Contact
-                        </button>
+      <nav className="navbar">
 
-                        <button onClick={() => setSearchOpen(!searchOpen)}>
-                            🔍 Search
-                        </button>
+        <div className="logo-area">
 
-                        <button onClick={() => scrollTo("student-form")}>
-                            Student Form
-                        </button>
+          <img
+            src="/logo.jpg"
+            alt="UnivGeeks Logo"
+            className="logo"
+          />
 
-                    </nav>
+          <span className="brand-name">
+            UnivGeeks
+          </span>
 
-                    <div className="header-actions">
+        </div>
 
-                        <button
-                            className="dark-button"
-                            onClick={() => setDarkMode(!darkMode)}
-                        >
-                            {darkMode ? "☀️" : "🌙"}
-                        </button>
+        {/* NAV LINKS */}
 
-                        <button
-                            className="login-button"
-                            onClick={() => setLoginOpen(true)}
-                        >
-                            Login
-                        </button>
+        <div
+          className={`nav-links ${
+            menuOpen ? "mobile-show" : ""
+          }`}
+        >
 
-                    </div>
+          <a href="#home">Home</a>
 
+          {/* STREAM DROPDOWN */}
+
+          <div className="dropdown">
+
+            <button
+              className="nav-button"
+              onClick={() =>
+                setStreamOpen(!streamOpen)
+              }
+            >
+                Streams <span>▾</span>
+             
+            </button>
+
+            {streamOpen && (
+              <div className="dropdown-menu">
+
+                <div className="dropdown-title">
+                  Class 12
                 </div>
-            </header>
 
+                {/* SCIENCE */}
 
-            {/* SEARCH */}
-            {searchOpen && (
-                <div className="search-area">
+                <div className="nested-dropdown">
 
-                    <div className="search-box">
-                        <span>🔎</span>
+                  <button
+                    className="nested-button"
+                    onClick={() =>
+                      setScienceOpen(!scienceOpen)
+                    }
+                  >
+                    Science <span>›</span>
+                  </button>
 
-                        <input
-                            type="text"
-                            placeholder="Search notes, PYQs, Science, PCM, PCB, PCMB..."
-                            autoFocus
-                        />
+                  {scienceOpen && (
+                    <div className="nested-menu">
+                      <a href="#streams">PCM</a>
+                      <a href="#streams">PCB</a>
+                      <a href="#streams">PCMB</a>
                     </div>
-
-                </div>
-            )}
-
-
-            {/* HERO / BANNER */}
-            <section id="home" className="hero">
-
-                <div className="hero-image"></div>
-
-                <div className="hero-overlay"></div>
-
-                <div className="hero-content">
-
-                    <span className="welcome">
-                        WELCOME TO UNIVGREEKS
-                    </span>
-
-                    <h1>
-                        Your Learning
-                        <br />
-                        <span>Journey Starts Here</span>
-                    </h1>
-
-                    <p>
-                        Learn smarter with notes, previous year questions,
-                        important topics and useful study material.
-                    </p>
-
-                    <div className="hero-buttons">
-
-                        <button
-                            className="primary-button"
-                            onClick={() => scrollTo("streams")}
-                        >
-                            Explore Streams
-                        </button>
-
-                        <button
-                            className="secondary-button"
-                            onClick={() => scrollTo("notes")}
-                        >
-                            Study Notes
-                        </button>
-
-                    </div>
+                  )}
 
                 </div>
 
-            </section>
-
-
-            {/* STREAM */}
-            <section id="streams" className="section">
-
-                <div className="section-title">
-
-                    <span>CLASS 12</span>
-
-                    <h2>Choose Your Stream</h2>
-
-                    <p>Select your stream and start learning.</p>
-
-                </div>
-
-                <div className="stream-grid">
-
-                    <div className="stream-card">
-
-                        <div className="stream-icon">🎨</div>
-
-                        <h3>Arts</h3>
-
-                        <p>
-                            History, Political Science,
-                            Geography, Sociology and more.
-                        </p>
-
-                        <button className="card-button">
-                            Arts
-                        </button>
-
-                    </div>
-
-
-                    <div className="stream-card">
-
-                        <div className="stream-icon">🔬</div>
-
-                        <h3>Science</h3>
-
-                        <p>Choose your Science combination.</p>
-
-                        <div className="science-buttons">
-
-                            <button className="card-button">PCM</button>
-
-                            <button className="card-button">PCB</button>
-
-                            <button className="card-button">PCMB</button>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="stream-card">
-
-                        <div className="stream-icon">📊</div>
-
-                        <h3>Commerce</h3>
-
-                        <p>
-                            Accountancy, Business Studies,
-                            Economics and more.
-                        </p>
-
-                        <button className="card-button">
-                            Commerce
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            {/* PYQs */}
-            <section id="pyqs" className="section">
-
-                <div className="section-title">
-
-                    <span>PRACTICE</span>
-
-                    <h2>Previous Year Questions</h2>
-
-                    <p>
-                        Practice PYQs for better exam preparation.
-                    </p>
-
-                </div>
-
-                <div className="three-grid">
-
-                    <div className="info-card">
-                        <div className="info-icon">📚</div>
-                        <h3>Class 12 PYQs</h3>
-                        <p>Previous year questions for Class 12.</p>
-                        <button className="card-button">Explore</button>
-                    </div>
-
-                    <div className="info-card">
-                        <div className="info-icon">📝</div>
-                        <h3>Subject-wise PYQs</h3>
-                        <p>Find questions according to subject.</p>
-                        <button className="card-button">Explore</button>
-                    </div>
-
-                    <div className="info-card">
-                        <div className="info-icon">⭐</div>
-                        <h3>Important Questions</h3>
-                        <p>Practice important exam questions.</p>
-                        <button className="card-button">Explore</button>
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            {/* NOTES */}
-            <section id="notes" className="section">
-
-                <div className="section-title">
-
-                    <span>STUDY MATERIAL</span>
-
-                    <h2>Study Notes</h2>
-
-                    <p>Easy-to-understand notes for students.</p>
-
-                </div>
-
-                <div className="three-grid">
-
-                    <div className="info-card">
-                        <div className="info-icon">📖</div>
-                        <h3>Class 12 Notes</h3>
-                        <p>Easy notes for Class 12 students.</p>
-                        <button className="card-button">View Notes</button>
-                    </div>
-
-                    <div className="info-card">
-                        <div className="info-icon">📘</div>
-                        <h3>Subject Notes</h3>
-                        <p>Subject-wise study material.</p>
-                        <button className="card-button">View Notes</button>
-                    </div>
-
-                    <div className="info-card">
-                        <div className="info-icon">💡</div>
-                        <h3>Important Topics</h3>
-                        <p>Quick revision of important topics.</p>
-                        <button className="card-button">View Notes</button>
-                    </div>
-
-                </div>
-
-            </section>
-
-
-            {/* STUDENT FORM */}
-            <section id="student-form" className="section form-section">
-
-                <div className="section-title">
-
-                    <span>REGISTRATION</span>
-
-                    <h2>Student Form</h2>
-
-                    <p>Enter your details to continue.</p>
-
-                </div>
-
-                <form className="student-form" onSubmit={handleForm}>
-
-                    <div className="form-row">
-
-                        <div className="form-group">
-
-                            <label>Full Name</label>
-
-                            <input
-                                type="text"
-                                placeholder="Enter your name"
-                                required
-                            />
-
-                        </div>
-
-                        <div className="form-group">
-
-                            <label>Email</label>
-
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                required
-                            />
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="form-row">
-
-                        <div className="form-group">
-
-                            <label>Mobile Number</label>
-
-                            <input
-                                type="tel"
-                                placeholder="Enter mobile number"
-                                required
-                            />
-
-                        </div>
-
-                        <div className="form-group">
-
-                            <label>Class</label>
-
-                            <select required defaultValue="">
-
-                                <option value="" disabled>
-                                    Select Class
-                                </option>
-
-                                <option>Class 10</option>
-                                <option>Class 11</option>
-                                <option>Class 12</option>
-                                <option>College</option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-
-                    <div className="form-group">
-
-                        <label>Stream</label>
-
-                        <select required defaultValue="">
-
-                            <option value="" disabled>
-                                Select Stream
-                            </option>
-
-                            <option>Science - PCM</option>
-                            <option>Science - PCB</option>
-                            <option>Science - PCMB</option>
-                            <option>Arts</option>
-                            <option>Commerce</option>
-
-                        </select>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        className="primary-button submit-button"
-                    >
-                        Submit Form
-                    </button>
-
-                </form>
-
-            </section>
-
-
-            {/* CONTACT */}
-            <section id="contact" className="contact-section">
-
-                <div>
-
-                    <span>GET IN TOUCH</span>
-
-                    <h2>Have a Question?</h2>
-
-                    <p>
-                        Contact us for study material,
-                        notes and educational information.
-                    </p>
-
-                </div>
-
-                <a
-                    href="mailto:info@univgreeks.com"
-                    className="contact-button"
-                >
-                    Contact Us
+                <a href="#streams">
+                  Commerce
                 </a>
 
-            </section>
+                <a href="#streams">
+                  Arts
+                </a>
 
-
-            {/* FOOTER */}
-            <footer className="footer">
-
-                <div className="footer-inner">
-
-                    <div>
-
-                        <h3>
-                            <span className="footer-brand"></span>
-                            <img
-                            src="/logo.jpg"
-                            alt="univGreeks Logo"
-                            className="footer-logo"
-                            />
-                            <span>univgeeks</span>
-
-                            
-                        </h3>
-
-                        <p>
-                            Learn better. Prepare better. Achieve better.
-                        </p>
-
-                    </div>
-
-
-                    <div>
-
-                        <h4>Quick Links</h4>
-
-                        <button onClick={() => scrollTo("home")}>
-                            Home
-                        </button>
-
-                        <button onClick={() => scrollTo("streams")}>
-                            Stream
-                        </button>
-
-                        <button onClick={() => scrollTo("pyqs")}>
-                            PYQs
-                        </button>
-
-                        <button onClick={() => scrollTo("notes")}>
-                            Notes
-                        </button>
-
-                    </div>
-
-
-                    <div>
-
-                        <h4>Contact</h4>
-
-                        <p>📧 info@univgreeks.com</p>
-                        <p>🎓 Education Platform</p>
-
-                    </div>
-
-                </div>
-
-                <div className="copyright">
-                    © 2026 univGreeks. All rights reserved.
-                </div>
-
-            </footer>
-
-
-            {/* LOGIN */}
-            {loginOpen && (
-
-                <div
-                    className="modal-overlay"
-                    onClick={() => setLoginOpen(false)}
-                >
-
-                    <div
-                        className="login-modal"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-
-                        <button
-                            className="close-button"
-                            onClick={() => setLoginOpen(false)}
-                        >
-                            ×
-                        </button>
-
-                        <div className="login-logo">
-                            U
-                        </div>
-
-                        <h2>Welcome Back</h2>
-
-                        <p>Login to continue learning.</p>
-
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                setLoginOpen(false);
-                            }}
-                        >
-
-                            <input
-                                type="email"
-                                placeholder="Email"
-                                required
-                            />
-
-                            <input
-                                type="password"
-                                placeholder="Password"
-                                required
-                            />
-
-                            <button
-                                type="submit"
-                                className="primary-button full-button"
-                            >
-                                Login
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </div>
-
+              </div>
             )}
 
-        </main>
-    );
+          </div>
+
+          <a href="#notes">Notes</a>
+
+          <a href="#pyqs">PYQs</a>
+
+          <a href="#contact">Contact</a>
+
+          {/* SEARCH */}
+
+          <div className="search-box">
+
+            <span>⌕</span>
+
+            <input
+              type="text"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+            />
+
+            <button
+              onClick={handleSearch}
+              aria-label="Search"
+            >
+              🔍
+            </button>
+
+          </div>
+
+          {/* LOGIN */}
+
+          <button
+            className="login-btn"
+            onClick={() => setLoginOpen(true)}
+          >
+            Login
+          </button>
+
+          {/* STUDENT FORM */}
+
+          <button
+            className="student-btn"
+            onClick={() => setStudentOpen(true)}
+          >
+            Student Form
+          </button>
+
+          {/* DARK MODE */}
+
+          <button
+            className="dark-btn"
+            onClick={() =>
+              setDarkMode(!darkMode)
+            }
+            aria-label="Toggle dark mode"
+          >
+            {darkMode ? "☀️" : "🌙"}
+          </button>
+
+        </div>
+
+        {/* MOBILE MENU */}
+
+        <button
+          className="menu-btn"
+          onClick={() =>
+            setMenuOpen(!menuOpen)
+          }
+        >
+          ☰
+        </button>
+
+      </nav>
+
+
+      {/* ================= HERO ================= */}
+
+      <section
+        id="home"
+        className="hero"
+      >
+
+        {/* FULL HERO IMAGE */}
+
+        <img
+          src="/educational.jpg"
+          alt="Education"
+          className="hero-image"
+        />
+
+        {/* OVERLAY */}
+
+        <div className="hero-overlay"></div>
+
+        {/* HERO CONTENT */}
+
+        <div className="hero-content">
+
+          <p className="hero-small">
+            WELCOME TO UNIVGEEKS
+          </p>
+
+          <h1>
+            Learn Today.
+            <br />
+            <span>
+              Build Your Future.
+            </span>
+          </h1>
+
+          <p className="hero-text">
+            Your one place for Notes, PYQs and
+            learning resources for Class 12.
+          </p>
+
+          <div className="hero-buttons">
+
+            <a
+              href="#notes"
+              className="primary-btn"
+            >
+              Explore Notes
+            </a>
+
+            <a
+              href="#pyqs"
+              className="secondary-btn"
+            >
+              View PYQs
+            </a>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* ================= STREAMS ================= */}
+
+      <section
+        id="streams"
+        className="section"
+      >
+
+        <div className="section-heading">
+
+          <p>CHOOSE YOUR PATH</p>
+
+          <h2>
+            Class 12 Streams
+          </h2>
+
+          <span>
+            Explore your stream and start learning.
+          </span>
+
+        </div>
+
+        <div className="stream-grid">
+
+          {/* COMMERCE */}
+
+          <div className="stream-card">
+
+            <div className="card-icon">
+              📊
+            </div>
+
+            <h3>
+              Commerce
+            </h3>
+
+            <p>
+              Accounts, Business Studies,
+              Economics and more.
+            </p>
+
+            <button>
+              Explore →
+            </button>
+
+          </div>
+
+
+          {/* SCIENCE */}
+
+          <div className="stream-card science-card">
+
+            <div className="card-icon">
+              🔬
+            </div>
+
+            <h3>
+              Science
+            </h3>
+
+            <p>
+              Choose your science combination.
+            </p>
+
+            <div className="subject-list">
+
+              <span>PCM</span>
+              <span>PCB</span>
+              <span>PCMB</span>
+
+            </div>
+
+            <button>
+              Explore →
+            </button>
+
+          </div>
+
+
+          {/* ARTS */}
+
+          <div className="stream-card">
+
+            <div className="card-icon">
+              🎨
+            </div>
+
+            <h3>
+              Arts
+            </h3>
+
+            <p>
+              History, Political Science,
+              Geography and more.
+            </p>
+
+            <button>
+              Explore →
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* ================= NOTES ================= */}
+
+      <section
+        id="notes"
+        className="section notes-section"
+      >
+
+        <div className="section-heading">
+
+          <p>STUDY SMART</p>
+
+          <h2>
+            Notes
+          </h2>
+
+          <span>
+            Easy-to-understand study material
+            for your preparation.
+          </span>
+
+        </div>
+
+        <div className="resource-grid">
+
+          {notes.map((note) => (
+
+            <div
+              className="resource-card"
+              key={note.title}
+            >
+
+              <div className="resource-icon">
+                {note.icon}
+              </div>
+
+              <h3>
+                {note.title}
+              </h3>
+
+              <p>
+                {note.text}
+              </p>
+
+              <button>
+                View Notes →
+              </button>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </section>
+
+
+      {/* ================= RBSE ================= */}
+
+      <section
+        id="rbse"
+        className="rbse-section"
+      >
+
+        <div>
+
+          <p className="rbse-small">
+            SPECIAL RESOURCE
+          </p>
+
+          <h2>
+            Rajasthan Board
+          </h2>
+
+          <p>
+            Get RBSE Class 12 study material,
+            notes and previous year questions
+            in one place.
+          </p>
+
+          <button className="rbse-btn">
+            Explore RBSE →
+          </button>
+
+        </div>
+
+        <div className="rbse-symbol">
+
+          <img
+            src="/rbse-logo.png"
+            alt="Rajasthan Board RBSE Logo"
+          />
+
+        </div>
+
+      </section>
+
+
+      {/* ================= PYQS ================= */}
+
+      <section
+        id="pyqs"
+        className="section"
+      >
+
+        <div className="section-heading">
+
+          <p>PRACTICE MORE</p>
+
+          <h2>
+            Previous Year Questions
+          </h2>
+
+          <span>
+            Practice important questions and
+            understand the exam pattern.
+          </span>
+
+        </div>
+
+        <div className="resource-grid">
+
+          {pyqs.map((pyq) => (
+
+            <div
+              className="resource-card"
+              key={pyq.title}
+            >
+
+              <div className="resource-icon">
+                {pyq.icon}
+              </div>
+
+              <h3>
+                {pyq.title}
+              </h3>
+
+              <p>
+                {pyq.text}
+              </p>
+
+              <button>
+                View PYQs →
+              </button>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </section>
+
+
+      {/* ================= CONTACT ================= */}
+
+      <section
+        id="contact"
+        className="contact-section"
+      >
+
+        <p>
+          HAVE A QUESTION?
+        </p>
+
+        <h2>
+          Start your learning journey
+          with UnivGeeks.
+        </h2>
+
+        <button>
+          Contact Us →
+        </button>
+
+      </section>
+
+
+      {/* ================= FOOTER ================= */}
+
+      <footer>
+
+        <div className="footer-logo">
+
+          <img
+            src="/logo.jpg"
+            alt="UnivGeeks"
+          />
+
+          <span>
+            UnivGeeks
+          </span>
+
+        </div>
+
+        <p>
+          © 2026 UnivGeeks.
+          Learn. Practice. Improve.
+        </p>
+
+      </footer>
+
+
+      {/* ================= LOGIN MODAL ================= */}
+
+      {loginOpen && (
+
+        <div
+          className="modal-overlay"
+          onClick={() =>
+            setLoginOpen(false)
+          }
+        >
+
+          <form
+            className="modal-form"
+            onSubmit={handleLogin}
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
+            <button
+              type="button"
+              className="close-modal"
+              onClick={() =>
+                setLoginOpen(false)
+              }
+            >
+              ✕
+            </button>
+
+            <h2>
+              Login
+            </h2>
+
+            <p>
+              Login to your UnivGeeks account.
+            </p>
+
+            <input
+              type="email"
+              placeholder="Email"
+              value={loginEmail}
+              onChange={(e) =>
+                setLoginEmail(e.target.value)
+              }
+            />
+
+            <input
+              type="password"
+              placeholder="Password"
+              value={loginPassword}
+              onChange={(e) =>
+                setLoginPassword(e.target.value)
+              }
+            />
+
+            <button
+              type="submit"
+              className="modal-submit"
+            >
+              Login
+            </button>
+
+          </form>
+
+        </div>
+
+      )}
+
+
+      {/* ================= STUDENT FORM ================= */}
+
+      {studentOpen && (
+
+        <div
+          className="modal-overlay"
+          onClick={() =>
+            setStudentOpen(false)
+          }
+        >
+
+          <form
+            className="modal-form student-modal"
+            onSubmit={handleStudentSubmit}
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
+            <button
+              type="button"
+              className="close-modal"
+              onClick={() =>
+                setStudentOpen(false)
+              }
+            >
+              ✕
+            </button>
+
+            <h2>
+              Student Form
+            </h2>
+
+            <p>
+              Enter your details to continue.
+            </p>
+
+            <input
+              type="text"
+              placeholder="Student Name"
+              value={studentName}
+              onChange={(e) =>
+                setStudentName(e.target.value)
+              }
+            />
+
+            <input
+              type="email"
+              placeholder="Email"
+              value={studentEmail}
+              onChange={(e) =>
+                setStudentEmail(e.target.value)
+              }
+            />
+
+            <select
+              value={studentClass}
+              onChange={(e) =>
+                setStudentClass(e.target.value)
+              }
+            >
+
+              <option value="">
+                Select Class
+              </option>
+
+              <option value="Class 10">
+                Class 10
+              </option>
+
+              <option value="Class 11">
+                Class 11
+              </option>
+
+              <option value="Class 12">
+                Class 12
+              </option>
+
+            </select>
+
+            <select
+              value={studentStream}
+              onChange={(e) =>
+                setStudentStream(e.target.value)
+              }
+            >
+
+              <option value="">
+                Select Stream
+              </option>
+
+              <option value="Science">
+                Science
+              </option>
+
+              <option value="Commerce">
+                Commerce
+              </option>
+
+              <option value="Arts">
+                Arts
+              </option>
+
+            </select>
+
+            <button
+              type="submit"
+              className="modal-submit"
+            >
+              Submit Student Form
+            </button>
+
+          </form>
+
+        </div>
+
+      )}
+
+    </main>
+  );
 }
