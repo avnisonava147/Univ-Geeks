@@ -6,6 +6,23 @@ import type {
   Subject,
 } from "../data/notesData";
 
+import {
+  SquareRadical,
+  FlaskConical,
+  Atom,
+  Dna,
+  Globe2,
+  BookOpen,
+  Languages,
+  Monitor,
+  Calculator,
+  BriefcaseBusiness,
+  ChartNoAxesCombined,
+  Landmark,
+  Users,
+  UsersRound,
+} from "lucide-react";
+
 type SubjectSelectorProps = {
   selectedClass: ClassName;
   selectedStream: Stream;
@@ -38,6 +55,61 @@ const subjectColors: Record<string, string> = {
 
 function getSubjectColor(subject: string) {
   return subjectColors[subject] ?? "#2F5FDE";
+}
+
+function getSubjectIcon(subject: string) {
+  switch (subject) {
+    case "Mathematics":
+      return <SquareRadical size={26} strokeWidth={2} />;
+
+    case "Science":
+      return <FlaskConical size={26} strokeWidth={2} />;
+
+    case "Physics":
+      return <Atom size={26} strokeWidth={2} />;
+
+    case "Chemistry":
+      return <FlaskConical size={26} strokeWidth={2} />;
+
+    case "Biology":
+      return <Dna size={26} strokeWidth={2} />;
+
+    case "Social Science":
+      return <Globe2 size={26} strokeWidth={2} />;
+
+    case "English":
+      return <BookOpen size={26} strokeWidth={2} />;
+
+    case "Hindi":
+      return <Languages size={26} strokeWidth={2} />;
+
+    case "Computer Applications":
+      return <Monitor size={26} strokeWidth={2} />;
+
+    case "Accountancy":
+      return <Calculator size={26} strokeWidth={2} />;
+
+    case "Business Studies":
+      return <BriefcaseBusiness size={26} strokeWidth={2} />;
+
+    case "Economics":
+      return <ChartNoAxesCombined size={26} strokeWidth={2} />;
+
+    case "History":
+      return <Landmark size={26} strokeWidth={2} />;
+
+    case "Political Science":
+      return <Users size={26} strokeWidth={2} />;
+
+    case "Geography":
+      return <Globe2 size={26} strokeWidth={2} />;
+
+    case "Sociology":
+      return <UsersRound size={26} strokeWidth={2} />;
+
+    default:
+      return <BookOpen size={26} strokeWidth={2} />;
+  }
 }
 
 export default function SubjectSelector({
@@ -143,7 +215,7 @@ export default function SubjectSelector({
                       color,
                     }}
                   >
-                    {subject.icon}
+                    {getSubjectIcon(subject.name)}
                   </div>
 
                   {/* Arrow */}
@@ -267,13 +339,7 @@ export default function SubjectSelector({
                       ),
                   }}
                 >
-                  {
-                    subjects.find(
-                      (subject) =>
-                        subject.name ===
-                        selectedSubject
-                    )?.icon
-                  }
+                  {getSubjectIcon(selectedSubject)}
                 </div>
 
                 <div>
