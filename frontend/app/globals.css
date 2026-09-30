@@ -2,26 +2,29 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
 }
 
-@theme inline {
+/* Theme variables. */
+:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  margin: 0;
+  background: #ffffff;
+  color: #0f172a;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -30,6 +33,86 @@ body {
     opacity: 0;
     transform: translateY(14px) scale(0.98);
     filter: blur(4px);
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+/* ============================================================
+   Admin section animations
+   ============================================================ */
+
+@keyframes admin-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes admin-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes admin-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes admin-slide-left {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes admin-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
   }
 
   to {
@@ -41,4 +124,210 @@ body {
 
 .animate-banner-text {
   animation: bannerTextAnimation 0.7s ease-out;
+  }
+}
+
+@keyframes admin-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes admin-grow-bar {
+  from {
+    transform: scaleY(0);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes admin-grow-col {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes admin-bounce-dot {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.5;
+  }
+
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.admin-anim-fade-up {
+  animation: admin-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.admin-anim-fade-in {
+  animation: admin-fade-in 0.3s ease-out both;
+}
+
+.admin-anim-pop {
+  animation: admin-pop 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.admin-anim-slide-left {
+  animation: admin-slide-left 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.admin-anim-toast {
+  animation: admin-toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.admin-anim-grow-bar {
+  transform-origin: bottom;
+  animation: admin-grow-bar 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.admin-anim-grow-col {
+  transform-origin: left;
+  animation: admin-grow-col 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-anim-fade-up,
+  .admin-anim-fade-in,
+  .admin-anim-pop,
+  .admin-anim-slide-left,
+  .admin-anim-toast,
+  .admin-anim-grow-bar,
+  .admin-anim-grow-col {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   UNIV GEEKS Background Styles
+   ============================================================ */
+
+.soft-grid {
+  background-color: #f8fafc;
+  background-image:
+    linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.soft-glow {
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(59, 130, 246, 0.08),
+      transparent 35%
+    ),
+    #f8fafc;
+}
+
+/* ============================================================
+   Glassmorphism
+   ============================================================ */
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.glass-effect-dark {
+  background: rgba(6, 28, 53, 0.75);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+}
+
+.glow-pill {
+  box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.4);
+}
+
+/* =================================================
+   HERO CONNECTION LINES
+   ================================================= */
+
+@keyframes heroLineDraw {
+  from {
+    stroke-dashoffset: 260;
+    opacity: 0;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.hero-connection-line {
+  fill: none;
+  stroke: rgba(103, 232, 249, 0.45);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  animation: heroLineDraw 1.2s ease-out forwards;
+}
+
+.hero-connection-line-1 {
+  animation-delay: 0.4s;
+}
+
+.hero-connection-line-2 {
+  animation-delay: 0.55s;
+}
+
+.hero-connection-line-3 {
+  animation-delay: 0.7s;
+}
+
+.hero-connection-line-4 {
+  animation-delay: 0.85s;
+}
+
+.hero-connection-dot {
+  fill: #67e8f9;
+  filter: drop-shadow(0 0 6px rgba(103, 232, 249, 0.8));
+  opacity: 0;
+  animation: heroDotAppear 0.5s ease-out forwards;
+}
+
+@keyframes heroDotAppear {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 1023px) {
+  .hero-connection-lines {
+    display: none;
+  }
 }
