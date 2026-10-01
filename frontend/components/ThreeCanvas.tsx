@@ -17,11 +17,11 @@ export default function ThreeCanvas() {
       const gl =
         canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
       if (!gl) {
-        setHasWebGL(false);
+        setTimeout(() => setHasWebGL(false), 0);
         return;
       }
     } catch {
-      setHasWebGL(false);
+      setTimeout(() => setHasWebGL(false), 0);
       return;
     }
 
@@ -44,7 +44,7 @@ export default function ThreeCanvas() {
         powerPreference: "high-performance",
       });
     } catch {
-      setHasWebGL(false);
+      setTimeout(() => setHasWebGL(false), 0);
       return;
     }
 
@@ -154,7 +154,7 @@ export default function ThreeCanvas() {
 
     // Animation Loop
     let animationFrameId: number;
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     const animate = () => {
       const elapsedTime = clock.getElapsedTime();
