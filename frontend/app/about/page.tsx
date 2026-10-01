@@ -775,7 +775,7 @@ export default function AboutPage() {
               <div>
 
                 <SectionLabel>
-                  Let's Connect
+                  Let&apos;s Connect
                 </SectionLabel>
 
                 <h2 className="mt-5 text-4xl font-bold text-slate-900">

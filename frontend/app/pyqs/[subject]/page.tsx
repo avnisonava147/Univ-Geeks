@@ -425,7 +425,7 @@ const currentTheme =
                 </TOCItem>
 
                 <TOCItem>
-                  What's Inside
+                  What&apos;s Inside
                 </TOCItem>
 
                 <TOCItem>

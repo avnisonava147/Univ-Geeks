@@ -33,6 +33,15 @@ body {
     opacity: 0;
     transform: translateY(14px) scale(0.98);
     filter: blur(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
 button,
 a,
 input {
@@ -124,7 +133,6 @@ button {
 
 .animate-banner-text {
   animation: bannerTextAnimation 0.7s ease-out;
-  }
 }
 
 @keyframes admin-shimmer {
