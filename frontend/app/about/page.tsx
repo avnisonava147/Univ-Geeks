@@ -347,12 +347,12 @@ export default function AboutPage() {
           2. WHO WE ARE
       ================================================= */}
 
-      <section className="relative z-10 -mt-16 rounded-t-[3rem] sofy-grid-50 px-6 py-20 md:px-12 lg:px-20">
+      <section className="relative z-10 -mt-16 rounded-t-[3rem] sofy-grid-50 px-6 py-12 md:px-12 lg:px-20">
         <div className="pointer-events-none absolute right-10 top-10 h-40 w-40 rounded-full bg-blue-100/50 blur-3xl" />
 
 <div className="pointer-events-none absolute bottom-10 left-10 h-32 w-32 rounded-full bg-indigo-100/40 blur-3xl" />
 
-        <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-2">
 
           <Reveal>
 
@@ -449,7 +449,7 @@ export default function AboutPage() {
           3. WHAT STUDENTS GET
       ================================================= */}
 
-      <section className="soft-glow px-6 py-20 sm:py-24">
+      <section className="soft-glow px-6 py-12 sm:py-14">
 
         <div className="mx-auto max-w-6xl">
 
@@ -479,7 +479,7 @@ export default function AboutPage() {
           </Reveal>
 
 
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
             {[
               {
@@ -546,12 +546,14 @@ export default function AboutPage() {
 
       </section>
 
+          <StudentSuccess />
+
 
       {/* =================================================
           4. WHY CHOOSE US
       ================================================= */}
 
-      <section className="bg-slate-900 px-6 py-20 text-white sm:py-24">
+      <section className="bg-slate-900 px-6 py-12 text-white sm:py-14">
 
         <div className="mx-auto max-w-6xl">
 
@@ -572,7 +574,7 @@ export default function AboutPage() {
           </Reveal>
 
 
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
+          <div className="mt-8 grid gap-6 md:grid-cols-3">
 
             {[
               {
@@ -620,17 +622,11 @@ export default function AboutPage() {
 
       </section>
 
-
-      
-
-      <StudentSuccess />
-
-
       {/* =================================================
           6. FOUNDER
       ================================================= */}
       {/* Founder Section */}
-<section className="soft-glow-50 px-6 py-20 sm:py-24">
+<section className="soft-glow-50 px-6 py-12 sm:py-14">
   <div className="mx-auto max-w-5xl">
 
     {/* Heading */}
@@ -648,7 +644,7 @@ export default function AboutPage() {
 
     {/* Founder Card */}
     <Reveal delay={150}>
-      <div className="mt-12 grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm md:grid-cols-2">
+      <div className="mt-8 grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm md:grid-cols-2">
 
         {/* Founder Photo */}
         <div className="relative min-h-80 overflow-hidden bg-blue-50">
@@ -691,7 +687,7 @@ export default function AboutPage() {
           7. ANIMATED STATISTICS
       ================================================= */}
 
-      <section className="px-6 py-20 sm:py-24">
+      <section className="px-6 py-12 sm:py-14">
 
         <div className="mx-auto max-w-6xl">
 
@@ -712,7 +708,7 @@ export default function AboutPage() {
           </Reveal>
 
 
-          <div className="mt-12 grid grid-cols-2 gap-5 md:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-5 md:grid-cols-4">
 
             {[
               {
@@ -764,7 +760,7 @@ export default function AboutPage() {
           8. CONTACT
       ================================================= */}
 
-      <section className="bg-blue-50/60 px-6 py-20 sm:py-24">
+      <section className="bg-blue-50/60 px-6 py-12 sm:py-14">
 
         <div className="mx-auto max-w-5xl">
 
@@ -818,7 +814,7 @@ export default function AboutPage() {
           9. FINAL CTA
       ================================================= */}
 
-      <section className="px-6 py-20 sm:py-24">
+      <section className="px-6 py-12 sm:py-14">
 
         <div className="mx-auto max-w-6xl">
 
