@@ -5,6 +5,46 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import ThreeCanvas from "../components/ThreeCanvas";
 
+export const pyqs = [
+  {
+    subject: "Physics",
+    className: "Class 12",
+    years: [
+      2025, 2024, 2023, 2022, 2021, 2020,
+      2019, 2018, 2017, 2016, 2015, 2014, 2013,
+    ],
+    thumbnail: "/physics-thumbnail.png",
+  },
+  {
+    subject: "Chemistry",
+    className: "Class 12",
+    years: [
+      2025, 2024, 2023, 2022, 2021, 2020,
+      2019, 2018, 2017, 2016, 2015, 2014, 2013,
+    ],
+    thumbnail: "/chemistry-thumbnail.png",
+  },
+  {
+    subject: "Mathematics",
+    className: "Class 12",
+    years: [
+      2025, 2024, 2023, 2022, 2021, 2020,
+      2019, 2018, 2017, 2016, 2015, 2014, 2013,
+    ],
+    thumbnail: "/mathematics-thumbnail.png",
+  },
+  {
+    subject: "Biology",
+    className: "Class 12",
+    years: [
+      2013, 2014, 2015, 2016, 2017,
+      2018, 2019, 2020, 2021, 2022,
+      2023, 2024, 2025,
+    ],
+    thumbnail: "/biology-thumbnail.png",
+  },
+];
+
 export default function HomePage() {
   const [activeClassTab, setActiveClassTab] = useState<"12" | "11" | "10">("12");
   const [quickSearch, setQuickSearch] = useState("");

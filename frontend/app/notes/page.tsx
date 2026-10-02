@@ -50,9 +50,25 @@ export default function NotesPage() {
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMessage, setSearchMessage] = useState("");
+  
+  // Hero banner carousel
+const [activeHeroBanner, setActiveHeroBanner] = useState(0);
 
-  const [activeBanner, setActiveBanner] = useState(0);
-  const [isBannerHovered, setIsBannerHovered] = useState(false);
+const heroBanners = [
+  {
+    src: "/mathematics-notes-banner.png",
+    alt: "Mathematics chapter-wise study notes",
+  },
+  {
+    src: "/physics-notes-banner.png",
+    alt: "Physics chapter-wise study notes",
+  },
+  {
+    src: "/biology-notes-banner.png",
+    alt: "Biology chapter-wise study notes",
+  },
+];
+  
 
   const streamSectionRef =
     useRef<HTMLElement | null>(null);
@@ -66,45 +82,51 @@ export default function NotesPage() {
   const pdfSectionRef =
     useRef<HTMLElement | null>(null);  
 
-      const scrollToSection = (
-    ref: React.RefObject<HTMLElement | null>
-  ) => {
-    setTimeout(() => {
-      ref.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 100);
-  };
-
-  useEffect(() => {
-  if (!selectedChapter) {
-    return;
-  }
-
-  const timer = setTimeout(() => {
-    pdfSectionRef.current?.scrollIntoView({
+     const scrollToSection = (
+  ref: React.RefObject<HTMLElement | null>
+) => {
+  setTimeout(() => {
+    ref.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
-  }, 150);
+  }, 100);
+};
 
-  return () => clearTimeout(timer);
-}, [selectedChapter]);
 
-useEffect(() => {
-  if (isBannerHovered) {
-    return;
-  }
 
-  const timer = setInterval(() => {
-    setActiveBanner((current) =>
-      (current + 1) % bannerSlides.length
-    );
-  }, 4200);
 
-  return () => clearInterval(timer);
-}, [isBannerHovered]);
+
+  
+  // Automatically scroll to the PDF section when a chapter is selected
+  useEffect(() => {
+    if (!selectedChapter) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      pdfSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [selectedChapter]);
+
+  // Automatically rotate the hero banners
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveHeroBanner(
+        (current) => (current + 1) % heroBanners.length
+      );
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+
+
 
   const subjects = getSubjects(
   selectedClass,
@@ -132,16 +154,26 @@ useEffect(() => {
       /^(?:class\s*)?(10|11|12)$/
     );
 
-    if (classMatch) {
-      const className = classMatch[1] as ClassName;
+    
+if (classMatch) {
+  const className = classMatch[1] as ClassName;
 
-      setSelectedClass(className);
-      setSelectedSubject(null);
-      setSelectedChapter(null);
+  setSelectedClass(className);
+  setSelectedSubject(null);
+  setSelectedChapter(null);
 
-      setSearchMessage(`Showing Class ${className}`);
-      return;
-    }
+  setSearchMessage(`Showing Class ${className}`);
+
+  // Scroll to the relevant section after selecting a class
+  if (className === "10") {
+    scrollToSection(subjectSectionRef);
+  } else {
+    scrollToSection(streamSectionRef);
+  }
+
+  return;
+}
+
 
     // Search for a stream: Science, Commerce, Arts
     const streamMatch = streams.find(
@@ -244,197 +276,242 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
       {/* Unified Glassy Navbar */}
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-slate-200 bg-white">
-        
-        {/* Background glow */}
-        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-blue-100/50 blur-3xl" />
+     
+{/* Final Notes Hero */}
+<section className="relative isolate overflow-hidden border-b border-slate-800 bg-[#041B33] text-white">
+  {/* Background glow and grid */}
+  <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-cyan-500/10 blur-[100px]" />
+  <div className="pointer-events-none absolute -bottom-40 right-0 h-96 w-96 rounded-full bg-blue-500/15 blur-[100px]" />
+  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px]" />
 
-        <div className="pointer-events-none absolute -left-32 bottom-0 h-72 w-72 rounded-full bg-purple-100/30 blur-3xl" />
+  <div className="relative mx-auto max-w-7xl px-6 pb-12 pt-8 sm:pb-16 sm:pt-10 lg:px-8 lg:pb-16">
+    {/* Breadcrumb */}
+    <nav aria-label="Breadcrumb" className="mb-7 flex items-center gap-2 text-sm">
+      <a
+        href="/"
+        className="font-medium text-cyan-400 transition hover:text-cyan-200"
+      >
+        Home
+      </a>
+      <span className="text-slate-500">›</span>
+      <span className="font-medium text-white">Notes</span>
+    </nav>
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 lg:grid-cols-[1.1fr_.9fr]">
-          
-          <div>
-            <p className="mb-4 text-sm font-semibold tracking-[0.18em] text-[#5B6478]">
-              LEARN · PREPARE · GROW
+    <div className="grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12">
+      {/* Left side */}
+      <div className="min-w-0">
+        {/* Exam badge */}
+        <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-cyan-300/25 px-5 py-3 text-sm font-semibold tracking-wide text-cyan-300">
+          <span className="h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.8)]" />
+          RBSE BOARD EXAM PREP 2027
+        </div>
+
+        {/* Main heading */}
+        <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+          Chapter-wise
+          <span className="mt-2 block text-cyan-400">
+            Study Notes.
+          </span>
+        </h1>
+
+        <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+          Clear, chapter-wise notes for Classes 10, 11 and 12 — organised
+          to make revision faster and exam preparation simpler.
+        </p>
+
+        {/* Statistics */}
+        <div className="mt-8 flex flex-wrap items-center">
+          <div className="pr-6 sm:pr-8">
+            <p className="text-3xl font-bold text-cyan-400 sm:text-4xl">
+              200+
             </p>
-
-            <h1 className="max-w-3xl font-serif text-5xl font-semibold leading-[1.08] tracking-tight text-[#16213E] sm:text-6xl">
-              Study notes for{" "}
-              <span className="relative whitespace-nowrap text-[#2F5FDE]">
-                classes 10 to 12
-
-                {/* Underline */}
-                <svg
-                  className="absolute -bottom-2 left-0 h-3 w-full"
-                  viewBox="0 0 200 14"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    d="M2,10 C60,2 140,2 198,9"
-                    fill="none"
-                    stroke="#F2A63D"
-                    strokeLinecap="round"
-                    strokeWidth="6"
-                  />
-                </svg>
-              </span>
-            </h1>
-
-            <p className="mt-6 max-w-xl text-base leading-7 text-[#5B6478] sm:text-lg">
-              Chapter-wise notes curated for your board exams —
-              simple, reliable, and always free to download.
+            <p className="mt-1 text-xs tracking-wide text-slate-300 sm:text-sm">
+              CHAPTERS
             </p>
+          </div>
 
-            {/* Search */}
-            <form
-               onSubmit={(e) => {
-                 e.preventDefault();
-                 handleSearch();
-                }}
-             className="mt-8 flex max-w-2xl items-center rounded-full border border-slate-200 bg-white p-1.5 shadow-sm transition focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-100">
-              <span className="ml-4 text-lg text-[#5B6478]">
-                🔍
-              </span>
+          <div className="border-l border-cyan-200/20 px-6 sm:px-8">
+            <p className="text-3xl font-bold text-cyan-400 sm:text-4xl">
+              Free
+            </p>
+            <p className="mt-1 text-xs tracking-wide text-slate-300 sm:text-sm">
+              ACCESS
+            </p>
+          </div>
 
-              <input
-                type="text"
-                 value={searchQuery}
-                 onChange={(e) => setSearchQuery(e.target.value)} 
-                placeholder="Search for class, subject or chapter..."
-                aria-label="Search for class, subject or chapter"
-                className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm outline-none"
-              />
+          <div className="border-l border-cyan-200/20 pl-6 sm:pl-8">
+            <p className="text-3xl font-bold text-cyan-400 sm:text-4xl">
+              3
+            </p>
+            <p className="mt-1 text-xs tracking-wide text-slate-300 sm:text-sm">
+              CLASSES
+            </p>
+          </div>
+        </div>
 
+        {/* Class buttons */}
+        <div className="mt-8 flex flex-wrap gap-3">
+          {(["10", "11", "12"] as ClassName[]).map((className) => {
+            const isActive = selectedClass === className;
+
+            return (
               <button
-                type="submit"
-                className="rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#2F5FDE]"
+                key={className}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => {
+                  setSearchQuery("");
+                  setSearchMessage("");
+                  setSelectedClass(className);
+                  setSelectedSubject(null);
+                  setSelectedChapter(null);
+
+                  if (className === "10") {
+                    scrollToSection(subjectSectionRef);
+                  } else {
+                    scrollToSection(streamSectionRef);
+                  }
+                }}
+                className={`rounded-full border px-6 py-3 text-sm font-semibold transition duration-300 hover:-translate-y-0.5 ${
+                  isActive
+                    ? "border-cyan-400 bg-cyan-400 text-[#041B33] shadow-lg shadow-cyan-400/20"
+                    : "border-slate-600 bg-white/5 text-white hover:border-cyan-400/60 hover:bg-cyan-400/10"
+                }`}
               >
-                Search
+                Class {className}
               </button>
-            </form>
-            </div>
+            );
+          })}
+        </div>
+
+        {/* Search: uses your existing handleSearch */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSearch();
+          }}
+          className="mt-8 flex w-full max-w-2xl items-center gap-2 rounded-full border border-slate-600 bg-white/[0.06] p-2 transition focus-within:border-cyan-400/70 focus-within:ring-4 focus-within:ring-cyan-400/10"
+        >
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search for class, subject or chapter..."
+            aria-label="Search for class, subject or chapter"
+            className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-white outline-none placeholder:text-slate-400 sm:px-4 sm:text-base"
+          />
+
+          <button
+            type="submit"
+            className="shrink-0 rounded-full bg-cyan-400 px-5 py-3 text-sm font-bold text-[#041B33] transition hover:bg-cyan-300 sm:px-8"
+          >
+            Search
+          </button>
+        </form>
+
+        {searchMessage && (
+          <p aria-live="polite" className="mt-3 text-sm text-cyan-200">
+            {searchMessage}
+          </p>
+        )}
+      </div>
+
+      {/* Right side: rotating subject posters */}
+      <div className="relative mx-auto w-full max-w-2xl lg:pl-2">
+        <div className="pointer-events-none absolute inset-8 rounded-full bg-blue-500/15 blur-3xl" />
+
+        <div className="relative overflow-hidden rounded-[28px] border border-cyan-400/20 bg-[#0B2946] p-1.5 shadow-2xl shadow-cyan-950/30">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-[23px] bg-gradient-to-br from-indigo-600 to-blue-700">
+            
+              
+<div className="relative h-full w-full overflow-hidden rounded-[28px] bg-slate-950">
+  {heroBanners.map((banner, index) => (
+    <div
+      key={banner.src}
+      className={`absolute inset-0 transition-opacity duration-700 ${
+        activeHeroBanner === index
+          ? "opacity-100"
+          : "pointer-events-none opacity-0"
+      }`}
+    >
+      {/* Blurred background fills the empty sides */}
+      <img
+        src={banner.src}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-2xl"
+      />
+
+      {/* Slight dark overlay for a premium look */}
+      <div className="absolute inset-0 bg-slate-950/20" />
+
+      {/* Complete poster: no cropping */}
+      <img
+        src={banner.src}
+        alt={banner.alt}
+        className="absolute inset-0 h-full w-full object-contain"
+      />
+    </div>
+  ))}
+</div>
 
             
-{searchMessage && (
-  <p
-    aria-live="polite"
-    className="mt-3 px-4 text-sm font-medium text-[#2F5FDE]"
-  >
-    {searchMessage}
-  </p>
-)}
 
-          
+            {/* Previous banner */}
+            <button
+              type="button"
+              aria-label="Previous banner"
+              onClick={() =>
+                setActiveHeroBanner(
+                  (current) =>
+                    (current - 1 + heroBanners.length) % heroBanners.length
+                )
+              }
+              className="absolute left-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur transition hover:bg-black/65"
+            >
+              ‹
+            </button>
 
-          {/* Banner Slider */}
-<div
-  className=" group relative hidden h-72 lg:block"
-  onMouseEnter={() => setIsBannerHovered(true)}
-  onMouseLeave={() => setIsBannerHovered(false)}
->
-  <div className="relative h-full overflow-hidden rounded-[24px] shadow-xl">
-
-    {/* Slides */}
-    <div
-      className="flex h-full transition-transform duration-700 ease-in-out"
-      style={{
-        transform: `translateX(-${activeBanner * 100}%)`,
-      }}
-    >
-      {bannerSlides.map((slide, index) => (
-        <div
-          key={index}
-          className={`relative h-full min-w-full bg-gradient-to-br ${slide.className} p-8 text-white`}
-        >
-
-          {/* Decorative circles */}
-          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10" />
-
-          <div className="pointer-events-none absolute -bottom-16 -left-10 h-44 w-44 rounded-full bg-white/10" />
-
-          {/* Content */}
-          <div className="relative flex h-full flex-col justify-center">
-
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/75">
-              {slide.subtitle}
-            </p>
-
-            <h2 className="mt-3 max-w-sm font-serif text-4xl font-semibold leading-tight">
-              {slide.title}
-            </h2>
-
-            <p className="mt-4 max-w-sm text-sm leading-6 text-white/85">
-              {slide.description}
-            </p>
-
-            <div className="mt-6 inline-flex w-fit rounded-full bg-white/15 px-4 py-2 text-xs font-semibold backdrop-blur-sm">
-              Explore Notes →
-            </div>
-
+            {/* Next banner */}
+            <button
+              type="button"
+              aria-label="Next banner"
+              onClick={() =>
+                setActiveHeroBanner(
+                  (current) => (current + 1) % heroBanners.length
+                )
+              }
+              className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur transition hover:bg-black/65"
+            >
+              ›
+            </button>
           </div>
 
-          {/* Slide number */}
-          <div className="absolute right-6 top-6 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
-            0{index + 1}
+          {/* Carousel indicators */}
+          <div className="flex items-center justify-center gap-2 py-3">
+            {heroBanners.map((banner, index) => (
+              <button
+                key={banner.src}
+                type="button"
+                aria-label={`Show banner ${index + 1}`}
+                aria-pressed={activeHeroBanner === index}
+                onClick={() => setActiveHeroBanner(index)}
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  activeHeroBanner === index
+                    ? "w-8 bg-cyan-400"
+                    : "w-2.5 bg-white/40 hover:bg-white/70"
+                }`}
+              />
+            ))}
           </div>
-
         </div>
-      ))}
+      </div>
     </div>
-
-    {/* Previous button */}
-    <button
-      type="button"
-      aria-label="Previous banner"
-      onClick={() =>
-        setActiveBanner(
-          (current) =>
-            (current - 1 + bannerSlides.length) %
-            bannerSlides.length
-        )
-      }
-      className="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/15 text-lg text-white opacity-0 backdrop-blur-sm transition-all duration-300 hover:bg-white/25 group-hover:opacity-100"
-    >
-      ←
-    </button>
-
-    {/* Next button */}
-    <button
-      type="button"
-      aria-label="Next banner"
-      onClick={() =>
-        setActiveBanner(
-          (current) =>
-            (current + 1) % bannerSlides.length
-        )
-      }
-      className="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-white/15 text-lg text-white opacity-0 backdrop-blur-sm transition-all duration-300 hover:bg-white/25"
-    >
-      →
-    </button>
-
-    {/* Dots */}
-    <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
-      {bannerSlides.map((_, index) => (
-        <button
-          key={index}
-          type="button"
-          aria-label={`Go to banner ${index + 1}`}
-          onClick={() => setActiveBanner(index)}
-          className={`h-2.5 rounded-full transition-all duration-300 ${
-            activeBanner === index
-              ? "w-8 bg-white"
-              : "w-2.5 bg-white/50 hover:bg-white/80"
-          }`}
-        />
-      ))}
-    </div>
-
   </div>
-</div>
-        </div>
-      </section>
+</section>
+
+      
+
 
       {/* STEP 1 */}
       <ClassSelector

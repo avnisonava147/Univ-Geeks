@@ -898,8 +898,12 @@ export default function AboutPage() {
 
         <div className="px-7 py-8 sm:px-10 sm:py-9 md:px-12">
 
-          {/* Main Content */}
-          <div className="text-center">
+{/* Main Content */}
+<div className="text-center">
+
+  <SectionLabel>
+    Let&apos;s Connect
+  </SectionLabel>
 
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
               Let's Connect
