@@ -195,10 +195,16 @@ export default function AboutPage() {
           }}
         >
           {/* Dark blue gradient background */}
-          <div className="absolute inset-0 bg-linear-to-br from-[#010617] via-[#061735] to-[#0a3970]" />
+          {/* About Hero Background */}
+<div className="absolute inset-0 bg-[#061A40]" />
 
-          {/* Soft central glow */}
-          <div className="absolute left-1/2 top-1/2 h-130 w-130 -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/15 blur-[130px]" />
+{/* Background Glows */}
+<div className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl" />
+<div className="absolute -right-32 bottom-10 h-96 w-96 rounded-full bg-cyan-400/10 blur-3xl" />
+
+{/* Subtle Decorative Rings */}
+<div className="absolute -right-20 top-10 h-72 w-72 rounded-full border border-white/10" />
+<div className="absolute -right-8 top-24 h-56 w-56 rounded-full border border-white/10" />
 
           <div className="relative z-10 mx-auto grid w-full max-w-375 items-center gap-5 lg:grid-cols-[1fr_360px_1fr]">
                         {/* =================================================
@@ -251,7 +257,7 @@ export default function AboutPage() {
                     <h2 className="text-2xl font-bold">Mission</h2>
                   </div>
                   <p className="mt-5 leading-7 text-slate-300">
-                    To make useful study resources easier to access and help students prepare with greater clarity and confidence.
+                    Making useful study resources easier to access, so students can prepare with greater clarity and confidence.
                   </p>
                 </div>
               </Reveal>
@@ -299,7 +305,7 @@ export default function AboutPage() {
                 <div className="hero-popup rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-left backdrop-blur-md transition duration-300 hover:-translate-y-2 hover:border-cyan-400/30">
                   <div className="flex items-center gap-4">
                     <div className="flex h-14 w-14 items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-400/10 text-2xl">🎓</div>
-                    <h2 className="text-2xl font-bold">Student First</h2>
+                    <h2 className="text-2xl font-bold">Student-First</h2>
                   </div>
                   <p className="mt-5 leading-7 text-slate-300">
                       Everything is designed around what students actually
@@ -340,512 +346,650 @@ export default function AboutPage() {
 
           <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2 text-lg text-white/40" style={{ opacity: 1 - scrollProgress * 3 }}>↓</div>
         </section>
+        
       </div>
 
 
-      {/* =================================================
-          2. WHO WE ARE
-      ================================================= */}
+      ```tsx
+{/* =================================================
+      2. WHAT IS UNIV GEEKS?
+  ================================================= */}
 
-      <section className="relative z-10 -mt-16 rounded-t-[3rem] sofy-grid-50 px-6 py-12 md:px-12 lg:px-20">
-        <div className="pointer-events-none absolute right-10 top-10 h-40 w-40 rounded-full bg-blue-100/50 blur-3xl" />
+<section className="relative z-10 -mt-16 rounded-t-[3rem] bg-white px-6 py-10 md:px-12 lg:px-20">
 
-<div className="pointer-events-none absolute bottom-10 left-10 h-32 w-32 rounded-full bg-indigo-100/40 blur-3xl" />
+  {/* Soft background glow */}
+  <div className="pointer-events-none absolute right-10 top-10 h-40 w-40 rounded-full bg-blue-100/40 blur-3xl" />
+  <div className="pointer-events-none absolute bottom-10 left-10 h-32 w-32 rounded-full bg-indigo-100/30 blur-3xl" />
 
-        <div className="mx-auto grid max-w-6xl items-center gap-8 lg:grid-cols-2">
+  <div className="relative mx-auto max-w-5xl text-center">
 
-          <Reveal>
+    <Reveal>
 
-            <div>
+      <SectionLabel>
+        What is UNIV GEEKS?
+      </SectionLabel>
 
-              <SectionLabel>
-                Who We Are
-              </SectionLabel>
+      <h2 className="mt-4 text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">
+        Everything students need,
+        <span className="text-blue-600"> in one place.</span>
+      </h2>
 
-              <h2 className="mt-5 text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">
-                Learning becomes easier
-                <br />
-                when resources are
-                <span className="text-blue-600">
-                  organized.
-                </span>
-              </h2>
+      <div className="mx-auto mt-4 h-1 w-14 rounded-full bg-blue-600" />
 
-              <div className="mt-6 h-1 w-16 rounded-full bg-blue-600" />
+      <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
+        UNIV GEEKS is a student-focused learning platform that brings
+        useful study resources together in one organized space.
+      </p>
 
-              <p className="mt-6 leading-8 text-slate-600">
-                UNIV GEEKS is a student-focused learning
-                platform created to make academic resources
-                easier to discover and use.
-              </p>
+      <p className="mx-auto mt-3 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
+        From chapter-wise notes to previous year questions, our goal is
+        to make it easier for students of Classes 10 to 12 to find what
+        they need and focus on learning.
+      </p>
 
-              <p className="mt-4 leading-8 text-slate-600">
-                We bring together notes, previous year
-                questions and other study materials to help
-                students of Classes 10 to 12 prepare in a
-                more organized way.
-              </p>
+    </Reveal>
 
+
+    {/* Resource Highlights */}
+
+    <div className="mt-6 grid gap-4 sm:grid-cols-3">
+
+      {[
+        {
+          icon: "📚",
+          title: "Chapter-wise Notes",
+          text: "Study material organized by subject and chapter.",
+        },
+        {
+          icon: "📝",
+          title: "Previous Year Questions",
+          text: "Practice with questions from previous examinations.",
+        },
+        {
+          icon: "🎓",
+          title: "Student Resources",
+          text: "Useful academic resources gathered in one place.",
+        },
+      ].map((item, index) => (
+
+        <Reveal key={item.title} delay={index * 100}>
+
+          <div className="rounded-2xl border border-blue-100 bg-linear-to-br from-blue-50 via-white to-cyan-50 p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
+
+            <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-white/80 text-2xl shadow-sm">
+              {item.icon}
             </div>
 
-          </Reveal>
+            <h3 className="mt-3 text-base font-bold text-slate-900">
+              {item.title}
+            </h3>
 
-
-          <div className="grid gap-5 sm:grid-cols-2">
-
-            {[
-              {
-                icon: "🎯",
-                title: "Student Focused",
-                text: "Resources designed around students' learning needs.",
-              },
-              {
-                icon: "📚",
-                title: "Organized Learning",
-                text: "Find useful study material in one place.",
-              },
-              {
-                icon: "🆓",
-                title: "Accessible Resources",
-                text: "Making learning resources easier to access.",
-              },
-              {
-                icon: "💡",
-                title: "Simple Experience",
-                text: "A clean platform with fewer distractions.",
-              },
-            ].map((item, index) => (
-
-              <Reveal key={item.title} delay={index * 100}>
-
-                <div className="h-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-2 hover:shadow-lg">
-
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">
-                    {item.icon}
-                  </div>
-
-                  <h3 className="mt-5 text-lg font-bold text-slate-900">
-                    {item.title}
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
-                    {item.text}
-                  </p>
-
-                </div>
-
-              </Reveal>
-
-            ))}
+            <p className="mt-1.5 text-sm leading-5 text-slate-600">
+              {item.text}
+            </p>
 
           </div>
 
-        </div>
+        </Reveal>
 
-      </section>
+      ))}
 
+    </div>
 
-      {/* =================================================
-          3. WHAT STUDENTS GET
-      ================================================= */}
+  </div>
 
-      <section className="soft-glow px-6 py-12 sm:py-14">
-
-        <div className="mx-auto max-w-6xl">
-
-          <Reveal>
-
-            <div className="text-center">
-
-              <SectionLabel>
-                What Students Get
-              </SectionLabel>
-
-              <h2 className="mt-5 text-4xl font-bold text-slate-900 sm:text-5xl">
-                Your study resources,
-                <br />
-                <span className="text-blue-600">
-                  in one place.
-                </span>
-              </h2>
-
-              <p className="mx-auto mt-5 max-w-2xl leading-7 text-slate-600">
-                Explore resources that support regular
-                practice, revision and exam preparation.
-              </p>
-
-            </div>
-
-          </Reveal>
+</section>
+```
 
 
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
-            {[
-              {
-                icon: "📝",
-                title: "Previous Year Questions",
-                text: "Practice questions organized by subject and year.",
-              },
-              {
-                icon: "📚",
-                title: "Chapter-wise Notes",
-                text: "Review important concepts through organized notes.",
-              },
-              {
-                icon: "🎓",
-                title: "Multiple Boards",
-                text: "Resources for students from different boards.",
-              },
-              {
-                icon: "🆓",
-                title: "Free Access",
-                text: "Access useful learning resources with fewer barriers.",
-              },
-              {
-                icon: "📱",
-                title: "Mobile Friendly",
-                text: "Study using your phone, tablet or laptop.",
-              },
-              {
-                icon: "🔍",
-                title: "Easy Navigation",
-                text: "Find study material without unnecessary confusion.",
-              },
-            ].map((item, index) => (
+ {/* =================================================
+      3. STUDENT ACHIEVEMENTS
+  ================================================= */}
 
-              <Reveal key={item.title} delay={index * 80}>
+<section className="relative z-10">
+  <StudentSuccess />
+</section>
 
-                <div className="flex h-full gap-4 rounded-2xl border border-slate-200 p-6 transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg">
+{/* =================================================
+      4. UNIV GEEKS IN NUMBERS
+  ================================================= */}
 
-                  <div className="flex h-12 min-w-12 items-center justify-center rounded-xl bg-blue-50 text-xl">
-                    {item.icon}
-                  </div>
+<section className="relative overflow-hidden bg-slate-50 px-6 py-9 sm:py-10 md:px-12 lg:px-20">
 
-                  <div>
+  {/* Soft Background Glows */}
+  <div className="pointer-events-none absolute -left-24 top-10 h-64 w-64 rounded-full bg-blue-100/50 blur-3xl" />
 
-                    <h3 className="font-bold text-slate-900">
-                      {item.title}
-                    </h3>
+  <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-cyan-100/40 blur-3xl" />
 
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
-                      {item.text}
-                    </p>
-
-                  </div>
-
-                </div>
-
-              </Reveal>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-          <StudentSuccess />
-
-
-      {/* =================================================
-          4. WHY CHOOSE US
-      ================================================= */}
-
-      <section className="bg-slate-900 px-6 py-12 text-white sm:py-14">
-
-        <div className="mx-auto max-w-6xl">
-
-          <Reveal>
-
-            <div className="text-center">
-
-              <SectionLabel>
-                Why UNIV GEEKS
-              </SectionLabel>
-
-              <h2 className="mt-5 text-4xl font-bold">
-                Built around your learning.
-              </h2>
-
-            </div>
-
-          </Reveal>
-
-
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
-
-            {[
-              {
-                icon: "✓",
-                title: "Organized Content",
-                text: "Find resources arranged for easier revision.",
-              },
-              {
-                icon: "↻",
-                title: "Continuous Improvement",
-                text: "We aim to improve the platform based on feedback.",
-              },
-              {
-                icon: "⚡",
-                title: "Simple Experience",
-                text: "A clean interface helps you focus on learning.",
-              },
-            ].map((item, index) => (
-
-              <Reveal key={item.title} delay={index * 100}>
-
-                <div className="text-center">
-
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-2xl font-bold">
-                    {item.icon}
-                  </div>
-
-                  <h3 className="mt-6 text-xl font-bold">
-                    {item.title}
-                  </h3>
-
-                  <p className="mt-4 leading-7 text-slate-300">
-                    {item.text}
-                  </p>
-
-                </div>
-
-              </Reveal>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      </section>
-
-      {/* =================================================
-          6. FOUNDER
-      ================================================= */}
-      {/* Founder Section */}
-<section className="soft-glow-50 px-6 py-12 sm:py-14">
-  <div className="mx-auto max-w-5xl">
+  <div className="relative mx-auto max-w-6xl">
 
     {/* Heading */}
     <Reveal>
-      <div className="text-center">
+
+      <div className="mx-auto max-w-3xl text-center">
+
         <SectionLabel>
-          Founder
+          UNIV GEEKS In Numbers
         </SectionLabel>
 
-        <h2 className="mt-5 text-4xl font-bold text-slate-900">
-          Built with a purpose.
+        <h2 className="mt-4 text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">
+          The numbers behind our
+          <span className="text-blue-600"> growing community.</span>
         </h2>
-      </div>
-    </Reveal>
 
-    {/* Founder Card */}
-    <Reveal delay={150}>
-      <div className="mt-8 grid overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm md:grid-cols-2">
+        <div className="mx-auto mt-4 h-1 w-14 rounded-full bg-blue-600" />
 
-        {/* Founder Photo */}
-        <div className="relative min-h-80 overflow-hidden bg-blue-50">
-          <img
-            src="/founder.jpg"
-            alt="Founder of UNIV GEEKS"
-            className="h-full min-h-80 w-full object-cover"
-          />
-        </div>
-
-        {/* Founder Information */}
-        <div className="flex flex-col justify-center p-8 sm:p-10">
-
-          <p className="text-sm font-bold uppercase tracking-wider text-blue-600">
-            Founder, UNIV GEEKS
-          </p>
-
-          <h3 className="mt-4 text-3xl font-bold text-slate-900">
-            Himanshu Shekhawat
-          </h3>
-
-          <p className="mt-5 leading-8 text-slate-600">
-           UNIV GEEKS was born from a simple idea: learning should be easier and study resources should be accessible to everyone. Our founder envisioned a platform where students can find organized notes, previous year questions, and useful academic resources in one place. With a student-first approach, UNIV GEEKS aims to make everyday learning more convenient and meaningful.
-          </p>
-
-          <p className="mt-4 text-sm text-slate-500">
-           
-          </p>
-
-        </div>
+        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+          From study resources to students and boards, these numbers
+          reflect the growing reach of UNIV GEEKS.
+        </p>
 
       </div>
+
     </Reveal>
 
-  </div>
-</section>
 
+    {/* Statistics */}
+    <div className="mt-7 grid grid-cols-2 gap-4 md:grid-cols-4">
 
-      {/* =================================================
-          7. ANIMATED STATISTICS
-      ================================================= */}
+      {[
+        {
+          number: 10,
+          label: "Subjects",
+        },
+        {
+          number: 500,
+          label: "Study Resources",
+        },
+        {
+          number: 1000,
+          label: "Students",
+        },
+        {
+          number: 5,
+          label: "Boards",
+        },
+      ].map((item, index) => (
 
-      <section className="px-6 py-12 sm:py-14">
+        <Reveal key={item.label} delay={index * 100}>
 
-        <div className="mx-auto max-w-6xl">
+          <div className="group h-full rounded-2xl border border-blue-100 bg-white p-5 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md sm:p-6">
 
-          <Reveal>
-
-            <div className="text-center">
-
-              <SectionLabel>
-                UNIV GEEKS In Numbers
-              </SectionLabel>
-
-              <h2 className="mt-5 text-4xl font-bold text-slate-900">
-                Growing one step at a time.
-              </h2>
-
+            {/* Number */}
+            <div className="text-3xl font-bold tracking-tight text-blue-600 sm:text-4xl">
+              <Counter target={item.number} />
             </div>
 
-          </Reveal>
-
-
-          <div className="mt-8 grid grid-cols-2 gap-5 md:grid-cols-4">
-
-            {[
-              {
-                number: 10,
-                label: "Subjects",
-              },
-              {
-                number: 500,
-                label: "Study Resources",
-              },
-              {
-                number: 1000,
-                label: "Students",
-              },
-              {
-                number: 5,
-                label: "Boards",
-              },
-            ].map((item, index) => (
-
-              <Reveal key={item.label} delay={index * 100}>
-
-                <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
-
-                  <Counter target={item.number} />
-
-                  <p className="mt-3 text-sm text-slate-500">
-                    {item.label}
-                  </p>
-
-                </div>
-
-              </Reveal>
-
-            ))}
+            {/* Label */}
+            <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:text-sm">
+              {item.label}
+            </p>
 
           </div>
 
-          <p className="mt-6 text-center text-xs text-slate-400">
-            Replace these placeholder numbers with verified statistics.
+        </Reveal>
+
+      ))}
+
+    </div>
+
+
+    {/* Bottom Highlight */}
+    <Reveal delay={500}>
+
+      <div className="mx-auto mt-5 max-w-3xl text-center">
+
+        <p className="text-sm font-medium leading-6 text-slate-500">
+          Built to bring useful learning resources together for students
+          across different boards and subjects.
+        </p>
+
+      </div>
+
+    </Reveal>
+
+  </div>
+
+</section>
+
+
+
+
+     {/* =================================================
+      5. WHY STUDENTS USE UNIV GEEKS
+  ================================================= */}
+
+<section className="relative overflow-hidden bg-slate-50 px-6 py-10 sm:py-11 md:px-12 lg:px-20">
+
+  {/* Soft Background Glows */}
+  <div className="pointer-events-none absolute -left-24 top-10 h-64 w-64 rounded-full bg-blue-100/50 blur-3xl" />
+
+  <div className="pointer-events-none absolute -right-24 bottom-0 h-72 w-72 rounded-full bg-cyan-100/40 blur-3xl" />
+
+  <div className="relative mx-auto max-w-6xl">
+
+    {/* Section Heading */}
+    <Reveal>
+
+      <div className="mx-auto max-w-3xl text-center">
+
+        <SectionLabel>
+          Why Students Use UNIV GEEKS
+        </SectionLabel>
+
+        <h2 className="mt-4 text-4xl font-bold leading-tight text-slate-900 sm:text-5xl">
+          Built around what
+          <span className="text-blue-600"> students need.</span>
+        </h2>
+
+        <div className="mx-auto mt-4 h-1 w-14 rounded-full bg-blue-600" />
+
+        <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+          Studying is already challenging enough. UNIV GEEKS is designed
+          to keep finding and using study resources simple, organized
+          and focused.
+        </p>
+
+      </div>
+
+    </Reveal>
+
+
+    {/* Benefits */}
+    <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+      {/* Organized */}
+      <Reveal delay={100}>
+
+        <div className="group h-full rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
+
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-2xl transition duration-300 group-hover:bg-blue-100">
+            🗂️
+          </div>
+
+          <h3 className="mt-4 text-lg font-bold text-slate-900">
+            Organized
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Resources are arranged clearly so students can find
+            what they need without unnecessary searching.
           </p>
 
         </div>
 
-      </section>
+      </Reveal>
 
 
-      {/* =================================================
-          8. CONTACT
-      ================================================= */}
+      {/* Student-Focused */}
+      <Reveal delay={200}>
 
-      <section className="bg-blue-50/60 px-6 py-12 sm:py-14">
+        <div className="group h-full rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
 
-        <div className="mx-auto max-w-5xl">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-2xl transition duration-300 group-hover:bg-blue-100">
+            🎓
+          </div>
 
-          <Reveal>
+          <h3 className="mt-4 text-lg font-bold text-slate-900">
+            Student-Focused
+          </h3>
 
-            <div className="grid gap-10 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm md:grid-cols-2 md:p-12">
-
-              <div>
-
-                <SectionLabel>
-                  Let's Connect
-                </SectionLabel>
-
-                <h2 className="mt-5 text-4xl font-bold text-slate-900">
-                  Your feedback
-                  <br />
-                  <span className="text-blue-600">
-                    matters to us.
-                  </span>
-                </h2>
-
-              </div>
-
-              <div>
-
-                <p className="leading-8 text-slate-600">
-                  Have suggestions or questions? Your feedback
-                  helps us improve UNIV GEEKS and make the
-                  platform more useful for students.
-                </p>
-
-                <a
-                  href="mailto:contact@univ-geeks.com"
-                  className="mt-7 inline-flex rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
-                >
-                  Contact Us →
-                </a>
-
-              </div>
-
-            </div>
-
-          </Reveal>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            The platform is built around the everyday study needs
+            of students.
+          </p>
 
         </div>
 
-      </section>
+      </Reveal>
 
+
+      {/* Simple */}
+      <Reveal delay={300}>
+
+        <div className="group h-full rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
+
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-2xl transition duration-300 group-hover:bg-blue-100">
+            ✨
+          </div>
+
+          <h3 className="mt-4 text-lg font-bold text-slate-900">
+            Easy to Use
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            A clean and simple experience helps students focus
+            on learning instead of navigating through clutter.
+          </p>
+
+        </div>
+
+      </Reveal>
+
+
+      {/* Accessible */}
+      <Reveal delay={400}>
+
+        <div className="group h-full rounded-2xl border border-blue-100 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
+
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-2xl transition duration-300 group-hover:bg-blue-100">
+            🌐
+          </div>
+
+          <h3 className="mt-4 text-lg font-bold text-slate-900">
+            In One Place
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Useful academic resources are brought together so
+            students can access them more conveniently.
+          </p>
+
+        </div>
+
+      </Reveal>
+
+    </div>
+
+
+    {/* Bottom Highlight */}
+    <Reveal delay={500}>
+
+      <div className="mx-auto mt-6 max-w-4xl rounded-2xl border border-blue-100 bg-linear-to-r from-blue-50 via-white to-cyan-50 px-6 py-5 text-center shadow-sm">
+
+        <p className="text-sm font-semibold leading-6 text-slate-700 sm:text-base">
+          Less time searching.
+          <span className="text-blue-600"> More time learning.</span>
+        </p>
+
+      </div>
+
+    </Reveal>
+
+  </div>
+
+</section>
+      
 
       {/* =================================================
-          9. FINAL CTA
-      ================================================= */}
+      6. MEET THE FOUNDER
+  ================================================= */}
 
-      <section className="px-6 py-12 sm:py-14">
+<section className="relative overflow-hidden bg-white px-6 py-8 sm:py-10 md:px-12 lg:px-20">
 
-        <div className="mx-auto max-w-6xl">
+  {/* Soft Background Glows */}
+  <div className="pointer-events-none absolute -left-24 top-10 h-56 w-56 rounded-full bg-blue-100/40 blur-3xl" />
 
-          <Reveal>
+  <div className="pointer-events-none absolute -right-24 bottom-0 h-64 w-64 rounded-full bg-cyan-100/30 blur-3xl" />
 
-            <div className="rounded-3xl bg-blue-700 px-8 py-14 text-center text-white shadow-xl sm:px-12">
+  <div className="relative mx-auto max-w-5xl">
 
-              <h2 className="text-4xl font-bold sm:text-5xl">
-                Ready to start learning?
-              </h2>
+    {/* Heading */}
+    <Reveal>
 
-              <p className="mx-auto mt-5 max-w-2xl leading-8 text-blue-100">
-                Explore notes, practice questions and take
-                the next step in your preparation.
-              </p>
+      <div className="text-center">
 
-              <Link
-                href="/notes"
-                className="mt-8 inline-flex rounded-xl bg-white px-8 py-4 font-bold text-blue-700 transition hover:-translate-y-1 hover:bg-blue-50"
+        <SectionLabel>
+          Meet the Founder
+        </SectionLabel>
+
+        <h2 className="mt-3 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
+          Built with a
+          <span className="text-blue-600"> purpose.</span>
+        </h2>
+
+        <div className="mx-auto mt-3 h-1 w-12 rounded-full bg-blue-600" />
+
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+          Behind UNIV GEEKS is a simple idea — make learning resources
+          easier for students to find, understand and use.
+        </p>
+
+      </div>
+
+    </Reveal>
+
+
+    {/* Founder Card */}
+    <Reveal delay={150}>
+
+      <div className="mt-7 grid overflow-hidden rounded-3xl border border-blue-100 bg-linear-to-br from-blue-50 via-white to-cyan-50 shadow-sm md:grid-cols-[0.85fr_1.15fr]">
+
+        {/* Founder Photo */}
+<div className="relative h-[390px] overflow-hidden bg-blue-50 sm:h-[450px] md:h-[500px]">
+
+  <img
+    src="/founder.jpg"
+    alt="Himanshu Shekhawat, Founder of UNIV GEEKS"
+    className="h-full w-full object-cover object-[center_65%]"
+  />
+
+</div>
+
+
+        {/* Founder Information */}
+        <div className="flex flex-col justify-center px-7 py-7 sm:px-9 sm:py-8">
+
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-600 sm:text-sm">
+            Founder, UNIV GEEKS
+          </p>
+
+          <h3 className="mt-2 text-3xl font-bold text-slate-900 sm:text-4xl">
+            Himanshu Shekhawat
+          </h3>
+
+          <p className="mt-4 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7">
+            UNIV GEEKS was born from a simple idea: learning should be
+            easier and useful study resources should be accessible to
+            students.
+          </p>
+
+          <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base sm:leading-7">
+            The platform brings organized notes, previous year questions
+            and other academic resources together in one place, with a
+            student-first approach to everyday learning.
+          </p>
+
+
+          {/* Highlight */}
+          <div className="mt-5 flex items-center gap-3">
+
+            <div className="h-9 w-1 rounded-full bg-blue-600" />
+
+            <p className="text-sm font-semibold leading-5 text-slate-700">
+              Making learning resources
+              <span className="text-blue-600">
+                {" "}simpler and easier to access.
+              </span>
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </Reveal>
+
+  </div>
+
+</section>
+
+
+      
+
+{/* =================================================
+      7. FINAL CTA
+  ================================================= */}
+
+<section className="relative overflow-hidden bg-[#061A40] px-6 py-10 text-white sm:py-12 md:px-12 lg:px-20">
+
+  {/* Background Glows */}
+  <div className="pointer-events-none absolute -left-32 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-blue-500/20 blur-3xl" />
+
+  <div className="pointer-events-none absolute -right-32 top-10 h-80 w-80 rounded-full bg-cyan-400/10 blur-3xl" />
+
+  {/* Decorative Rings */}
+  <div className="pointer-events-none absolute -right-20 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full border border-white/10" />
+
+  <div className="pointer-events-none absolute -right-5 top-1/2 h-56 w-56 -translate-y-1/2 rounded-full border border-white/10" />
+
+  <div className="relative mx-auto max-w-4xl text-center">
+
+    <Reveal>
+
+      {/* Small Label */}
+      <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-300">
+        Start Learning
+      </p>
+
+      {/* Heading */}
+      <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+        Your preparation,
+        <span className="block text-blue-300">
+          starts here.
+        </span>
+      </h2>
+
+      {/* Description */}
+      <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base sm:leading-7">
+        Explore notes, previous year questions and useful study
+        resources designed to make your learning journey simpler.
+      </p>
+
+      {/* CTA Button */}
+      <div className="mt-7 flex justify-center">
+
+        <a
+          href="/"
+          className="group inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#061A40] shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+        >
+          Explore Resources
+
+          <span className="transition-transform duration-300 group-hover:translate-x-1">
+            →
+          </span>
+        </a>
+
+      </div>
+
+    </Reveal>
+
+  </div>
+
+</section>
+      {/* =================================================
+      8. LET'S CONNECT
+  ================================================= */}
+
+<section className="relative overflow-hidden bg-white px-6 py-8 sm:py-10 md:px-12 lg:px-20">
+
+  {/* Soft Background Glows */}
+  <div className="pointer-events-none absolute -left-24 bottom-0 h-56 w-56 rounded-full bg-blue-100/40 blur-3xl" />
+
+  <div className="pointer-events-none absolute -right-24 top-0 h-64 w-64 rounded-full bg-cyan-100/30 blur-3xl" />
+
+  <div className="relative mx-auto max-w-5xl">
+
+    <Reveal>
+
+      <div className="overflow-hidden rounded-3xl border border-blue-100 bg-linear-to-br from-blue-50 via-white to-cyan-50 shadow-sm">
+
+        <div className="px-7 py-8 sm:px-10 sm:py-9 md:px-12">
+
+          {/* Main Content */}
+          <div className="text-center">
+
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+              Let's Connect
+            </p>
+
+            <h2 className="mt-2 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
+              Your feedback
+              <span className="text-blue-600"> matters to us.</span>
+            </h2>
+
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-base">
+              Have a suggestion, question or idea for UNIV GEEKS?
+              We'd love to hear from you. Your feedback helps us
+              improve the platform for students.
+            </p>
+
+            {/* Contact Button */}
+            <div className="mt-5">
+
+              <a
+                href="/contact"
+                className="group inline-flex items-center gap-2 rounded-full bg-[#061A40] px-6 py-3 text-sm font-semibold text-white shadow-md transition duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-lg"
               >
-                Get Started →
-              </Link>
+                Contact Us
+
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                  →
+                </span>
+              </a>
 
             </div>
 
-          </Reveal>
+          </div>
+
+
+          {/* Divider */}
+          <div className="my-7 h-px bg-blue-100" />
+
+
+          {/* Social Links */}
+          <div className="text-center">
+
+            <p className="text-sm font-semibold text-slate-700">
+              Follow UNIV GEEKS
+            </p>
+
+            <p className="mt-1 text-xs text-slate-500">
+              Stay connected for updates, resources and new content.
+            </p>
+
+
+            <div className="mt-4 flex justify-center gap-3">
+
+              {/* Instagram */}
+              <a
+                href="https://www.instagram.com/univ_geeks?stkn=bGV3c3RoaDBoZjQ1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:text-blue-600 hover:shadow-md"
+              >
+                <span className="text-lg">◎</span>
+                Instagram
+              </a>
+
+
+              {/* YouTube */}
+              <a
+                href="https://youtube.com/@himanshubhaiya8?si=jWUdkE3rArBumNwT"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:text-blue-600 hover:shadow-md"
+              >
+                <span className="text-lg">▶</span>
+                YouTube
+              </a>
+
+            </div>
+
+          </div>
 
         </div>
 
-      </section>
+      </div>
 
-    </main>
+    </Reveal>
+
+  </div>
+
+</section>
+
+</main>
   );
 }
