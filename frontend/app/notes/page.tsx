@@ -50,7 +50,24 @@ export default function NotesPage() {
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
   const [searchMessage, setSearchMessage] = useState("");
+  
+  // Hero banner carousel
+const [activeHeroBanner, setActiveHeroBanner] = useState(0);
 
+const heroBanners = [
+  {
+    src: "/mathematics-notes-banner.png",
+    alt: "Mathematics chapter-wise study notes",
+  },
+  {
+    src: "/physics-notes-banner.png",
+    alt: "Physics chapter-wise study notes",
+  },
+  {
+    src: "/biology-notes-banner.png",
+    alt: "Biology chapter-wise study notes",
+  },
+];
   
 
   const streamSectionRef =
@@ -65,31 +82,49 @@ export default function NotesPage() {
   const pdfSectionRef =
     useRef<HTMLElement | null>(null);  
 
-      const scrollToSection = (
-    ref: React.RefObject<HTMLElement | null>
-  ) => {
-    setTimeout(() => {
-      ref.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }, 100);
-  };
-
-  useEffect(() => {
-  if (!selectedChapter) {
-    return;
-  }
-
-  const timer = setTimeout(() => {
-    pdfSectionRef.current?.scrollIntoView({
+     const scrollToSection = (
+  ref: React.RefObject<HTMLElement | null>
+) => {
+  setTimeout(() => {
+    ref.current?.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
-  }, 150);
+  }, 100);
+};
 
-  return () => clearTimeout(timer);
-}, [selectedChapter]);
+
+
+
+
+  
+  // Automatically scroll to the PDF section when a chapter is selected
+  useEffect(() => {
+    if (!selectedChapter) {
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      pdfSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [selectedChapter]);
+
+  // Automatically rotate the hero banners
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveHeroBanner(
+        (current) => (current + 1) % heroBanners.length
+      );
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, []);
+
 
 
 
@@ -242,136 +277,240 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
       <Navbar />
 
      
-      {/* Hero - New Navy and Cyan Design */}
-      <section className="relative isolate overflow-hidden border-b border-slate-800 bg-[#071426] text-white">
-        {/* Background effects */}
-        <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-cyan-500/15 blur-[100px]" />
-        <div className="pointer-events-none absolute -bottom-40 right-0 h-96 w-96 rounded-full bg-blue-600/20 blur-[100px]" />
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:48px_48px] opacity-40" />
+{/* Final Notes Hero */}
+<section className="relative isolate overflow-hidden border-b border-slate-800 bg-[#041B33] text-white">
+  {/* Background glow and grid */}
+  <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-cyan-500/10 blur-[100px]" />
+  <div className="pointer-events-none absolute -bottom-40 right-0 h-96 w-96 rounded-full bg-blue-500/15 blur-[100px]" />
+  <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:48px_48px]" />
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
-          {/* Left: Heading and search */}
-          <div className="animate-[fadeInUp_0.7s_ease-out_both]">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-cyan-200">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-cyan-300" />
-              LEARN · PREPARE · GROW
-            </div>
+  <div className="relative mx-auto max-w-7xl px-6 pb-12 pt-8 sm:pb-16 sm:pt-10 lg:px-8 lg:pb-16">
+    {/* Breadcrumb */}
+    <nav aria-label="Breadcrumb" className="mb-7 flex items-center gap-2 text-sm">
+      <a
+        href="/"
+        className="font-medium text-cyan-400 transition hover:text-cyan-200"
+      >
+        Home
+      </a>
+      <span className="text-slate-500">›</span>
+      <span className="font-medium text-white">Notes</span>
+    </nav>
 
-            <h1 className="max-w-2xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-              Your learning journey,
-              <span className="mt-2 block bg-gradient-to-r from-cyan-300 via-blue-300 to-white bg-clip-text text-transparent">
-                one chapter at a time.
-              </span>
-            </h1>
+    <div className="grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12">
+      {/* Left side */}
+      <div className="min-w-0">
+        {/* Exam badge */}
+        <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-cyan-300/25 px-5 py-3 text-sm font-semibold tracking-wide text-cyan-300">
+          <span className="h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.8)]" />
+          RBSE BOARD EXAM PREP 2027
+        </div>
 
-            <p className="mt-6 max-w-xl text-base leading-7 text-slate-300 sm:text-lg">
-              Explore free, chapter-wise notes for Classes 10, 11 and 12.
-              Understand concepts, prepare for exams, and revise with confidence.
+        {/* Main heading */}
+        <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+          Chapter-wise
+          <span className="mt-2 block text-cyan-400">
+            Study Notes.
+          </span>
+        </h1>
+
+        <p className="mt-6 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">
+          Clear, chapter-wise notes for Classes 10, 11 and 12 — organised
+          to make revision faster and exam preparation simpler.
+        </p>
+
+        {/* Statistics */}
+        <div className="mt-8 flex flex-wrap items-center">
+          <div className="pr-6 sm:pr-8">
+            <p className="text-3xl font-bold text-cyan-400 sm:text-4xl">
+              200+
             </p>
-
-            {/* Search form: reuses your existing search functionality */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSearch();
-              }}
-              className="mt-8 flex max-w-2xl items-center gap-2 rounded-2xl border border-white/15 bg-white/[0.07] p-2 shadow-2xl shadow-cyan-950/30 backdrop-blur-xl transition focus-within:border-cyan-300/60 focus-within:ring-4 focus-within:ring-cyan-300/10"
-            >
-              <span className="pl-2 text-xl text-cyan-300">⌕</span>
-
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search class, subject or chapter..."
-                aria-label="Search for class, subject or chapter"
-                className="min-w-0 flex-1 bg-transparent px-2 py-3 text-sm text-white outline-none placeholder:text-slate-400"
-              />
-
-              <button
-                type="submit"
-                className="rounded-xl bg-cyan-300 px-5 py-3 text-sm font-bold text-[#071426] transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-200 hover:shadow-lg hover:shadow-cyan-300/20"
-              >
-                Search
-              </button>
-            </form>
-
-            {searchMessage && (
-              <p
-                aria-live="polite"
-                className="mt-3 text-sm font-medium text-cyan-200"
-              >
-                {searchMessage}
-              </p>
-            )}
-
-            {/* Class information */}
-            <div className="mt-7 flex flex-wrap items-center gap-3 text-sm text-slate-300">
-              <span className="font-medium text-slate-400">Available for</span>
-              {["Class 10", "Class 11", "Class 12"].map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 transition duration-300 hover:border-cyan-300/40 hover:bg-cyan-300/10"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
+            <p className="mt-1 text-xs tracking-wide text-slate-300 sm:text-sm">
+              CHAPTERS
+            </p>
           </div>
 
-          {/* Right: Three subject cards */}
-          <div className="relative mx-auto w-full max-w-xl">
-            <div className="pointer-events-none absolute inset-8 rounded-full bg-cyan-400/10 blur-3xl" />
+          <div className="border-l border-cyan-200/20 px-6 sm:px-8">
+            <p className="text-3xl font-bold text-cyan-400 sm:text-4xl">
+              Free
+            </p>
+            <p className="mt-1 text-xs tracking-wide text-slate-300 sm:text-sm">
+              ACCESS
+            </p>
+          </div>
 
-            <div className="relative grid grid-cols-2 items-center gap-4 sm:gap-5">
-              {/* Mathematics */}
-              <div className="group animate-[fadeInUp_0.7s_0.1s_ease-out_both] overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] p-2 shadow-xl backdrop-blur-sm transition duration-500 hover:-translate-y-2 hover:border-cyan-300/50 hover:shadow-cyan-500/10">
-                <div className="overflow-hidden rounded-xl">
-                  <img
-                    src="/mathematics-thumbnail.png"
-                    alt="Mathematics study notes"
-                    className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <div className="px-2 pb-2 pt-3">
-                  <p className="font-semibold text-white">Mathematics</p>
-                  <p className="mt-1 text-xs text-slate-400">Practice & solve</p>
-                </div>
-              </div>
-
-              {/* Physics */}
-              <div className="group animate-[fadeInUp_0.7s_0.2s_ease-out_both] mt-10 overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] p-2 shadow-xl backdrop-blur-sm transition duration-500 hover:-translate-y-2 hover:border-cyan-300/50 hover:shadow-cyan-500/10 sm:mt-14">
-                <div className="overflow-hidden rounded-xl">
-                  <img
-                    src="/physics-thumbnail.png"
-                    alt="Physics study notes"
-                    className="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <div className="px-2 pb-2 pt-3">
-                  <p className="font-semibold text-white">Physics</p>
-                  <p className="mt-1 text-xs text-slate-400">Explore concepts</p>
-                </div>
-              </div>
-
-              {/* Biology */}
-              <div className="group col-span-2 mx-auto w-[58%] -mt-1 animate-[fadeInUp_0.7s_0.3s_ease-out_both] overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] p-2 shadow-xl backdrop-blur-sm transition duration-500 hover:-translate-y-2 hover:border-cyan-300/50 hover:shadow-cyan-500/10 sm:w-[52%]">
-                <div className="overflow-hidden rounded-xl">
-                  <img
-                    src="/biology-thumbnail.png"
-                    alt="Biology study notes"
-                    className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <div className="px-2 pb-2 pt-3">
-                  <p className="font-semibold text-white">Biology</p>
-                  <p className="mt-1 text-xs text-slate-400">Discover life sciences</p>
-                </div>
-              </div>
-            </div>
+          <div className="border-l border-cyan-200/20 pl-6 sm:pl-8">
+            <p className="text-3xl font-bold text-cyan-400 sm:text-4xl">
+              3
+            </p>
+            <p className="mt-1 text-xs tracking-wide text-slate-300 sm:text-sm">
+              CLASSES
+            </p>
           </div>
         </div>
-      </section>
+
+        {/* Class buttons */}
+        <div className="mt-8 flex flex-wrap gap-3">
+          {(["10", "11", "12"] as ClassName[]).map((className) => {
+            const isActive = selectedClass === className;
+
+            return (
+              <button
+                key={className}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => {
+                  setSearchQuery("");
+                  setSearchMessage("");
+                  setSelectedClass(className);
+                  setSelectedSubject(null);
+                  setSelectedChapter(null);
+
+                  if (className === "10") {
+                    scrollToSection(subjectSectionRef);
+                  } else {
+                    scrollToSection(streamSectionRef);
+                  }
+                }}
+                className={`rounded-full border px-6 py-3 text-sm font-semibold transition duration-300 hover:-translate-y-0.5 ${
+                  isActive
+                    ? "border-cyan-400 bg-cyan-400 text-[#041B33] shadow-lg shadow-cyan-400/20"
+                    : "border-slate-600 bg-white/5 text-white hover:border-cyan-400/60 hover:bg-cyan-400/10"
+                }`}
+              >
+                Class {className}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Search: uses your existing handleSearch */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSearch();
+          }}
+          className="mt-8 flex w-full max-w-2xl items-center gap-2 rounded-full border border-slate-600 bg-white/[0.06] p-2 transition focus-within:border-cyan-400/70 focus-within:ring-4 focus-within:ring-cyan-400/10"
+        >
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search for class, subject or chapter..."
+            aria-label="Search for class, subject or chapter"
+            className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-white outline-none placeholder:text-slate-400 sm:px-4 sm:text-base"
+          />
+
+          <button
+            type="submit"
+            className="shrink-0 rounded-full bg-cyan-400 px-5 py-3 text-sm font-bold text-[#041B33] transition hover:bg-cyan-300 sm:px-8"
+          >
+            Search
+          </button>
+        </form>
+
+        {searchMessage && (
+          <p aria-live="polite" className="mt-3 text-sm text-cyan-200">
+            {searchMessage}
+          </p>
+        )}
+      </div>
+
+      {/* Right side: rotating subject posters */}
+      <div className="relative mx-auto w-full max-w-2xl lg:pl-2">
+        <div className="pointer-events-none absolute inset-8 rounded-full bg-blue-500/15 blur-3xl" />
+
+        <div className="relative overflow-hidden rounded-[28px] border border-cyan-400/20 bg-[#0B2946] p-1.5 shadow-2xl shadow-cyan-950/30">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-[23px] bg-gradient-to-br from-indigo-600 to-blue-700">
+            
+              
+<div className="relative h-full w-full overflow-hidden rounded-[28px] bg-slate-950">
+  {heroBanners.map((banner, index) => (
+    <div
+      key={banner.src}
+      className={`absolute inset-0 transition-opacity duration-700 ${
+        activeHeroBanner === index
+          ? "opacity-100"
+          : "pointer-events-none opacity-0"
+      }`}
+    >
+      {/* Blurred background fills the empty sides */}
+      <img
+        src={banner.src}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full scale-110 object-cover opacity-40 blur-2xl"
+      />
+
+      {/* Slight dark overlay for a premium look */}
+      <div className="absolute inset-0 bg-slate-950/20" />
+
+      {/* Complete poster: no cropping */}
+      <img
+        src={banner.src}
+        alt={banner.alt}
+        className="absolute inset-0 h-full w-full object-contain"
+      />
+    </div>
+  ))}
+</div>
+
+            
+
+            {/* Previous banner */}
+            <button
+              type="button"
+              aria-label="Previous banner"
+              onClick={() =>
+                setActiveHeroBanner(
+                  (current) =>
+                    (current - 1 + heroBanners.length) % heroBanners.length
+                )
+              }
+              className="absolute left-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur transition hover:bg-black/65"
+            >
+              ‹
+            </button>
+
+            {/* Next banner */}
+            <button
+              type="button"
+              aria-label="Next banner"
+              onClick={() =>
+                setActiveHeroBanner(
+                  (current) => (current + 1) % heroBanners.length
+                )
+              }
+              className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur transition hover:bg-black/65"
+            >
+              ›
+            </button>
+          </div>
+
+          {/* Carousel indicators */}
+          <div className="flex items-center justify-center gap-2 py-3">
+            {heroBanners.map((banner, index) => (
+              <button
+                key={banner.src}
+                type="button"
+                aria-label={`Show banner ${index + 1}`}
+                aria-pressed={activeHeroBanner === index}
+                onClick={() => setActiveHeroBanner(index)}
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  activeHeroBanner === index
+                    ? "w-8 bg-cyan-400"
+                    : "w-2.5 bg-white/40 hover:bg-white/70"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+      
 
 
       {/* STEP 1 */}
