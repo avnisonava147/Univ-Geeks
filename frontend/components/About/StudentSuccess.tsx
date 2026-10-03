@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Reveal from "./Reveal";
 
+
 const students = [
   {
     name: "Shruti Ranawat",
@@ -11,73 +12,180 @@ const students = [
   },
   {
     name: "Nupur Rathore",
-    score: "95.00%",
+    score: "97.80%",
     image: "/students/2.png",
   },
   {
     name: "Jyoti Shekhawat",
-    score: "94.00%",
+    score: "97.40%",
     image: "/students/3.png",
   },
 ];
 
 export default function StudentSuccess() {
   return (
-    <section className="soft-grid-50 px-6 py-20 sm:py-24">
-      <div className="mx-auto max-w-7xl">
+    <section className="relative overflow-hidden bg-[#061A40] px-6 py-14 text-white sm:py-16">
 
-        {/* Section Heading */}
-        <Reveal>
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-bold uppercase tracking-widest text-blue-600">
-              Student Achievements
+      {/* Background Glows */}
+      <div className="pointer-events-none absolute -left-32 top-10 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-80 w-80 rounded-full bg-cyan-400/10 blur-3xl" />
+
+      {/* Decorative Rings */}
+      <div className="pointer-events-none absolute -right-24 top-8 h-64 w-64 rounded-full border border-white/10" />
+      <div className="pointer-events-none absolute -right-8 top-24 h-48 w-48 rounded-full border border-white/10" />
+      <div className="pointer-events-none absolute -left-20 bottom-8 h-48 w-48 rounded-full border border-blue-300/10" />
+
+      {/* Decorative Stars */}
+      <div className="pointer-events-none absolute left-[8%] top-[25%] text-2xl text-blue-200/40">
+        ✦
+      </div>
+
+      <div className="pointer-events-none absolute left-[14%] bottom-[20%] text-lg text-cyan-200/30">
+        ✧
+      </div>
+
+      <div className="pointer-events-none absolute right-[12%] top-[25%] text-3xl text-blue-200/40">
+        ✦
+      </div>
+
+      <div className="pointer-events-none absolute right-[8%] bottom-[18%] text-xl text-cyan-200/30">
+        ✧
+      </div>
+
+      <div className="relative mx-auto max-w-6xl">
+
+        {/* Heading */}
+        <div className="mx-auto max-w-2xl text-center">
+
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-300">
+            Student Achievements
+          </p>
+
+          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+            Celebrating our
+            <span className="text-blue-300"> students.</span>
+          </h2>
+
+          <p className="mt-3 text-sm leading-6 text-slate-300 sm:text-base">
+            Recognizing the effort, dedication and achievements
+            of students in their learning journey.
+          </p>
+
+        </div>
+
+        {/* Achievement Content */}
+        <div className="mt-9 grid items-center gap-8 lg:grid-cols-[0.8fr_1.5fr]">
+
+          {/* Left Information */}
+          <div className="text-center lg:text-left">
+
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-300">
+              Recent Highlights
             </p>
 
-            <h2 className="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-              Celebrating Our Students
-            </h2>
+            <h3 className="mt-3 text-2xl font-bold sm:text-3xl">
+              Effort that deserves
+              <span className="text-blue-300"> recognition.</span>
+            </h3>
 
-            <p className="mt-5 text-lg leading-8 text-slate-600">
-              Every achievement represents dedication, consistency,
-              and the effort students put into their learning journey.
+            <p className="mt-4 max-w-md text-sm leading-6 text-slate-300">
+              Every result represents consistent preparation,
+              practice and the determination to keep learning.
             </p>
+
+            {/* Stats */}
+            <div className="mt-7 flex justify-center gap-6 lg:justify-start">
+
+              <div>
+                <p className="text-2xl font-bold text-blue-300">
+                  {students.length}
+                </p>
+
+                <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">
+                  Featured Students
+                </p>
+              </div>
+
+              <div className="border-l border-white/15 pl-6">
+                <p className="text-2xl font-bold text-blue-300">
+                  {students[0].score}
+                </p>
+
+                <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">
+                  Top Result
+                </p>
+              </div>
+
+              <div className="border-l border-white/15 pl-6">
+                <p className="text-2xl font-bold text-blue-300">
+                  2026
+                </p>
+
+                <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">
+                  Results
+                </p>
+              </div>
+
+            </div>
+
           </div>
-        </Reveal>
 
-        {/* Achievement Posters */}
-        <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {students.map((student, index) => (
-            <Reveal key={student.name} delay={index * 100}>
-              <div className="group overflow-hidden rounded-3xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+          {/* Student Cards */}
+          <div className="grid gap-4 sm:grid-cols-3">
 
-                {/* Poster Image */}
-                <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-slate-100">
+            {students.map((student) => (
+
+              <div
+                key={student.name}
+                className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg backdrop-blur-sm transition duration-300 hover:-translate-y-2 hover:border-blue-300/30 hover:bg-white/10"
+              >
+
+                <div className="overflow-hidden bg-white/5">
                   <Image
                     src={student.image}
-                    alt={`${student.name} achievement poster`}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-contain transition duration-500 group-hover:scale-105"
+                    alt={`${student.name} achievement`}
+                    width={500}
+                    height={500}
+                    className="h-auto w-full object-contain transition duration-500 group-hover:scale-[1.03]"
                   />
                 </div>
 
-                {/* Student Details */}
-                <div className="px-3 pb-3 pt-5 text-center">
-                  <h3 className="text-xl font-bold text-slate-900">
+                <div className="px-4 py-3 text-center">
+
+                  <h3 className="text-sm font-bold text-white">
                     {student.name}
                   </h3>
 
-                  <p className="mt-2 text-sm font-semibold text-blue-600">
-                    
+                  <p className="mt-1 text-sm font-semibold text-blue-300">
+                    {student.score}
                   </p>
+
                 </div>
 
               </div>
-            </Reveal>
-          ))}
+
+            ))}
+
+          </div>
+
+        </div>
+
+        {/* CTA */}
+        <div className="mt-9 text-center">
+
+          <a
+            href="/achievements"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:border-blue-300/40 hover:bg-white/10"
+          >
+            View All Achievements
+            <span>→</span>
+          </a>
+
         </div>
 
       </div>
+
     </section>
   );
 }
+
