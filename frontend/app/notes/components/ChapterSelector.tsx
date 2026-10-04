@@ -27,9 +27,7 @@ export default function ChapterSelector({
 
           <div>
             <h2 className="flex items-baseline gap-3 text-3xl font-semibold tracking-tight text-[#16213E]">
-              <span className="font-serif italic text-[#2F5FDE]">
-                4.
-              </span>
+             
 
               Select your chapter
             </h2>
