@@ -305,7 +305,7 @@ export default async function SubjectPage({
                 </TOCItem>
 
                 <TOCItem>
-                  What's Inside
+                  What&apos;s Inside
                 </TOCItem>
 
                 <TOCItem>

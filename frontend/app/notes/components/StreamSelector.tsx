@@ -2,6 +2,7 @@
 
 import type { Stream } from "../data/notesData";
 import { streamInfo } from "../data/notesData";
+import { Atom, BarChart3, Palette } from "lucide-react";
 
 type StreamSelectorProps = {
   selectedStream: Stream;
@@ -34,9 +35,7 @@ export default function StreamSelector({
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="flex items-baseline gap-3 text-3xl font-semibold tracking-tight text-[#16213E]">
-              <span className="font-serif italic text-[#2F5FDE]">
-                2.
-              </span>
+              
 
               Select your stream
             </h2>
@@ -87,7 +86,13 @@ export default function StreamSelector({
                       color,
                     }}
                   >
-                    {info.icon}
+                    {stream === "Science" ? (
+  <Atom size={26} strokeWidth={2} />
+) : stream === "Commerce" ? (
+  <BarChart3 size={26} strokeWidth={2} />
+) : (
+  <Palette size={26} strokeWidth={2} />
+)}
                   </div>
 
                   {/* Arrow */}

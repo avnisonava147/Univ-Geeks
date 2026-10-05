@@ -1,6 +1,7 @@
 "use client";
 
 import type { ClassName } from "../data/notesData";
+import { BookOpen, GraduationCap, ScrollText } from "lucide-react";
 import { classInfo } from "../data/notesData";
 
 type ClassSelectorProps = {
@@ -32,10 +33,7 @@ export default function ClassSelector({
         <div className="mb-7 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="flex items-baseline gap-3 text-3xl font-semibold tracking-tight text-[#16213E]">
-              <span className="font-serif italic text-[#2F5FDE]">
-                1.
-              </span>
-
+             
               Choose your class
             </h2>
 
@@ -87,7 +85,14 @@ export default function ClassSelector({
                       color,
                     }}
                   >
-                    📖
+                      {className === "10" ? (
+    <BookOpen size={22} strokeWidth={2} />
+  ) : className === "11" ? (
+    <GraduationCap size={22} strokeWidth={2} />
+  ) : (
+    <ScrollText size={22} strokeWidth={2} />
+  )}
+  
                   </div>
 
                   {/* Arrow */}
