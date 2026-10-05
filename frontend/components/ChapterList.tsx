@@ -133,7 +133,7 @@ export default function ChapterList({
                 </h3>
 
                 <p className="mt-1 text-xs text-slate-500">
-                  Previous year papers from 2020 – 2025
+                  Previous year papers from 2013 – 2025
                 </p>
 
               </div>
@@ -141,7 +141,7 @@ export default function ChapterList({
 
               {/* YEARS */}
               <div className="rounded-lg bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">
-                6+ Years
+                13 Years
               </div>
 
 
