@@ -49,7 +49,7 @@ export default function PYQCard({
           
           <div>
             <p className="text-sm font-bold text-slate-900">
-              6+ Years of PYQs
+              {years.length} Years of PYQs
             </p>
 
             <p className="mt-1 text-xs text-slate-500">
