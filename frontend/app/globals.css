@@ -1019,12 +1019,6 @@ button {
 @keyframes subjectIconFloat {
   0%,
   100% {
-/* =================================================
-    ACHIEVEMENT HERO SECTION
-   ================================================= */
-
-@keyframes achievementFloat {
-  0%, 100% {
     transform: translateY(0);
   }
 
@@ -1036,6 +1030,7 @@ button {
 
 /* =========================================================
    FLOATING LABELS
+========================================================= */
 
 .subject-floating-label {
   position: absolute;
@@ -1207,6 +1202,17 @@ button {
     transition: none !important;
   }
 }
+
+/* =================================================
+    ACHIEVEMENT HERO SECTION
+   ================================================= */
+
+@keyframes achievementFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
     transform: translateY(-12px);
   }
 }
