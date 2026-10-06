@@ -908,6 +908,7 @@ button {
 
 /* =========================================================
    MAIN SUBJECT VISUAL
+   ========================================================= */
 
 .subject-visual-card {
   position: relative;
@@ -1019,12 +1020,6 @@ button {
 @keyframes subjectIconFloat {
   0%,
   100% {
-/* =================================================
-    ACHIEVEMENT HERO SECTION
-   ================================================= */
-
-@keyframes achievementFloat {
-  0%, 100% {
     transform: translateY(0);
   }
 
@@ -1033,9 +1028,9 @@ button {
   }
 }
 
-
 /* =========================================================
    FLOATING LABELS
+   ========================================================= */
 
 .subject-floating-label {
   position: absolute;
@@ -1115,6 +1110,7 @@ button {
 
 /* =========================================================
    DECORATIVE SYMBOLS
+   ========================================================= */
 
 .subject-decoration {
   position: absolute;
@@ -1170,6 +1166,7 @@ button {
 
 /* =========================================================
    MOBILE
+   ========================================================= */
 
 @media (max-width: 1023px) {
   .subject-pattern {
@@ -1308,5 +1305,3 @@ body {
 main {
   background: #ffffff !important;
 }
-
-
