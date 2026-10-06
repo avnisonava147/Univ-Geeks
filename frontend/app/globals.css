@@ -339,12 +339,3 @@ button {
     display: none;
   }
 }
-/*global white bg*/
-html,
-body{
-  background :#ffffff !important;
-}
-main{
-  background:#ffffff !important
-
-}

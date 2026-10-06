@@ -134,9 +134,7 @@ export default function SubjectSelector({
 
           <div>
             <h2 className="flex items-baseline gap-3 text-3xl font-semibold tracking-tight text-[#16213E]">
-              <span className="font-serif italic text-[#2F5FDE]">
-                3.
-              </span>
+             
 
               Select your subject
             </h2>
