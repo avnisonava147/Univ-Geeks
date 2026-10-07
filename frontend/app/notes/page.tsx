@@ -67,6 +67,10 @@ const heroBanners = [
     src: "/biology-notes-banner.png",
     alt: "Biology chapter-wise study notes",
   },
+  {
+    src: "/chemistry-notes-banner.png",
+    alt: "Chemistry chapter-wise study notes",
+  },
 ];
   
 
@@ -430,7 +434,7 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
         <div className="pointer-events-none absolute inset-8 rounded-full bg-blue-500/15 blur-3xl" />
 
         <div className="relative overflow-hidden rounded-[28px] border border-cyan-400/20 bg-[#0B2946] p-1.5 shadow-2xl shadow-cyan-950/30">
-          <div className="relative aspect-[16/10] overflow-hidden rounded-[23px] bg-gradient-to-br from-indigo-600 to-blue-700">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-[23px] bg-gradient-to-br from-indigo-600 to-blue-700">
             
               
 <div className="relative h-full w-full overflow-hidden rounded-[28px] bg-slate-950">
