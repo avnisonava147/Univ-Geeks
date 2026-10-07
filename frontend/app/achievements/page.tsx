@@ -1,8 +1,11 @@
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function AchievementsPage() {
   return (
     <main>
+      <Navbar />
       {/* ================= HERO SECTION ================= */}
       <section className="relative min-h-[75vh] overflow-hidden bg-[#061A40] text-white">
 
@@ -447,7 +450,7 @@ export default function AchievementsPage() {
 
 </section>
 
-
-</main>
+      <Footer />
+    </main>
   );
 }

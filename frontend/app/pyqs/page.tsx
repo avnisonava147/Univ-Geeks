@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import PYQCard from "../../components/PYQCard";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
 
 const pyqs = [
@@ -550,6 +551,7 @@ export default function PYQsPage() {
 
       </section>
 
+      <Footer />
     </main>
   );
 }

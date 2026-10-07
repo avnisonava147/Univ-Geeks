@@ -12,6 +12,7 @@ import {
   type Stream,
 } from "./data/notesData";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
  const bannerSlides = [
   {
@@ -733,9 +734,7 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
     </div>
   </section>
 )}
-
-      
-
+      <Footer />
     </main>
   );
 }

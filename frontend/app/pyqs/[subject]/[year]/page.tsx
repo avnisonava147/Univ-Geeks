@@ -1,6 +1,7 @@
 import Link from "next/link";
 import PaperActions from "../../../../components/PaperActions";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 type PageProps = {
   params: Promise<{
     subject: string;
@@ -292,6 +293,8 @@ export default async function YearPYQPage({
         </div>
 
       </div>
+
+      <Footer />
     </main>
   );
 }
