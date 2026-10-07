@@ -33,7 +33,7 @@ export default function Navbar({ variant = "auto" }: NavbarProps) {
     { name: "Home", href: "/" },
     { name: "Notes", href: "/notes" },
     { name: "PYQs", href: "/pyqs" },
-    { name: "About", href: "/about" },
+    { name: "Contact Us", href: "/contact" },
   ];
 
   const isActive = (href: string) => {
