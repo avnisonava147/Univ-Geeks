@@ -29,7 +29,7 @@ export default function Navbar() {
           />
 
           <div>
-            <div className="text-sm font-semibold tracking-[0.2em] text-cyan-300">
+            <div className="text-lg font-black leading-none">
               UNIV
             </div>
             <div className="text-lg font-black leading-none">
