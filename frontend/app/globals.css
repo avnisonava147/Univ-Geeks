@@ -340,6 +340,872 @@ button {
   }
 }
 
+/* =========================================================
+   UNIVGEEKS PYQ HERO - SUBJECT CARD STACK
+
+.hero-dots {
+  background-image: radial-gradient(
+    rgba(125, 211, 252, 0.35) 1.2px,
+    transparent 1.2px
+  );
+  background-size: 14px 14px;
+}
+
+/* Main desktop subject card */
+.subject-stack-card {
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  width: min(430px, 88%);
+
+  padding: 18px 20px;
+
+  border-radius: 24px;
+
+  color: #0f172a;
+
+  text-decoration: none;
+
+  border: 1px solid rgba(255, 255, 255, 0.45);
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.18),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+
+  backdrop-filter: blur(18px);
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    filter 0.35s ease;
+
+  overflow: hidden;
+
+  isolation: isolate;
+}
+
+/* Shine effect */
+.subject-stack-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.38),
+      transparent 42%,
+      rgba(255, 255, 255, 0.12)
+    );
+
+  pointer-events: none;
+
+  z-index: -1;
+}
+
+/* Soft background glow */
+.subject-stack-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 150px;
+  height: 150px;
+
+  right: -50px;
+  bottom: -70px;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.25);
+
+  filter: blur(5px);
+
+  pointer-events: none;
+
+  z-index: -1;
+}
+
+/* Card positions */
+
+.subject-card-biology {
+  transform:
+    translate(18px, -150px)
+    rotate(4deg);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(220, 252, 231, 0.98),
+      rgba(167, 243, 208, 0.94)
+    );
+
+  z-index: 4;
+}
+
+.subject-card-mathematics {
+  transform:
+    translate(-10px, -50px)
+    rotate(2deg);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(254, 249, 195, 0.98),
+      rgba(253, 230, 138, 0.94)
+    );
+
+  z-index: 3;
+}
+
+.subject-card-chemistry {
+  transform:
+    translate(12px, 50px)
+    rotate(-2deg);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(250, 232, 255, 0.98),
+      rgba(233, 213, 255, 0.94)
+    );
+
+  z-index: 2;
+}
+
+.subject-card-physics {
+  transform:
+    translate(-15px, 150px)
+    rotate(-4deg);
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(147, 197, 253, 0.98),
+      rgba(37, 99, 235, 0.95)
+    );
+
+  color: white;
+
+  z-index: 1;
+}
+
+/* Hover */
+
+.subject-card-biology:hover {
+  transform:
+    translate(5px, -165px)
+    rotate(0deg)
+    scale(1.035);
+
+  box-shadow:
+    0 28px 55px rgba(34, 197, 94, 0.18),
+    0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+.subject-card-mathematics:hover {
+  transform:
+    translate(-5px, -65px)
+    rotate(0deg)
+    scale(1.035);
+
+  box-shadow:
+    0 28px 55px rgba(234, 179, 8, 0.16),
+    0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+.subject-card-chemistry:hover {
+  transform:
+    translate(5px, 35px)
+    rotate(0deg)
+    scale(1.035);
+
+  box-shadow:
+    0 28px 55px rgba(168, 85, 247, 0.18),
+    0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+.subject-card-physics:hover {
+  transform:
+    translate(-5px, 135px)
+    rotate(0deg)
+    scale(1.035);
+
+  box-shadow:
+    0 28px 55px rgba(37, 99, 235, 0.35),
+    0 12px 25px rgba(0, 0, 0, 0.16);
+}
+
+/* Icon */
+
+.subject-card-icon {
+  display: flex;
+
+  width: 58px;
+  height: 58px;
+
+  flex-shrink: 0;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 17px;
+
+  background: rgba(255, 255, 255, 0.48);
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+
+  font-size: 30px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Card title */
+
+.subject-stack-card h3 {
+  margin: 0;
+
+  font-size: 21px;
+
+  line-height: 1.2;
+
+  font-weight: 800;
+
+  letter-spacing: -0.02em;
+}
+
+/* Card subtitle */
+
+.subject-stack-card p {
+  margin: 5px 0 0;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  opacity: 0.7;
+}
+
+/* Arrow */
+
+.subject-card-arrow {
+  display: flex;
+
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-left: auto;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.72);
+
+  color: #0f172a;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  box-shadow:
+    0 6px 15px rgba(0, 0, 0, 0.1);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease;
+}
+
+.subject-stack-card:hover .subject-card-arrow {
+  transform: translateX(4px);
+
+  background: white;
+}
+
+/* Physics arrow on dark card */
+.subject-card-physics .subject-card-arrow {
+  color: #1d4ed8;
+}
+
+
+/* =========================================================
+   MOBILE SUBJECT CARDS
+
+.mobile-subject-card {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 15px 16px;
+
+  border-radius: 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  background: rgba(255, 255, 255, 0.09);
+
+  color: white;
+
+  text-decoration: none;
+
+  backdrop-filter: blur(12px);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.mobile-subject-card:hover {
+  transform: translateX(4px);
+
+  background: rgba(255, 255, 255, 0.14);
+
+  border-color: rgba(125, 211, 252, 0.35);
+}
+
+.mobile-subject-card h3 {
+  margin: 0;
+
+  font-size: 16px;
+
+  font-weight: 800;
+}
+
+.mobile-subject-card p {
+  margin: 3px 0 0;
+
+  font-size: 12px;
+
+  color: rgba(191, 219, 254, 0.85);
+}
+
+.mobile-subject-card > span:last-child {
+  margin-left: auto;
+
+  font-size: 20px;
+
+  color: #bae6fd;
+
+  transition: transform 0.2s ease;
+}
+
+.mobile-subject-card:hover > span:last-child {
+  transform: translateX(4px);
+}
+
+
+/* =========================================================
+   SMALL FLOATING DECORATION
+
+.floating-spark {
+  animation: floatingSpark 3s ease-in-out infinite;
+}
+
+@keyframes floatingSpark {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: translateY(-8px);
+    opacity: 1;
+  }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+
+@media (prefers-reduced-motion: reduce) {
+  .subject-stack-card,
+  .mobile-subject-card,
+  .floating-spark {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   UNIVGEEKS SUBJECT HERO
+
+.subject-pattern {
+  position: absolute;
+  inset: 0;
+
+  pointer-events: none;
+
+  opacity: 0.22;
+}
+
+/* Physics - orbit pattern */
+.subject-pattern-physics {
+  background-image:
+    radial-gradient(
+      circle at 78% 42%,
+      transparent 0 90px,
+      rgba(125, 211, 252, 0.12) 91px 92px,
+      transparent 93px
+    ),
+    radial-gradient(
+      circle at 78% 42%,
+      transparent 0 135px,
+      rgba(125, 211, 252, 0.08) 136px 137px,
+      transparent 138px
+    );
+}
+
+/* Chemistry - molecule pattern */
+.subject-pattern-chemistry {
+  background-image:
+    radial-gradient(
+      circle at 78% 40%,
+      rgba(110, 231, 183, 0.12) 0 8px,
+      transparent 9px
+    ),
+    radial-gradient(
+      circle at 70% 52%,
+      rgba(110, 231, 183, 0.1) 0 5px,
+      transparent 6px
+    ),
+    radial-gradient(
+      circle at 86% 57%,
+      rgba(110, 231, 183, 0.1) 0 6px,
+      transparent 7px
+    );
+  background-size: 180px 180px;
+}
+
+/* Mathematics - grid */
+.subject-pattern-mathematics {
+  background-image:
+    linear-gradient(
+      rgba(216, 180, 254, 0.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(216, 180, 254, 0.08) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px;
+  mask-image: linear-gradient(
+    to left,
+    black,
+    transparent 75%
+  );
+}
+
+/* Biology - soft organic pattern */
+.subject-pattern-biology {
+  background-image:
+    radial-gradient(
+      ellipse at 75% 40%,
+      rgba(190, 242, 100, 0.12) 0,
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 88% 65%,
+      rgba(74, 222, 128, 0.1) 0,
+      transparent 35%
+    );
+}
+
+
+/* =========================================================
+   SUBJECT STATS
+
+.subject-stat {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 145px;
+
+  padding: 11px 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.13);
+
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(12px);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.subject-stat:hover {
+  transform: translateY(-2px);
+
+  background: rgba(255, 255, 255, 0.12);
+
+  border-color: rgba(125, 211, 252, 0.25);
+}
+
+.subject-stat-icon {
+  display: flex;
+
+  width: 36px;
+  height: 36px;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 10px;
+
+  background: rgba(255, 255, 255, 0.1);
+
+  font-size: 17px;
+}
+
+.subject-stat-label {
+  display: block;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.08em;
+
+  color: rgba(191, 219, 254, 0.7);
+}
+
+.subject-stat-value {
+  display: block;
+
+  margin-top: 2px;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  color: white;
+}
+
+
+/* =========================================================
+   MAIN SUBJECT VISUAL
+   ========================================================= */
+
+.subject-visual-card {
+  position: relative;
+
+  display: flex;
+
+  min-height: 300px;
+
+  width: 300px;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  border-radius: 36px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.14),
+      rgba(255, 255, 255, 0.05)
+    );
+
+  box-shadow:
+    0 35px 80px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+
+  backdrop-filter: blur(22px);
+
+  transform: rotate(3deg);
+
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.subject-visual-card:hover {
+  transform: rotate(0deg) translateY(-5px);
+
+  box-shadow:
+    0 45px 90px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+
+/* Shine */
+
+.subject-visual-shine {
+  position: absolute;
+
+  width: 260px;
+  height: 120px;
+
+  top: -70px;
+  right: -60px;
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.14);
+
+  filter: blur(15px);
+
+  transform: rotate(-25deg);
+
+  pointer-events: none;
+}
+
+
+/* Big subject icon */
+
+.subject-visual-icon {
+  display: flex;
+
+  width: 120px;
+  height: 120px;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  border-radius: 34px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.17),
+      rgba(255, 255, 255, 0.05)
+    );
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  font-size: 62px;
+
+  text-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.22);
+
+  animation: subjectIconFloat 4s ease-in-out infinite;
+}
+
+@keyframes subjectIconFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* =========================================================
+   FLOATING LABELS
+   ========================================================= */
+
+.subject-floating-label {
+  position: absolute;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 9px 13px;
+
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.09);
+
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.14);
+
+  backdrop-filter: blur(14px);
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.subject-floating-label span:first-child {
+  color: #bae6fd;
+}
+
+.subject-floating-label-top {
+  top: 35px;
+
+  right: 5px;
+
+  transform: rotate(5deg);
+
+  animation: labelFloatTop 4s ease-in-out infinite;
+}
+
+.subject-floating-label-bottom {
+  bottom: 35px;
+
+  left: 0;
+
+  transform: rotate(-4deg);
+
+  animation: labelFloatBottom 4s ease-in-out infinite;
+}
+
+@keyframes labelFloatTop {
+  0%,
+  100% {
+    transform: translateY(0) rotate(5deg);
+  }
+
+  50% {
+    transform: translateY(-7px) rotate(5deg);
+  }
+}
+
+@keyframes labelFloatBottom {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-4deg);
+  }
+
+  50% {
+    transform: translateY(7px) rotate(-4deg);
+  }
+}
+
+
+/* =========================================================
+   DECORATIVE SYMBOLS
+   ========================================================= */
+
+.subject-decoration {
+  position: absolute;
+
+  color: rgba(186, 230, 253, 0.65);
+
+  font-weight: 300;
+
+  pointer-events: none;
+}
+
+.subject-decoration-one {
+  left: 50px;
+
+  top: 95px;
+
+  font-size: 28px;
+
+  animation: decorationFloat 3.5s ease-in-out infinite;
+}
+
+.subject-decoration-two {
+  right: 35px;
+
+  bottom: 100px;
+
+  font-size: 22px;
+
+  animation: decorationFloat 4.5s ease-in-out infinite reverse;
+}
+
+.subject-decoration-three {
+  left: 25px;
+
+  bottom: 150px;
+
+  font-size: 30px;
+
+  opacity: 0.5;
+}
+
+@keyframes decorationFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 1023px) {
+  .subject-pattern {
+    opacity: 0.12;
+  }
+
+  .subject-stat {
+    min-width: 135px;
+  }
+}
+
+@media (max-width: 640px) {
+  .subject-stat {
+    width: 100%;
+  }
+
+  .subject-stat-value {
+    font-size: 11px;
+  }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .subject-visual-icon,
+  .subject-floating-label,
+  .subject-decoration {
+    animation: none !important;
+  }
+
+  .subject-visual-card,
+  .subject-stat {
+    transition: none !important;
+  }
+}
+
 /* =================================================
     ACHIEVEMENT HERO SECTION
    ================================================= */
@@ -429,3 +1295,13 @@ button {
 .achievement-pop:nth-child(16) { animation-delay: 1.6s; }
 .achievement-pop:nth-child(17) { animation-delay: 1.7s; }
 .achievement-pop:nth-child(18) { animation-delay: 1.8s; }
+
+/* global white bg */
+html,
+body {
+  background: #ffffff !important;
+}
+
+main {
+  background: #ffffff !important;
+}

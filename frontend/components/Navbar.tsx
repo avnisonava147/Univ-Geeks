@@ -40,196 +40,177 @@ export default function Navbar({ variant = "auto" }: NavbarProps) {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
   };
+import { Menu, X, Bell } from "lucide-react";
+import { useState } from "react";
+
+const navItems = [
+  { label: "Home", href: "/" },
+  { label: "Notes", href: "/notes" },
+  { label: "PYQs", href: "/pyqs" },
+  { label: "About", href: "/about" },
+  { label: "Admin", href: "/admin" },
+];
+
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isDarkVariant
-          ? scrolled
-            ? "border-b border-white/10 bg-slate-950/80 shadow-[0_8px_32px_rgba(0,0,0,0.36)] backdrop-blur-xl"
-            : "border-b border-white/10 bg-slate-950/40 backdrop-blur-md"
-          : scrolled
-          ? "border-b border-slate-200/70 bg-white/80 shadow-[0_8px_32px_rgba(15,23,42,0.06)] backdrop-blur-xl"
-          : "border-b border-slate-200/50 bg-white/60 backdrop-blur-md"
-      }`}
-    >
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-5 sm:px-8">
-        {/* Brand / Logo */}
-        <Link
-          href="/"
-          className="group flex items-center gap-3 transition-transform duration-200 hover:scale-[1.02]"
-        >
-          <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-white/30 bg-white shadow-sm transition-shadow duration-300 group-hover:shadow-md">
-            <img
-              src="/logo_UnivGeeks.png"
-              alt="UnivGeeks Logo"
-              className="h-full w-full object-contain p-0.5"
-            />
-          </div>
+    <header className="sticky top-0 z-50 border-b border-slate-800/70 bg-slate-950/80 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
 
-          <div className="flex flex-col">
-            <span
-              className={`text-xl font-extrabold tracking-tight transition-colors ${
-                isDarkVariant
-                  ? "bg-gradient-to-r from-white via-slate-100 to-cyan-300 bg-clip-text text-transparent"
-                  : "text-slate-900"
-              }`}
-            >
-              UnivGeeks
-            </span>
-            <span
-              className={`text-[10px] font-semibold tracking-wider uppercase ${
-                isDarkVariant ? "text-cyan-300/80" : "text-blue-600"
-              }`}
-            >
-              Learn • Prepare • Grow
-            </span>
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3 text-white">
+          <img
+            src="/logo.png"
+            alt="Logo"
+            className="h-10 w-10 rounded-xl"
+          />
+
+          <div>
+            <div className="text-lg font-black leading-none">
+              UNIV
+            </div>
+            <div className="text-lg font-black leading-none">
+              GEEKS
+            </div>
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden items-center gap-1.5 rounded-full border border-slate-200/40 bg-white/40 p-1.5 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)] backdrop-blur-md md:flex dark:border-white/10 dark:bg-white/5">
-          {navLinks.map((link) => {
-            const active = isActive(link.href);
-            return (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`relative rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${
-                  active
-                    ? isDarkVariant
-                      ? "bg-blue-600/90 text-white shadow-sm"
-                      : "bg-blue-600 text-white shadow-sm"
-                    : isDarkVariant
-                    ? "text-slate-200 hover:bg-white/10 hover:text-white"
-                    : "text-slate-600 hover:bg-slate-100/70 hover:text-blue-600"
-                }`}
-              >
-                {link.name}
-              </Link>
-            );
-          })}
+        {/* Navigation */}
+        <nav className="hidden items-center gap-6 md:flex">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-sm font-medium text-slate-300 transition hover:text-cyan-300"
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
 
-        {/* Right Action Buttons */}
-        <div className="hidden items-center gap-3 sm:flex">
-          <Link
-            href="/admin/login"
-            className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-200 ${
-              isDarkVariant
-                ? "border border-white/20 bg-white/5 text-slate-200 backdrop-blur-sm hover:border-cyan-400 hover:bg-white/10 hover:text-white"
-                : "border border-slate-200 bg-white/70 text-slate-700 backdrop-blur-sm hover:border-blue-300 hover:bg-white hover:text-blue-600"
-            }`}
-          >
-            Login
-          </Link>
+        {/* Right Side */}
+        <div className="hidden items-center gap-3 md:flex">
 
+          {/* Notification */}
+          <div className="relative">
+            <button
+              type="button"
+              aria-label="Notifications"
+              onClick={() =>
+                setNotificationOpen((prev) => !prev)
+              }
+              className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-200 transition hover:bg-slate-800 hover:text-cyan-300"
+            >
+              <Bell size={20} />
+
+              {/* Notification Count */}
+              <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white">
+                3
+              </span>
+            </button>
+
+            {/* Notification Dropdown */}
+            {notificationOpen && (
+              <div className="absolute right-0 top-12 z-50 w-80 rounded-xl border border-slate-700 bg-slate-900 p-4 shadow-2xl">
+
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="font-semibold text-white">
+                    Notifications
+                  </h3>
+
+                  <span className="text-xs text-cyan-300">
+                    3 New
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+
+                  {/* Notification 1 */}
+                  <div className="rounded-lg p-3 transition hover:bg-slate-800">
+                    <p className="text-sm font-semibold text-white">
+                      📚 New Notes Added
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-400">
+                      New study notes are available.
+                    </p>
+                  </div>
+
+                  {/* Notification 2 */}
+                  <div className="rounded-lg p-3 transition hover:bg-slate-800">
+                    <p className="text-sm font-semibold text-white">
+                      📝 New PYQs Added
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-400">
+                      Previous year questions have been updated.
+                    </p>
+                  </div>
+
+                  {/* Notification 3 */}
+                  <div className="rounded-lg p-3 transition hover:bg-slate-800">
+                    <p className="text-sm font-semibold text-white">
+                      🎓 Exam Update
+                    </p>
+
+                    <p className="mt-1 text-xs text-slate-400">
+                      Check the latest board exam updates.
+                    </p>
+                  </div>
+
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Explore Notes */}
           <Link
             href="/notes"
-            className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/30 hover:brightness-110 active:scale-95"
+            className="rounded-full border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-500/20"
           >
-            <span>Get Started</span>
-            <span className="transition-transform duration-200 group-hover:translate-x-0.5">
-              →
-            </span>
+            Explore Notes
           </Link>
         </div>
 
-        {/* Mobile Hamburger Button */}
+        {/* Mobile Menu Button */}
         <button
           type="button"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle navigation menu"
-          className={`flex h-11 w-11 items-center justify-center rounded-xl border p-2 transition-colors md:hidden ${
-            isDarkVariant
-              ? "border-white/15 bg-white/10 text-white hover:bg-white/20"
-              : "border-slate-200 bg-white/80 text-slate-700 hover:bg-slate-100"
-          }`}
+          aria-label="Toggle menu"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-slate-900/60 text-slate-200 md:hidden"
+          onClick={() => setIsOpen((prev) => !prev)}
         >
-          {mobileMenuOpen ? (
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          ) : (
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          )}
+          {isOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
       </div>
 
-      {/* Mobile Drawer Menu with Glassy Backdrop */}
-      {mobileMenuOpen && (
-        <div
-          className={`border-b px-6 py-6 md:hidden ${
-            isDarkVariant
-              ? "border-white/10 bg-slate-950/95 shadow-2xl backdrop-blur-2xl text-white"
-              : "border-slate-200 bg-white/95 shadow-xl backdrop-blur-2xl text-slate-800"
-          }`}
-        >
-          <div className="flex flex-col gap-2">
-            {navLinks.map((link) => {
-              const active = isActive(link.href);
-              return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`rounded-xl px-4 py-3 text-base font-semibold transition ${
-                    active
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : isDarkVariant
-                      ? "text-slate-200 hover:bg-white/10"
-                      : "text-slate-700 hover:bg-slate-100 hover:text-blue-600"
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              );
-            })}
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <nav className="border-t border-slate-800 bg-slate-950/95 md:hidden">
+          <div className="mx-auto flex max-w-7xl flex-col px-4 py-3">
 
-            <div className="mt-4 flex flex-col gap-3 pt-4 border-t border-slate-200/50 dark:border-white/10">
+            {navItems.map((item) => (
               <Link
-                href="/admin/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`rounded-xl border py-3 text-center text-sm font-semibold ${
-                  isDarkVariant
-                    ? "border-white/20 bg-white/5 text-white"
-                    : "border-slate-200 bg-slate-50 text-slate-700"
-                }`}
+                key={item.href}
+                href={item.href}
+                className="rounded-xl px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800 hover:text-cyan-300"
+                onClick={() => setIsOpen(false)}
               >
-                Login
+                {item.label}
               </Link>
-              <Link
-                href="/notes"
-                onClick={() => setMobileMenuOpen(false)}
-                className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 py-3 text-center text-sm font-semibold text-white shadow-md shadow-blue-500/20"
-              >
-                Get Started
-              </Link>
-            </div>
+            ))}
+
+            <Link
+              href="/notes"
+              className="mt-2 rounded-xl bg-cyan-500/20 px-3 py-2 text-sm font-semibold text-cyan-300"
+              onClick={() => setIsOpen(false)}
+            >
+              Explore Notes
+            </Link>
+
           </div>
-        </div>
+        </nav>
       )}
     </header>
   );

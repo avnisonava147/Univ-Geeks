@@ -67,6 +67,10 @@ const heroBanners = [
     src: "/biology-notes-banner.png",
     alt: "Biology chapter-wise study notes",
   },
+  {
+    src: "/chemistry-notes-banner.png",
+    alt: "Chemistry chapter-wise study notes",
+  },
 ];
   
 
@@ -286,25 +290,34 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
 
   <div className="relative mx-auto max-w-7xl px-6 pb-12 pt-8 sm:pb-16 sm:pt-10 lg:px-8 lg:pb-16">
     {/* Breadcrumb */}
-    <nav aria-label="Breadcrumb" className="mb-7 flex items-center gap-2 text-sm">
-      <a
-        href="/"
-        className="font-medium text-cyan-400 transition hover:text-cyan-200"
-      >
-        Home
-      </a>
-      <span className="text-slate-500">›</span>
-      <span className="font-medium text-white">Notes</span>
-    </nav>
+   
 
     <div className="grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:gap-12">
       {/* Left side */}
       <div className="min-w-0">
-        {/* Exam badge */}
-        <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-cyan-300/25 px-5 py-3 text-sm font-semibold tracking-wide text-cyan-300">
-          <span className="h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.8)]" />
-          RBSE BOARD EXAM PREP 2027
-        </div>
+        
+        
+{/* Motivational badge */}
+<div className="group relative mb-6 inline-flex items-center gap-3 overflow-hidden rounded-full border border-cyan-300/30 bg-cyan-400/[0.04] px-5 py-3 text-sm font-semibold tracking-wide text-white shadow-[0_0_25px_rgba(34,211,238,0.08)]">
+  <span className="absolute inset-0 rounded-full bg-cyan-400/[0.04]" />
+
+  <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/10 text-lg">
+    🚀
+  </span>
+
+  <span className="relative">
+    Learn Today
+    <span className="mx-2 text-cyan-300">·</span>
+    <span className="text-cyan-300">
+      Score Higher Tomorrow
+    </span>
+  </span>
+
+  <span className="relative text-cyan-300" aria-hidden="true">
+    ↗
+  </span>
+</div>
+
 
         {/* Main heading */}
         <h1 className="text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
@@ -421,7 +434,7 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
         <div className="pointer-events-none absolute inset-8 rounded-full bg-blue-500/15 blur-3xl" />
 
         <div className="relative overflow-hidden rounded-[28px] border border-cyan-400/20 bg-[#0B2946] p-1.5 shadow-2xl shadow-cyan-950/30">
-          <div className="relative aspect-[16/10] overflow-hidden rounded-[23px] bg-gradient-to-br from-indigo-600 to-blue-700">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-[23px] bg-gradient-to-br from-indigo-600 to-blue-700">
             
               
 <div className="relative h-full w-full overflow-hidden rounded-[28px] bg-slate-950">

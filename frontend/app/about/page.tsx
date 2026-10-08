@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Founder from "@/components/About/Founder";
+
 import StudentSuccess from "@/components/About/StudentSuccess";
 import Navbar from "@/components/Navbar";
 
