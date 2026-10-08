@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import StudentSuccess from "@/components/About/StudentSuccess";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 
 // =====================================================
@@ -1001,6 +1002,7 @@ export default function AboutPage() {
 
 </section>
 
-</main>
+      <Footer />
+    </main>
   );
 }
