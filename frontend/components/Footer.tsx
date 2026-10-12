@@ -159,6 +159,10 @@ export default function Footer() {
               <li>
                 <Link href="/donate" className="flex items-center gap-1.5 transition hover:text-cyan-400">
                   <span>Support Us ❤️</span>
+
+              <li>
+                <Link href="https://t.me/Univgeeks_svh" target="_blank"  className="transition hover:text-cyan-400">
+                  Telegram
                 </Link>
               </li>
             </ul>
