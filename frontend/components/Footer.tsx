@@ -156,6 +156,12 @@ export default function Footer() {
                   Contact Us
                 </Link>
               </li>
+
+              <li>
+                <Link href="https://t.me/Univgeeks_svh" target="_blank"  className="transition hover:text-cyan-400">
+                  Telegram
+                </Link>
+              </li>
             </ul>
           </div>
 
