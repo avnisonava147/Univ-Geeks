@@ -1,8 +1,9 @@
 import Link from "next/link";
-import ChapterList from "../../../components/ChapterList";
+import ChapterList from "../../../../components/ChapterList";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import SubjectHero from "../../../components/SubjectHero";
+import SubjectHero from "../../../../components/SubjectHero";
+
 
 type PageProps = {
   params: Promise<{
