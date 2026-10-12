@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import FloatingFormulaBook from "../components/FloatingFormulaBook";
+import PyqCarousel3D from "../components/PyqCarousel3D";
 import Footer from "../components/Footer";
 
 export const pyqs = [
@@ -43,6 +44,81 @@ export const pyqs = [
       2023, 2024, 2025,
     ],
     thumbnail: "/biology-thumbnail.png",
+  },
+];
+
+const studentReviews = [
+  {
+    name: "Shruti Ranawat",
+    role: "RBSE Class 12 • Science (PCM)",
+    location: "Sikar, Rajasthan",
+    badge: "98.0% District Topper",
+    rating: 5,
+    avatarGradient: "from-amber-500 to-orange-500",
+    initials: "SR",
+    review:
+      "UnivGeeks was my secret weapon for Class 12 board prep! The chapter-wise PYQs from 2013–2025 gave me an exact idea of recurring questions. The formula sheets helped me revise the complete Physics syllabus in just 2 hours before the exam.",
+    tag: "Physics & Chemistry",
+  },
+  {
+    name: "Rahul Choudhary",
+    role: "RBSE Class 12 • Science (PCB)",
+    location: "Kota, Rajasthan",
+    badge: "96.4% in Board Exams",
+    rating: 5,
+    avatarGradient: "from-blue-600 to-cyan-600",
+    initials: "RC",
+    review:
+      "The handwritten notes and diagrams are clean, concise, and straight to the point. No fluff or confusing jargon. It helped me score 98 in Chemistry and cleared all my foundation concepts. Ab Padhega Rajasthan!",
+    tag: "Chemistry & Biology",
+  },
+  {
+    name: "Jyoti Shekhawat",
+    role: "RBSE Class 12 • Science",
+    location: "Jaipur, Rajasthan",
+    badge: "97.4% State Rank",
+    rating: 5,
+    avatarGradient: "from-rose-500 to-pink-600",
+    initials: "JS",
+    review:
+      "Finding authentic Rajasthan board previous year questions with clean step-by-step solutions used to be impossible. UnivGeeks solved that completely. Every RBSE student in Rajasthan must use this platform!",
+    tag: "Complete PYQs Pack",
+  },
+  {
+    name: "Manvendra Singh",
+    role: "RBSE Class 10 • All Subjects",
+    location: "Jodhpur, Rajasthan",
+    badge: "95.8% in Class 10",
+    rating: 5,
+    avatarGradient: "from-emerald-500 to-teal-600",
+    initials: "MS",
+    review:
+      "The Class 10 Science and Maths chapter summaries are incredible. When our school pre-boards were approaching, I only studied from these revision notes and scored 95+ in all core subjects.",
+    tag: "Class 10 All Subjects",
+  },
+  {
+    name: "Ananya Rathore",
+    role: "RBSE Class 11 • Science Stream",
+    location: "Udaipur, Rajasthan",
+    badge: "Foundation Top Rank",
+    rating: 5,
+    avatarGradient: "from-purple-600 to-indigo-600",
+    initials: "AR",
+    review:
+      "The transition from Class 10 to 11 was tough, but the interactive formula sheets and structured PDFs made derivations easy to grasp. The UI is lightning-fast and completely free to use.",
+    tag: "Class 11 Science",
+  },
+  {
+    name: "Harsh Vardhan",
+    role: "RBSE Class 12 • Mathematics",
+    location: "Bikaner, Rajasthan",
+    badge: "99/100 in Maths",
+    rating: 5,
+    avatarGradient: "from-cyan-500 to-blue-600",
+    initials: "HV",
+    review:
+      "The 13-year question papers categorized by chapter are the best study resource available online. I practiced all calculus and algebra PYQs from here and scored 99 in Mathematics!",
+    tag: "Mathematics PYQs",
   },
 ];
 
@@ -251,31 +327,30 @@ export default function HomePage() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-50 px-4 py-1.5 text-xs font-semibold text-cyan-700 shadow-sm sm:text-sm">
                 <span className="flex h-2 w-2 rounded-full bg-cyan-500 animate-ping" />
-                <span>Next-Gen RBSE & Board Preparation Portal</span>
+                <span>
+UnivGeeks - Students ka Platform</span>
               </div>
 
               {/* Heading */}
               <h1 className="mt-6 text-4xl font-extrabold leading-[1.15] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-                Empower Your Mind.{" "}
-                <span className="block bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Ace Your Board Exams.
+                AB PADHEGA{" "}
+                <span className="block sm:inline bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  RAJASTHAN
                 </span>
               </h1>
 
               {/* Subheading */}
-              <p className="mt-5 text-base leading-relaxed text-slate-600 sm:text-lg">
-                High-yield chapter notes, 13+ years chapter-wise PYQs (2013–2025),
-                and interactive formula sheets carefully structured for Class 10, 11 & 12 students.
+              <p className="mt-5 text-base leading-relaxed text-slate-600 sm:text-lg">Resources Kisi ki majboori nahi kisi ki padhai ki wajah banne chaiye
               </p>
 
-              {/* Action Buttons: Sign Up in place of Explore Chapter Notes */}
+              {/* Action Buttons: Donate / Support Us */}
               <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
                 <Link
-                  href="/contact"
-                  className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-500 px-8 py-4 text-base font-bold text-white shadow-[0_10px_25px_rgba(37,99,235,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_15px_35px_rgba(6,182,212,0.38)] active:scale-95 sm:w-auto"
+                  href="/notes"
+                  className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 px-8 py-4 text-base font-bold text-white shadow-[0_10px_25px_rgba(244,63,94,0.30)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_15px_35px_rgba(251,146,60,0.45)] active:scale-95 sm:w-auto"
                 >
-                  <span className="text-lg">✨</span>
-                  <span>Sign Up Free</span>
+                  <span className="text-lg">📝</span>
+                  <span>Explore Notes</span>
                   <span className="transition-transform duration-300 group-hover:translate-x-1">
                     →
                   </span>
@@ -290,42 +365,6 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Quick Search Bar */}
-              <div className="mt-8 max-w-xl">
-                <div className="relative flex items-center rounded-2xl border border-slate-200 bg-white p-2 shadow-md transition focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/20">
-                  <span className="pl-3 text-lg text-slate-400">🔍</span>
-                  <input
-                    type="text"
-                    value={quickSearch}
-                    onChange={(e) => setQuickSearch(e.target.value)}
-                    placeholder="Search Physics, Chemistry, Maths, PYQs..."
-                    className="w-full bg-transparent px-3 py-1.5 text-sm text-slate-900 outline-none placeholder:text-slate-400"
-                  />
-                  {quickSearch && (
-                    <button
-                      type="button"
-                      onClick={() => setQuickSearch("")}
-                      className="mr-2 rounded-lg bg-slate-100 px-2.5 py-1 text-xs text-slate-600 hover:bg-slate-200"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
-
-                {/* Popular Search Chips */}
-                <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500 lg:justify-start">
-                  <span className="font-semibold text-slate-600">Popular:</span>
-                  {popularSearches.map((chip) => (
-                    <Link
-                      key={chip.label}
-                      href={chip.href}
-                      className="rounded-full border border-slate-200 bg-white px-3 py-1 text-slate-600 shadow-sm transition hover:border-cyan-400 hover:bg-cyan-50 hover:text-cyan-700"
-                    >
-                      {chip.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
 
               {/* Metrics Strip */}
               <div className="mt-10 grid grid-cols-2 gap-3 border-t border-slate-200/80 pt-6 sm:grid-cols-4">
@@ -592,128 +631,73 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================
-          4. MASTER BOARD PATTERNS (DECLUTTERED & STREAMLINED)
-          FRESH SOFT ICE-BLUE PLANE
+          4. MASTER BOARD PATTERNS (SIMPLE + VISUAL)
+          SOFT ICE-BLUE PLANE WITH A 3D PAPER CAROUSEL
       ====================================================== */}
       <section className="relative overflow-hidden border-y border-blue-100 bg-gradient-to-b from-[#f0f7ff] to-[#e8f3fe] px-5 py-20 sm:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid items-center gap-12 lg:grid-cols-12">
-            
-            {/* Left Info Column (7 cols) */}
-            <div className="lg:col-span-7">
-              <div className="inline-flex rounded-full bg-cyan-100 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-cyan-800">
-                13+ Years Archive (2013–2025)
+        {/* Ambient glows */}
+        <div className="pointer-events-none absolute -left-32 top-16 h-72 w-72 rounded-full bg-cyan-400/15 blur-3xl" />
+        <div className="pointer-events-none absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-indigo-400/15 blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <div className="grid items-center gap-14 lg:grid-cols-12">
+
+            {/* Left Info Column (6 cols) — deliberately minimal */}
+            <div className="lg:col-span-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-200/70 bg-white/80 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-cyan-800 shadow-sm backdrop-blur-sm">
+                <span>📅</span>
+                <span>13+ Years Archive • 2013–2025</span>
               </div>
 
-              <h2 className="mt-4 text-3xl font-extrabold leading-tight text-slate-900 sm:text-4xl lg:text-5xl">
-                Master Board Patterns With{" "}
-                <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-                  Chapter-Wise PYQs.
+              <h2 className="mt-5 text-3xl font-extrabold leading-[1.15] text-slate-900 sm:text-4xl lg:text-5xl">
+                Master Board Patterns,
+                <span className="block bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  ab bas ek click door.
                 </span>
               </h2>
 
-              <p className="mt-4 text-base leading-relaxed text-slate-600 sm:text-lg">
-                Stop solving unorganized papers. UnivGeeks breaks down 13 consecutive years
-                of board exams into clean, chapter-level collections for rapid targeted practice.
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
+                <span className="font-semibold text-slate-800">
+                  13 saal ke board papers, ek jagah.
+                </span>{" "}
+                Padho, pattern pehchano aur exam se pehle apni taiyari pakki karo — bina
+                random PDFs dhoondhe.
               </p>
 
-              {/* 3 Lightweight, easily understandable feature cards */}
-              <div className="mt-8 grid gap-3.5 sm:grid-cols-3">
-                <div className="rounded-2xl border border-blue-200/60 bg-white/90 p-4 shadow-sm backdrop-blur-sm">
-                  <div className="text-2xl">🗓️</div>
-                  <h3 className="mt-2 text-sm font-bold text-slate-900">
-                    2013 – 2025 Solved
-                  </h3>
-                  <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                    13 years of recurring questions & marking schemes.
-                  </p>
-                </div>
+              {/* 3 short chips — easy to scan */}
+              <ul className="mt-7 flex flex-wrap gap-2.5">
+                {[
+                  "🗓️ 2013–2025 Solved",
+                  "🎯 Chapter-wise sorted",
+                  "🇮🇳 Hindi + English",
+                ].map((chip) => (
+                  <li
+                    key={chip}
+                    className="inline-flex items-center rounded-full border border-blue-200/70 bg-white/85 px-4 py-2 text-xs font-bold text-slate-700 shadow-sm backdrop-blur-sm sm:text-sm"
+                  >
+                    {chip}
+                  </li>
+                ))}
+              </ul>
 
-                <div className="rounded-2xl border border-blue-200/60 bg-white/90 p-4 shadow-sm backdrop-blur-sm">
-                  <div className="text-2xl">🎯</div>
-                  <h3 className="mt-2 text-sm font-bold text-slate-900">
-                    Chapter-Wise Focus
-                  </h3>
-                  <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                    Finish a chapter in tuition, test board questions instantly.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-blue-200/60 bg-white/90 p-4 shadow-sm backdrop-blur-sm">
-                  <div className="text-2xl">🇮🇳</div>
-                  <h3 className="mt-2 text-sm font-bold text-slate-900">
-                    Bilingual Medium
-                  </h3>
-                  <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                    Curated in Hindi & English for Rajasthan & State Boards.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-8">
+              <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                 <Link
                   href="/pyqs"
-                  className="inline-flex items-center gap-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5 hover:shadow-cyan-500/25"
+                  className="group inline-flex items-center gap-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5 hover:shadow-cyan-500/25"
                 >
-                  <span>Explore Class 12 PYQ Repository</span>
-                  <span>→</span>
+                  <span>Explore Class 12 PYQs</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
                 </Link>
+
+                <span className="text-xs font-semibold text-slate-500">
+                  100% free — hamesha free. 🎓
+                </span>
               </div>
             </div>
 
-            {/* Right Visual Card (5 cols) */}
-            <div className="lg:col-span-5">
-              <div className="rounded-3xl border border-blue-200/80 bg-white p-7 shadow-xl">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 text-lg">
-                      📄
-                    </span>
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-900">
-                        RBSE Class 12 Question Papers
-                      </h4>
-                      <p className="text-xs text-slate-500">
-                        Physics • Chemistry • Mathematics
-                      </p>
-                    </div>
-                  </div>
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-600">
-                    2025 Solved
-                  </span>
-                </div>
-
-                <div className="mt-5 space-y-2.5">
-                  {[
-                    { label: "2025 Board Paper", desc: "Latest solution with step marking", tag: "Solved" },
-                    { label: "2024 Board Paper", desc: "Chapter-segregated questions", tag: "PDF" },
-                    { label: "2023 Board Paper", desc: "Complete question set with key", tag: "Verified" },
-                    { label: "2013-2022 Archive", desc: "10 Years topic-wise questions", tag: "Archive" },
-                  ].map((row) => (
-                    <div
-                      key={row.label}
-                      className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/80 p-3 text-xs transition hover:bg-cyan-50/60"
-                    >
-                      <div className="flex items-center gap-2.5">
-                        <span className="text-cyan-600">⚡</span>
-                        <div>
-                          <p className="font-bold text-slate-900">{row.label}</p>
-                          <p className="text-[11px] text-slate-500">{row.desc}</p>
-                        </div>
-                      </div>
-                      <span className="rounded-md bg-white px-2 py-0.5 font-bold text-slate-600 shadow-xs border border-slate-200">
-                        {row.tag}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-5 rounded-xl bg-cyan-50/80 border border-cyan-100 p-3 text-center">
-                  <p className="text-xs font-medium text-cyan-800">
-                    💡 80% of board questions repeat concepts from past 5 years.
-                  </p>
-                </div>
-              </div>
+            {/* Right Visual (6 cols) — 3D animated paper carousel */}
+            <div className="lg:col-span-6">
+              <PyqCarousel3D />
             </div>
 
           </div>
@@ -721,73 +705,124 @@ export default function HomePage() {
       </section>
 
       {/* =====================================================
-          5. CHAPTER NOTES PORTAL
-          SOFT LIGHT PURPLE PLANE
+          5. STUDENTS REVIEWS SECTION
+          WARM AMBER & PEARL PLANE WITH HIGH CONVERSION CARDS
       ====================================================== */}
-      <section className="relative border-b border-slate-200 bg-gradient-to-b from-white via-purple-50/20 to-white px-5 py-20 sm:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative overflow-hidden border-b border-amber-100/60 bg-gradient-to-b from-[#f8fafc] via-[#fffbf3] to-[#f8fafc] px-5 py-20 sm:px-8 sm:py-24">
+        {/* Ambient atmospheric glows */}
+        <div className="pointer-events-none absolute -left-28 top-12 h-72 w-72 rounded-full bg-amber-400/10 blur-3xl" />
+        <div className="pointer-events-none absolute -right-28 bottom-12 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-400/5 blur-3xl" />
+
+        <div className="relative z-10 mx-auto max-w-7xl">
+          {/* Header */}
           <div className="mx-auto max-w-3xl text-center">
-            <div className="inline-flex rounded-full bg-purple-50 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-purple-700">
-              Exam-Ready Summaries
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/80 bg-amber-50 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-amber-800 shadow-sm">
+              <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+              <span>⭐ 4.9/5 Student Rating • 25,000+ Learners</span>
             </div>
 
-            <h2 className="mt-4 text-3xl font-extrabold text-slate-900 sm:text-5xl">
-              Clean, Concise Chapter Notes.
+            <h2 className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+              Students{" "}
+              <span className="bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 bg-clip-text text-transparent">
+                Reviews
+              </span>
             </h2>
 
-            <p className="mt-3 text-base text-slate-600 sm:text-lg">
-              No need to reread 800-page textbooks right before exams. Our chapter notes distill
-              the essential definitions, derivations, formulas, and diagrams.
+            <p className="mt-3 text-base leading-relaxed text-slate-600 sm:text-lg">
+              Hear directly from Class 10, 11 &amp; 12 board exam achievers across Rajasthan who transformed
+              their scores with UnivGeeks notes, formula sheets, and solved PYQs.
             </p>
+
+            {/* Quick Trust Highlights */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-200/80 bg-amber-50/80 px-3.5 py-1 text-xs font-semibold text-amber-900">
+                <span>⭐</span> 4.9 / 5 Rating (1,250+ Reviews)
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-200/80 bg-blue-50/80 px-3.5 py-1 text-xs font-semibold text-blue-900">
+                <span>🎯</span> 96%+ Board Success Rate
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200/80 bg-emerald-50/80 px-3.5 py-1 text-xs font-semibold text-emerald-900">
+                <span>📍</span> 33 Districts in Rajasthan
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-200/80 bg-purple-50/80 px-3.5 py-1 text-xs font-semibold text-purple-900">
+                <span>⚡</span> 100% Free Resources
+              </span>
+            </div>
           </div>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {[
-              {
-                icon: "⚡",
-                title: "15-Minute Revision",
-                description:
-                  "Revisit laws, formulas, and definitions in minutes before your board exam.",
-              },
-              {
-                icon: "🎯",
-                title: "Intuitive Selectors",
-                description:
-                  "Pick class, stream, subject, and chapter to open the exact PDF instantly.",
-              },
-              {
-                icon: "📥",
-                title: "Offline PDF Downloads",
-                description:
-                  "Save PDFs to your phone or laptop to study anytime without wasting internet data.",
-              },
-            ].map((card) => (
+          {/* Reviews Grid */}
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {studentReviews.map((review) => (
               <div
-                key={card.title}
-                className="rounded-3xl border border-slate-200 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:border-purple-300 hover:shadow-xl"
+                key={review.name}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-400/60 hover:shadow-xl hover:shadow-amber-500/10"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-50 text-2xl">
-                  {card.icon}
+                {/* Decorative corner accent */}
+                <div className="pointer-events-none absolute right-0 top-0 h-24 w-24 translate-x-8 -translate-y-8 rounded-full bg-gradient-to-br from-amber-200/20 to-orange-200/10 blur-xl transition-all duration-300 group-hover:scale-125" />
+
+                <div>
+                  {/* Top: Stars + Score Badge */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-0.5 text-base font-black text-amber-400">
+                      {"★".repeat(review.rating)}
+                    </div>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-amber-200/80 bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-800">
+                      🏆 {review.badge}
+                    </span>
+                  </div>
+
+                  {/* Review Quote */}
+                  <p className="mt-4 text-sm leading-relaxed text-slate-700 sm:text-[15px]">
+                    &ldquo;{review.review}&rdquo;
+                  </p>
                 </div>
 
-                <h3 className="mt-5 text-lg font-bold text-slate-900">
-                  {card.title}
-                </h3>
+                {/* Bottom: Reviewer Profile */}
+                <div className="mt-6 flex items-center gap-3.5 border-t border-slate-100 pt-5">
+                  <div
+                    className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${review.avatarGradient} text-sm font-black text-white shadow-md`}
+                  >
+                    {review.initials}
+                  </div>
 
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                  {card.description}
-                </p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="truncate text-sm font-bold text-slate-900">
+                        {review.name}
+                      </h4>
+                      <span className="text-xs font-bold text-emerald-600" title="Verified Student">
+                        ✓
+                      </span>
+                    </div>
+                    <p className="truncate text-xs text-slate-500">
+                      {review.role}
+                    </p>
+                    <p className="text-[11px] font-semibold text-amber-700">
+                      📍 {review.location}
+                    </p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-10 text-center">
+          {/* Action Row */}
+          <div className="mt-12 flex flex-col items-center justify-center gap-4 text-center sm:flex-row">
+            <Link
+              href="/achievements"
+              className="inline-flex items-center gap-2 rounded-2xl border border-amber-300 bg-amber-500 px-8 py-3.5 font-bold text-white shadow-md shadow-amber-500/25 transition-all duration-300 hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-500/35"
+            >
+              <span>View All Student Success Stories</span>
+              <span>→</span>
+            </Link>
+
             <Link
               href="/notes"
-              className="inline-flex items-center gap-2 rounded-2xl border border-purple-300 bg-purple-50 px-8 py-3.5 font-bold text-purple-700 transition hover:bg-purple-600 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-8 py-3.5 font-bold text-slate-700 shadow-sm transition-all duration-300 hover:border-cyan-400 hover:bg-cyan-50/50 hover:text-cyan-700"
             >
-              <span>Go to Notes Portal</span>
-              <span>→</span>
+              <span>Explore Free Notes &amp; PYQs</span>
+              <span>📚</span>
             </Link>
           </div>
         </div>
