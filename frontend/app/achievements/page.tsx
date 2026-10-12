@@ -1,12 +1,30 @@
+
 import Link from "next/link";
+
+const achievers = [
+  { image: 4, name: "Maheep Bharadwaj", percentage: "97.4%" },
+  { image: 5, name: "Ghanshyam Gour", percentage: "96.4%" },
+  { image: 6, name: "Nimisha", percentage: "96.20%" },
+  { image: 7, name: "Mamta Godara", percentage: "95.8%" },
+  { image: 8, name: "Khushi Patidar", percentage: "95%" },
+  { image: 9, name: "Manmeet", percentage: "95%" },
+  { image: 10, name: "Varsha Choudhary", percentage: "95%" },
+  { image: 11, name: "Divyanshu Saini", percentage: "95%" },
+  { image: 12, name: "Rekha Kumari", percentage: "94.8%" },
+  { image: 13, name: "Dinesh Meghwal", percentage: "94.6%" },
+  { image: 14, name: "Mithilesh Kumar", percentage: "94.4%" },
+  { image: 15, name: "Kumkum Godara", percentage: "93.6%" },
+  { image: 16, name: "Tanuj Rathore", percentage: "93.40%" },
+  { image: 17, name: "Rudraksh Kumar Vyas", percentage: "93.40%" },
+  { image: 18, name: "Asmit", percentage: "93.40%" },
+  
+];
 
 export default function AchievementsPage() {
   return (
     <main>
       {/* ================= HERO SECTION ================= */}
       <section className="relative min-h-[75vh] overflow-hidden bg-[#061A40] text-white">
-
-        {/* Background Glow */}
         <div className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl" />
         <div className="absolute -right-32 bottom-10 h-96 w-96 rounded-full bg-cyan-400/10 blur-3xl" />
 
@@ -19,7 +37,7 @@ export default function AchievementsPage() {
           ✦
         </div>
 
-        <div className="achievement-pulse absolute left-[18%] bottom-[25%] text-xl text-cyan-200/40">
+        <div className="achievement-pulse absolute bottom-[25%] left-[18%] text-xl text-cyan-200/40">
           ✧
         </div>
 
@@ -27,7 +45,7 @@ export default function AchievementsPage() {
           ✦
         </div>
 
-        <div className="achievement-pulse absolute right-[10%] bottom-[25%] text-2xl text-blue-200/40">
+        <div className="achievement-pulse absolute bottom-[25%] right-[10%] text-2xl text-blue-200/40">
           ✧
         </div>
 
@@ -38,9 +56,7 @@ export default function AchievementsPage() {
 
         {/* Hero Content */}
         <div className="relative mx-auto flex min-h-[75vh] max-w-6xl items-center justify-center px-6 text-center">
-
           <div className="achievement-fade max-w-4xl">
-
             <p className="mb-5 text-sm font-semibold uppercase tracking-[0.35em] text-blue-200">
               Our Students • Their Journey • Their Success
             </p>
@@ -60,7 +76,6 @@ export default function AchievementsPage() {
 
             {/* Achievement Highlights */}
             <div className="mt-10 flex flex-wrap justify-center gap-4">
-
               <div className="rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm backdrop-blur-sm">
                 ✦ Hard Work
               </div>
@@ -72,7 +87,6 @@ export default function AchievementsPage() {
               <div className="rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm backdrop-blur-sm">
                 ✦ Success
               </div>
-
             </div>
           </div>
         </div>
@@ -92,362 +106,266 @@ export default function AchievementsPage() {
         </div>
       </section>
 
-
       {/* ================= FEATURED ACHIEVERS ================= */}
-<section className="bg-[#f4faff] px-6 py-20">
+      <section className="bg-[#f4faff] px-6 py-20">
+        <div className="mx-auto max-w-6xl px-2 sm:px-4 lg:px-10">
+          {/* Heading */}
+          <div className="mb-14 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-600">
+              Our Star Achievers
+            </p>
 
-  <div className="mx-auto max-w-6xl px-6 lg:px-10">
+            <h2 className="mt-3 text-4xl font-bold text-[#063b56] sm:text-5xl">
+              Celebrating Our Students
+            </h2>
 
-    {/* Heading */}
-    <div className="mb-14 text-center">
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+              Real students. Real achievements. Every milestone is a story of
+              dedication, growth, and hard work.
+            </p>
 
-      <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-600">
-        Our Star Achievers
-      </p>
-
-      <h2 className="mt-3 text-4xl font-bold text-[#063b56] sm:text-5xl">
-        Celebrating Our Students
-      </h2>
-
-      <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
-        Real students. Real achievements. Every milestone is a story of
-        dedication, growth, and hard work.
-      </p>
-
-      <div className="mx-auto mt-6 h-1 w-16 rounded-full bg-cyan-500" />
-
-    </div>
-
-
-    {/* Featured Cards */}
-    <div className="grid gap-7 md:grid-cols-3 lg:gap-8">
-
-      {/* Card 1 */}
-      <div className="achievement-card group overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-slate-200 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl">
-
-        <div className="relative h-[390px] overflow-hidden bg-[#062d68]">
-
-          {/* Rank Badge */}
-          <div className="absolute left-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400 text-lg font-bold text-slate-900 shadow-lg">
-            ♛
+            <div className="mx-auto mt-6 h-1 w-16 rounded-full bg-cyan-500" />
           </div>
 
-          <img
-            src="/achievements/1.png"
-            alt="Featured student achievement"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
+          {/* Featured Cards: unchanged */}
+          <div className="grid gap-7 md:grid-cols-3 lg:gap-8">
+            {/* Card 1 */}
+            <div className="achievement-card group overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-slate-200 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl">
+              <div className="relative h-[390px] overflow-hidden bg-[#062d68]">
+                <div className="absolute left-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400 text-lg font-bold text-slate-900 shadow-lg">
+                  ♛
+                </div>
 
-        </div>
+                <img
+                  src="/achievements/1.png"
+                  alt="Shruti Ranawat achievement"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
 
-        <div className="border-t-4 border-yellow-400 px-6 py-6 text-center">
+              <div className="border-t-4 border-yellow-400 px-6 py-6 text-center">
+                <p className="text-4xl font-extrabold text-yellow-600">
+                  98%
+                </p>
 
-          <p className="text-4xl font-extrabold text-yellow-600">
-            98%
-          </p>
+                <h3 className="mt-2 text-xl font-bold text-slate-900">
+                  Shruti Ranawat
+                </h3>
 
-          <h3 className="mt-2 text-xl font-bold text-slate-900">
-            Shruti Ranawat
-          </h3>
-
-          <p className="mt-1 text-sm text-slate-500">
-            RBSE 2026
-          </p>
-
-        </div>
-
-      </div>
-
-
-      {/* Card 2 */}
-      <div className="achievement-card group overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-slate-200 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl">
-
-        <div className="relative h-[390px] overflow-hidden bg-[#062d68]">
-
-          <div className="absolute left-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 text-lg font-bold text-slate-800 shadow-lg">
-            2
-          </div>
-
-          <img
-            src="/achievements/2.png"
-            alt="Featured student achievement"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-
-        </div>
-
-        <div className="border-t-4 border-slate-300 px-6 py-6 text-center">
-
-          <p className="text-4xl font-extrabold text-slate-500">
-            97.8%
-          </p>
-
-          <h3 className="mt-2 text-xl font-bold text-slate-900">
-            Nupur Rathor
-          </h3>
-
-          <p className="mt-1 text-sm text-slate-500">
-            RBSE 2026
-          </p>
-
-        </div>
-
-      </div>
-
-
-      {/* Card 3 */}
-      <div className="achievement-card group overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-slate-200 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl">
-
-        <div className="relative h-[390px] overflow-hidden bg-[#062d68]">
-
-          <div className="absolute left-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-orange-400 text-lg font-bold text-white shadow-lg">
-            3
-          </div>
-
-          <img
-            src="/achievements/3.png"
-            alt="Featured student achievement"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-
-        </div>
-
-        <div className="border-t-4 border-orange-400 px-6 py-6 text-center">
-
-          <p className="text-4xl font-extrabold text-orange-600">
-            97.4%
-          </p>
-
-          <h3 className="mt-2 text-xl font-bold text-slate-900">
-            Jyoti Shekhawat
-          </h3>
-
-          <p className="mt-1 text-sm text-slate-500">
-            RBSE 2026
-          </p>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-{/* ================= ACHIEVEMENT HIGHLIGHT ================= */}
-<section className="bg-[#f4faff] px-6 py-12">
-
-  <div className="mx-auto flex max-w-6xl items-center gap-6">
-
-    {/* Left Line */}
-    <div className="hidden h-px flex-1 bg-slate-200 sm:block" />
-
-    {/* Highlight Pill */}
-    <div className="achievement-fade flex items-center gap-3 rounded-full bg-[#063b56] px-7 py-3 text-center text-sm font-bold uppercase tracking-wide text-white shadow-lg sm:text-base">
-
-      <span className="text-lg text-cyan-300">
-        ✦
-      </span>
-
-      <span>
-        30+ Students Scored More Than 90%
-      </span>
-
-    </div>
-
-    {/* Right Line */}
-    <div className="hidden h-px flex-1 bg-slate-200 sm:block" />
-
-  </div>
-
-</section>
-{/* ================= ALL ACHIEVERS ================= */}
-<section className="bg-[#f4faff] px-6 pb-24 pt-10">
-
-  <div className="mx-auto max-w-6xl px-6 lg:px-10">
-
-    {/* Heading */}
-    <div className="mb-12 text-center">
-      <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-600">
-        More Achievements
-      </p>
-
-      <h2 className="mt-3 text-3xl font-bold text-[#063b56] sm:text-4xl">
-        Our Achievers
-      </h2>
-    </div>
-
-    {/* Student Cards */}
-    <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-
-      {Array.from({ length: 15 }, (_, index) => {
-        const imageNumber = index + 4;
-
-        return (
-          <div
-            key={imageNumber}
-            className="achievement-pop group overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-200 transition-all duration-500 hover:-translate-y-2 hover:shadow-xl"
-          >
-
-            {/* Student Image */}
-            <div className="relative aspect-[5/4] overflow-hidden bg-slate-100">
-
-              <img
-                src={`/achievements/${imageNumber}.png`}
-                alt={`Student achievement ${imageNumber}`}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-
+                <p className="mt-1 text-sm text-slate-500">
+                  RBSE 2026
+                </p>
+              </div>
             </div>
 
-            {/* Student Details */}
-            <div className="border-t-2 border-cyan-400 px-2 py-3 text-center">
+            {/* Card 2 */}
+            <div className="achievement-card group overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-slate-200 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl">
+              <div className="relative h-[390px] overflow-hidden bg-[#062d68]">
+                <div className="absolute left-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 text-lg font-bold text-slate-800 shadow-lg">
+                  2
+                </div>
 
-              <p className="text-xl font-extrabold text-cyan-500">
-                90%+
-              </p>
+                <img
+                  src="/achievements/2.png"
+                  alt="Nupur Rathor achievement"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
 
-              <h3 className="mt-1 text-xs font-bold text-slate-900">
-                Student Name
-              </h3>
+              <div className="border-t-4 border-slate-300 px-6 py-6 text-center">
+                <p className="text-4xl font-extrabold text-slate-500">
+                  97.8%
+                </p>
 
-              <p className="mt-1 text-xs text-slate-500">
-                RBSE 2026
-              </p>
+                <h3 className="mt-2 text-xl font-bold text-slate-900">
+                  Nupur Rathor
+                </h3>
 
+                <p className="mt-1 text-sm text-slate-500">
+                  RBSE 2026
+                </p>
+              </div>
             </div>
 
+            {/* Card 3 */}
+            <div className="achievement-card group overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-slate-200 transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl">
+              <div className="relative h-[390px] overflow-hidden bg-[#062d68]">
+                <div className="absolute left-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-orange-400 text-lg font-bold text-white shadow-lg">
+                  3
+                </div>
+
+                <img
+                  src="/achievements/3.png"
+                  alt="Jyoti Shekhawat achievement"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+
+              <div className="border-t-4 border-orange-400 px-6 py-6 text-center">
+                <p className="text-4xl font-extrabold text-orange-600">
+                  97.4%
+                </p>
+
+                <h3 className="mt-2 text-xl font-bold text-slate-900">
+                  Jyoti Shekhawat
+                </h3>
+
+                <p className="mt-1 text-sm text-slate-500">
+                  RBSE 2026
+                </p>
+              </div>
+            </div>
           </div>
-        );
-      })}
+        </div>
+      </section>
 
-    </div>
+      {/* ================= ACHIEVEMENT HIGHLIGHT ================= */}
+      <section className="bg-[#f4faff] px-6 py-12">
+        <div className="mx-auto flex max-w-6xl items-center gap-6">
+          <div className="hidden h-px flex-1 bg-slate-200 sm:block" />
 
-  </div>
+          <div className="achievement-fade flex items-center gap-3 rounded-full bg-[#063b56] px-5 py-3 text-center text-xs font-bold uppercase tracking-wide text-white shadow-lg sm:px-7 sm:text-base">
+            <span className="text-lg text-cyan-300">✦</span>
 
-</section>
+            <span>30+ Students Scored More Than 90%</span>
+          </div>
 
-{/* ================= YOUR STORY STARTS HERE ================= */}
-<section className="relative overflow-hidden bg-[#063b56] px-6 py-14 text-white sm:py-16">
+          <div className="hidden h-px flex-1 bg-slate-200 sm:block" />
+        </div>
+      </section>
 
-  {/* Background Glows */}
-  <div className="absolute -left-28 top-0 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+      {/* ================= ALL ACHIEVERS ================= */}
+      <section className="bg-[#f4faff] px-6 pb-24 pt-10">
+        <div className="mx-auto max-w-6xl px-2 sm:px-4 lg:px-10">
+          {/* Heading */}
+          <div className="mb-12 text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-600">
+              More Achievements
+            </p>
 
-  <div className="absolute -right-28 bottom-0 h-72 w-72 rounded-full bg-blue-400/10 blur-3xl" />
+            <h2 className="mt-3 text-3xl font-bold text-[#063b56] sm:text-4xl">
+              Our Achievers
+            </h2>
+          </div>
 
-  {/* Decorative Stars */}
-  <div className="absolute left-[8%] top-[30%] animate-pulse text-2xl text-cyan-300/40">
-    ✦
-  </div>
+          {/* Student Cards */}
+          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {achievers.map((student) => (
+              <div
+                key={student.image}
+                className="achievement-pop group overflow-hidden rounded-2xl bg-white shadow-md ring-1 ring-slate-200 transition-all duration-500 hover:-translate-y-2 hover:shadow-xl"
+              >
+                {/* Student Image */}
+                <div className="relative aspect-[5/4] overflow-hidden bg-slate-100">
+                  <img
+                    src={`/achievements/${student.image}.png`}
+                    alt={`${student.name} achievement`}
+                    loading="lazy"
+                    className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
 
-  <div className="absolute right-[8%] bottom-[25%] animate-pulse text-3xl text-yellow-200/40">
-    ✦
-  </div>
+                {/* Student Details */}
+                <div className="border-t-2 border-cyan-400 px-2 py-3 text-center">
+                  <p className="text-lg font-extrabold text-cyan-600 sm:text-xl">
+                    {student.percentage}
+                  </p>
 
-  <div className="relative mx-auto flex max-w-6xl flex-col items-center justify-between gap-10 lg:flex-row">
+                  <h3 className="mt-1 break-words text-xs font-bold text-slate-900 sm:text-sm">
+                    {student.name}
+                  </h3>
 
-    {/* LEFT CONTENT */}
-    <div className="text-center lg:text-left">
+                  <p className="mt-1 text-xs text-slate-500">
+                    RBSE 2026
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
-        Your Journey
-      </p>
+      {/* ================= YOUR STORY STARTS HERE ================= */}
+      <section className="relative overflow-hidden bg-[#063b56] px-6 py-14 text-white sm:py-16">
+        {/* Background Glows */}
+        <div className="absolute -left-28 top-0 h-64 w-64 rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="absolute -right-28 bottom-0 h-72 w-72 rounded-full bg-blue-400/10 blur-3xl" />
 
-      <h2 className="mt-3 text-4xl font-bold leading-tight sm:text-5xl">
-        Your Story
-        <span className="block text-cyan-300">
-          Starts Here
-        </span>
-      </h2>
-
-      <p className="mt-5 max-w-lg text-base leading-7 text-blue-100/75 sm:text-lg">
-        Every achiever was once a student taking their next step.
-      </p>
-
-    </div>
-
-
-    {/* RIGHT JOURNEY */}
-    <div className="flex items-center gap-4 sm:gap-7">
-
-      {/* LEARN */}
-      <Link
-  href="/notes"
-  className="group text-center"
->
-
-        <div className="flex h-20 w-20 items-center justify-center rounded-full border border-cyan-300/40 bg-white/10 backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-110 group-hover:border-cyan-300 sm:h-24 sm:w-24">
-
-          <span className="text-3xl sm:text-4xl">
-            📖
-          </span>
-
+        {/* Decorative Stars */}
+        <div className="absolute left-[8%] top-[30%] animate-pulse text-2xl text-cyan-300/40">
+          ✦
         </div>
 
-        <p className="mt-3 text-xs font-bold tracking-wider text-cyan-300 sm:text-sm">
-          LEARN
-        </p>
-
-      </Link>
-
-
-      <span className="text-xl text-cyan-300/50 sm:text-2xl">
-        →
-      </span>
-
-
-      {/* PRACTICE */}
-      <Link
-  href="/pyqs"
-  className="group text-center"
->
-
-        <div className="flex h-20 w-20 items-center justify-center rounded-full border border-cyan-300/40 bg-white/10 backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-110 group-hover:border-cyan-300 sm:h-24 sm:w-24">
-
-          <span className="text-3xl sm:text-4xl">
-            ✏️
-          </span>
-
+        <div className="absolute bottom-[25%] right-[8%] animate-pulse text-3xl text-yellow-200/40">
+          ✦
         </div>
 
-        <p className="mt-3 text-xs font-bold tracking-wider text-cyan-300 sm:text-sm">
-          PRACTICE
-        </p>
+        <div className="relative mx-auto flex max-w-6xl flex-col items-center justify-between gap-10 lg:flex-row">
+          {/* Left Content */}
+          <div className="text-center lg:text-left">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-300">
+              Your Journey
+            </p>
 
-      </Link>
+            <h2 className="mt-3 text-4xl font-bold leading-tight sm:text-5xl">
+              Your Story
+              <span className="block text-cyan-300">Starts Here</span>
+            </h2>
 
+            <p className="mt-5 max-w-lg text-base leading-7 text-blue-100/75 sm:text-lg">
+              Every achiever was once a student taking their next step.
+            </p>
+          </div>
 
-      <span className="text-xl text-cyan-300/50 sm:text-2xl">
-        →
-      </span>
+          {/* Right Journey */}
+          <div className="flex items-center gap-3 sm:gap-7">
+            {/* Learn */}
+            <Link
+              href="/notes"
+              className="group text-center"
+              aria-label="Explore study notes"
+            >
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-cyan-300/40 bg-white/10 backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-110 group-hover:border-cyan-300 sm:h-24 sm:w-24">
+                <span className="text-3xl sm:text-4xl">📖</span>
+              </div>
 
+              <p className="mt-3 text-xs font-bold tracking-wider text-cyan-300 sm:text-sm">
+                LEARN
+              </p>
+            </Link>
 
-      {/* ACHIEVE */}
-      <div className="group text-center">
+            <span className="text-lg text-cyan-300/50 sm:text-2xl">→</span>
 
-        <div className="flex h-20 w-20 items-center justify-center rounded-full border border-yellow-300/40 bg-white/10 backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-110 group-hover:border-yellow-300 sm:h-24 sm:w-24">
+            {/* Practice */}
+            <Link
+              href="/pyqs"
+              className="group text-center"
+              aria-label="Practice previous year questions"
+            >
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-cyan-300/40 bg-white/10 backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-110 group-hover:border-cyan-300 sm:h-24 sm:w-24">
+                <span className="text-3xl sm:text-4xl">✏️</span>
+              </div>
 
-          <span className="text-3xl sm:text-4xl">
-            🏆
-          </span>
+              <p className="mt-3 text-xs font-bold tracking-wider text-cyan-300 sm:text-sm">
+                PRACTICE
+              </p>
+            </Link>
 
+            <span className="text-lg text-cyan-300/50 sm:text-2xl">→</span>
+
+            {/* Achieve */}
+            <div className="group text-center">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border border-yellow-300/40 bg-white/10 backdrop-blur-sm transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-110 group-hover:border-yellow-300 sm:h-24 sm:w-24">
+                <span className="text-3xl sm:text-4xl">🏆</span>
+              </div>
+
+              <p className="mt-3 text-xs font-bold tracking-wider text-yellow-300 sm:text-sm">
+                ACHIEVE
+              </p>
+            </div>
+          </div>
         </div>
-
-        <p className="mt-3 text-xs font-bold tracking-wider text-yellow-300 sm:text-sm">
-          ACHIEVE
-        </p>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-</main>
+      </section>
+    </main>
   );
 }
