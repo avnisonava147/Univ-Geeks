@@ -13,6 +13,7 @@ import {
   type Stream,
 } from "./data/notesData";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
  const bannerSlides = [
   {
@@ -785,6 +786,7 @@ instagramUrl="https://www.instagram.com/univ_geeks?igsh=MmRxYTN5ZTE2N2J2"
       )}
 
 
+      <Footer />
     </main>
   );
 }
