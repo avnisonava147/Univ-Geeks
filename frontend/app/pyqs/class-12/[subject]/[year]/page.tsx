@@ -1,5 +1,5 @@
 import Link from "next/link";
-import PaperActions from "../../../../components/PaperActions";
+import PaperActions from "../../../../../components/PaperActions";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 type PageProps = {
