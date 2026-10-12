@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Founder from "@/components/About/Founder";
+
 import StudentSuccess from "@/components/About/StudentSuccess";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 
 // =====================================================
@@ -905,6 +906,9 @@ export default function AboutPage() {
     Let&apos;s Connect
   </SectionLabel>
 
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">
+              Let's Connect
+            </p>
 
             <h2 className="mt-2 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">
               Your feedback
@@ -977,16 +981,6 @@ export default function AboutPage() {
                 YouTube
               </a>
 
-              {/* Telegram */}
-              <a
-                href="https://t.me/Univgeeks_svh"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-2 rounded-full border border-blue-100 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:text-blue-600 hover:shadow-md"
-              >
-                <span className="text-lg">▶</span>
-                Telegram
-              </a>
             </div>
 
           </div>
@@ -1001,6 +995,7 @@ export default function AboutPage() {
 
 </section>
 
-</main>
+      <Footer />
+    </main>
   );
 }

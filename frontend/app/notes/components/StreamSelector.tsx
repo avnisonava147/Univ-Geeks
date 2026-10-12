@@ -35,9 +35,7 @@ export default function StreamSelector({
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="flex items-baseline gap-3 text-3xl font-semibold tracking-tight text-[#16213E]">
-              <span className="font-serif italic text-[#2F5FDE]">
-                2.
-              </span>
+              
 
               Select your stream
             </h2>

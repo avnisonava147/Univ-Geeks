@@ -1,5 +1,7 @@
 
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const achievers = [
   { image: 4, name: "Maheep Bharadwaj", percentage: "97.4%" },
@@ -23,6 +25,7 @@ const achievers = [
 export default function AchievementsPage() {
   return (
     <main>
+      <Navbar />
       {/* ================= HERO SECTION ================= */}
       <section className="relative min-h-[75vh] overflow-hidden bg-[#061A40] text-white">
         <div className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl" />
@@ -366,6 +369,20 @@ export default function AchievementsPage() {
           </div>
         </div>
       </section>
+
+        <p className="mt-3 text-xs font-bold tracking-wider text-yellow-300 sm:text-sm">
+          ACHIEVE
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+      <Footer />
     </main>
   );
 }

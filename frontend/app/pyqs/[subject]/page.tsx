@@ -1,6 +1,9 @@
 import Link from "next/link";
 import ChapterList from "../../../components/ChapterList";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import SubjectHero from "../../../components/SubjectHero";
+
 type PageProps = {
   params: Promise<{
     subject: string;
@@ -12,7 +15,7 @@ const subjectData: Record<
   {
     name: string;
     thumbnail: string;
-     theme: string;
+    theme: string;
     chapters: string[];
   }
 > = {
@@ -77,185 +80,58 @@ const subjectData: Record<
       "Probability",
     ],
   },
-  biology: {
-  name: "Biology",
-  thumbnail: "/biology-thumbnail.png",
-  theme: "biology",
-  chapters: [
-    "Sexual Reproduction in Flowering Plants",
-    "Human Reproduction",
-    "Reproductive Health",
-    "Principles of Inheritance and Variation",
-    "Molecular Basis of Inheritance",
-    "Evolution",
-    "Human Health and Disease",
-    "Microbes in Human Welfare",
-    "Biotechnology: Principles and Processes",
-    "Biotechnology and its Applications",
-    "Organisms and Populations",
-    "Ecosystem",
-    "Biodiversity and Conservation",
-  ],
-},
 
+  biology: {
+    name: "Biology",
+    thumbnail: "/biology-thumbnail.png",
+    theme: "biology",
+    chapters: [
+      "Sexual Reproduction in Flowering Plants",
+      "Human Reproduction",
+      "Reproductive Health",
+      "Principles of Inheritance and Variation",
+      "Molecular Basis of Inheritance",
+      "Evolution",
+      "Human Health and Disease",
+      "Microbes in Human Welfare",
+      "Biotechnology: Principles and Processes",
+      "Biotechnology and its Applications",
+      "Organisms and Populations",
+      "Ecosystem",
+      "Biodiversity and Conservation",
+    ],
+  },
 };
 
-export default async function SubjectPage({ params }: PageProps) {
+export default async function SubjectPage({
+  params,
+}: PageProps) {
   const { subject } = await params;
 
   const data =
-    subjectData[subject.toLowerCase()] || subjectData.chemistry;
+    subjectData[subject.toLowerCase()] ||
+    subjectData.chemistry;
 
   const subjectName = data.name;
-const bannerThemes = {
-  chemistry:
-    "from-emerald-950 via-teal-900 to-slate-950",
-
-  physics:
-    "from-blue-950 via-indigo-900 to-slate-950",
-
-  mathematics:
-    "from-violet-950 via-purple-900 to-slate-950",
-
-  biology:
-    "from-green-950 via-emerald-900 to-slate-950",
-};
-
-
-const currentTheme =
-  bannerThemes[data.theme as keyof typeof bannerThemes];
-
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <Navbar />
 
       {/* =====================================================
-          HERO
+          SUBJECT HERO
       ====================================================== */}
-<section
-  className={`relative overflow-hidden bg-gradient-to-br ${currentTheme} text-white`}
->
 
-        {/* Background glow */}
-        {/* Background effects */}
-<div className="pointer-events-none absolute -right-32 -top-20 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
-
-<div className="pointer-events-none absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-white/5 blur-3xl" />
-
-<div className="pointer-events-none absolute right-1/3 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full border border-white/5 bg-white/5 blur-2xl" />
-
-        <div className="relative mx-auto max-w-[1400px] px-5 py-10 sm:px-8 lg:px-10 lg:py-12">
-
-          {/* Breadcrumb */}
-          <div className="mb-6 flex flex-wrap items-center gap-2 text-sm text-blue-200">
-            <Link href="/" className="transition hover:text-white">
-              Home
-            </Link>
-
-            <span>›</span>
-
-            <Link href="/" className="transition hover:text-white">
-              PYQs
-            </Link>
-
-            <span>›</span>
-
-            <span>Class 12</span>
-
-            <span>›</span>
-
-            <span className="font-semibold text-white">
-              {subjectName}
-            </span>
-          </div>
-
-          <div className="grid items-center gap-10 lg:grid-cols-[1fr_360px]">
-
-            {/* Hero Content */}
-            <div>
-
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/30 bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur-sm">
-                📚 Class 12 Resources
-              </div>
-
-              <h1 className="max-w-4xl text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-                RBSE Class 12{" "}
-                <span className="text-cyan-300">
-                  {subjectName}
-                </span>{" "}
-                PYQs
-              </h1>
-
-              <p className="mt-5 max-w-3xl text-base leading-7 text-blue-100 sm:text-lg">
-                Chapter-wise previous year question papers from
-                2013 – 2025. Download, practice and prepare smarter
-                with UnivGeeks.
-              </p>
-
-              {/* Hero Stats */}
-              <div className="mt-8 flex flex-wrap gap-x-8 gap-y-4 text-sm font-semibold">
-
-                <div className="flex items-center gap-2">
-                  <span>📄</span>
-                  <span>13 Years</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span>📚</span>
-                  <span>Chapter-wise</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span>🟢</span>
-                  <span>Verified Content</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span>⚡</span>
-                  <span>Exam Ready</span>
-                </div>
-
-              </div>
-            </div>
-
-            {/* Hero Side Illustration */}
-            <div className="hidden lg:flex justify-center">
-              <div className="flex h-60 w-80 items-center justify-center rounded-3xl border border-white/10 bg-white/5 text-center backdrop-blur-sm">
-
-                <div>
-                <div className="text-7xl">
-  {subjectName === "Chemistry"
-    ? "🧪"
-    : subjectName === "Physics"
-    ? "⚛️"
-    : subjectName === "Mathematics"
-    ? "📐"
-    : "🧬"}
-</div>
-
-                  <p className="mt-4 text-lg font-bold text-cyan-200">
-                    Better Preparation.
-                  </p>
-
-                  <p className="text-sm text-blue-200">
-                    Brighter Tomorrow.
-                  </p>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
+      <SubjectHero
+        subject={subjectName}
+        chaptersCount={data.chapters.length}
+      />
 
       {/* =====================================================
           FEATURE CARDS
       ====================================================== */}
-      <section className="mx-auto max-w-[1400px] px-5 py-5 sm:px-8 lg:px-10">
 
+      <section className="mx-auto max-w-[1400px] px-5 py-5 sm:px-8 lg:px-10">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
           <FeatureCard
@@ -266,8 +142,8 @@ const currentTheme =
 
           <FeatureCard
             icon="🗓️"
-            title="2013 – 2025"
-            description="13 Years of PYQs"
+            title="2020 – 2025"
+            description="6+ Years of PYQs"
           />
 
           <FeatureCard
@@ -285,18 +161,23 @@ const currentTheme =
         </div>
       </section>
 
-
       {/* =====================================================
           MAIN CONTENT
       ====================================================== */}
-      <section className="mx-auto max-w-[1400px] px-5 pb-14 sm:px-8 lg:px-10">
 
+      <section
+        id="chapters"
+        className="mx-auto max-w-[1400px] px-5 pb-14 sm:px-8 lg:px-10"
+      >
         <div className="grid gap-5 lg:grid-cols-[1fr_350px]">
 
           {/* LEFT COLUMN */}
           <div className="space-y-5">
 
-            {/* Book Card */}
+            {/* =================================================
+                BOOK CARD
+            ================================================== */}
+
             <div className="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
 
               <div className="grid gap-6 p-5 sm:p-6 md:grid-cols-[170px_1fr]">
@@ -310,7 +191,6 @@ const currentTheme =
                   />
                 </div>
 
-
                 {/* Details */}
                 <div>
 
@@ -320,8 +200,9 @@ const currentTheme =
                       <h2 className="text-2xl font-extrabold leading-tight text-[#092653] sm:text-3xl">
                         RBSE Class 12 {subjectName}{" "}
                         Chapterwise PYQs
+
                         <span className="block">
-                          (2013 – 2025)
+                          (2020 – 2025)
                         </span>
                       </h2>
                     </div>
@@ -332,21 +213,19 @@ const currentTheme =
 
                   </div>
 
-
                   <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-600 sm:text-base">
                     Get chapter-wise previous year question papers
-                    for RBSE Class 12 {subjectName}. Covers 13 years
+                    for RBSE Class 12 {subjectName}. Covers 6+ Years
                     with solutions-ready PDFs.
                   </p>
-
 
                   {/* Metadata */}
                   <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
 
                     <InfoBox
                       icon="🗓️"
-                      title="13 Years"
-                      subtitle="2013 – 2025"
+                      title="6+ Years"
+                      subtitle="2020 – 2025"
                     />
 
                     <InfoBox
@@ -368,7 +247,6 @@ const currentTheme =
                     />
 
                   </div>
-
 
                   {/* Buttons */}
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -393,18 +271,21 @@ const currentTheme =
               </div>
             </div>
 
+            {/* =================================================
+                CHAPTER SECTION
+            ================================================== */}
 
-            {/* Chapter Section */}
-<ChapterList
-  subject={subjectName}
-  chapters={data.chapters}
-/>
+            <ChapterList
+              subject={subjectName}
+              chapters={data.chapters}
+            />
 
           </div>
 
           {/* =================================================
               RIGHT SIDEBAR
           ================================================== */}
+
           <aside className="space-y-5">
 
             {/* Table of Contents */}
@@ -425,7 +306,7 @@ const currentTheme =
                 </TOCItem>
 
                 <TOCItem>
-                  What&apos;s Inside
+                  What's Inside
                 </TOCItem>
 
                 <TOCItem>
@@ -439,7 +320,6 @@ const currentTheme =
               </div>
 
             </SidebarCard>
-
 
             {/* Help */}
             <SidebarCard title="🎧 Need Help?">
@@ -458,7 +338,6 @@ const currentTheme =
 
             </SidebarCard>
 
-
             {/* Related Subjects */}
             <SidebarCard title="📚 Related Subjects">
 
@@ -468,6 +347,12 @@ const currentTheme =
                   name="Physics"
                   href="/pyqs/physics"
                   icon="⚛️"
+                />
+
+                <RelatedSubject
+                  name="Chemistry"
+                  href="/pyqs/chemistry"
+                  icon="🧪"
                 />
 
                 <RelatedSubject
@@ -482,18 +367,6 @@ const currentTheme =
                   icon="🧬"
                 />
 
-                <RelatedSubject
-                  name="English"
-                  href="/pyqs/english"
-                  icon="📘"
-                />
-
-                <RelatedSubject
-                  name="Hindi"
-                  href="/pyqs/hindi"
-                  icon="📕"
-                />
-
               </div>
 
             </SidebarCard>
@@ -503,154 +376,11 @@ const currentTheme =
         </div>
       </section>
 
-
       {/* =====================================================
           FOOTER
       ====================================================== */}
-      <footer className="bg-[#12243a] text-white">
 
-        <div className="mx-auto max-w-[1400px] px-5 py-10 sm:px-8 lg:px-10">
-
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-
-            {/* Brand */}
-            <div>
-
-              <div className="flex items-center gap-3">
-
-                <img
-                  src="/logo_UnivGeeks.png"
-                  alt="UnivGeeks"
-                  className="h-12 w-12 rounded-full"
-                />
-
-                <div>
-                  <h3 className="text-lg font-extrabold">
-                    UnivGeeks
-                  </h3>
-
-                  <p className="text-xs text-slate-300">
-                    Learn. Prepare. Grow.
-                  </p>
-                </div>
-
-              </div>
-
-            </div>
-
-
-            {/* Quick Links */}
-            <div>
-              <h4 className="font-bold">
-                Quick Links
-              </h4>
-
-              <div className="mt-4 space-y-2 text-sm text-slate-300">
-
-                <Link href="/" className="block hover:text-white">
-                  Home
-                </Link>
-
-                <Link href="/" className="block hover:text-white">
-                  Courses
-                </Link>
-
-                <Link href="/" className="block hover:text-white">
-                  PYQs
-                </Link>
-
-                <Link href="/" className="block hover:text-white">
-                  Notes
-                </Link>
-
-                <Link href="/" className="block hover:text-white">
-                  About
-                </Link>
-
-              </div>
-            </div>
-
-
-            {/* Resources */}
-            <div>
-              <h4 className="font-bold">
-                Resources
-              </h4>
-
-              <div className="mt-4 space-y-2 text-sm text-slate-300">
-
-                <Link href="/" className="block hover:text-white">
-                  Privacy Policy
-                </Link>
-
-                <Link href="/" className="block hover:text-white">
-                  Terms of Service
-                </Link>
-
-                <Link href="/contact" className="block hover:text-white">
-                  Contact Us
-                </Link>
-
-                <Link href="/contact" className="block hover:text-white">
-                  Help & Support
-                </Link>
-
-              </div>
-            </div>
-
-
-            {/* Follow */}
-            <div>
-
-              <h4 className="font-bold">
-                Follow Us
-              </h4>
-
-              <div className="mt-4 flex gap-3">
-
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500">
-                  ▶
-                </div>
-
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-pink-500">
-                  ◎
-                </div>
-
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-500">
-                  in
-                </div>
-
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black">
-                  X
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div className="border-t border-white/10">
-
-          <div className="mx-auto flex max-w-[1400px] flex-col gap-2 px-5 py-4 text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-
-            <span>
-              © 2025 UnivGeeks. All rights reserved.
-            </span>
-
-            <span>
-              Made with ❤️ for students
-            </span>
-
-          </div>
-
-        </div>
-
-      </footer>
-
+      <Footer />
     </main>
   );
 }
@@ -677,6 +407,7 @@ function FeatureCard({
       </div>
 
       <div>
+
         <h3 className="font-extrabold text-slate-900">
           {title}
         </h3>
@@ -684,6 +415,7 @@ function FeatureCard({
         <p className="mt-1 text-sm text-slate-500">
           {description}
         </p>
+
       </div>
 
     </div>

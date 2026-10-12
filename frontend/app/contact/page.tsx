@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 // =====================================================
 // REVEAL ANIMATION
@@ -489,53 +490,7 @@ export default function ContactPage() {
       {/* =================================================
           5. FOOTER
       ================================================= */}
-
-      <footer className="border-t border-slate-200 bg-slate-50 px-6 py-6">
-
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
-
-          <div>
-
-            <p className="font-bold text-slate-900">
-              UNIV GEEKS
-            </p>
-
-            <p className="mt-1 text-xs text-slate-500">
-              Making learning simpler for students.
-            </p>
-
-          </div>
-
-
-          <div className="flex items-center gap-4 text-xs text-slate-500">
-
-            <a
-              href="/"
-              className="transition hover:text-blue-600"
-            >
-              Home
-            </a>
-
-            <a
-              href="/about"
-              className="transition hover:text-blue-600"
-            >
-              About
-            </a>
-
-            <a
-              href="/achievements"
-              className="transition hover:text-blue-600"
-            >
-              Achievements
-            </a>
-
-          </div>
-
-        </div>
-
-      </footer>
-
+      <Footer />
     </main>
   );
 }

@@ -184,6 +184,19 @@ const class11Subjects: Record<Stream, Subject[]> = {
       style: "bg-green-50 text-green-600",
       chapters: [],
     },
+
+        {
+      name: "English",
+      icon: "A",
+      style: "bg-purple-50 text-purple-600",
+      chapters: [],
+    },
+    {
+      name: "Hindi",
+      icon: "अ",
+      style: "bg-pink-50 text-pink-600",
+      chapters: [],
+    },
   ],
 
   Commerce: [
@@ -263,6 +276,19 @@ const class12Subjects: Record<Stream, Subject[]> = {
       name: "Biology",
       icon: "⌁",
       style: "bg-green-50 text-green-600",
+      chapters: [],
+    },
+
+        {
+      name: "English",
+      icon: "A",
+      style: "bg-purple-50 text-purple-600",
+      chapters: [],
+    },
+    {
+      name: "Hindi",
+      icon: "अ",
+      style: "bg-pink-50 text-pink-600",
       chapters: [],
     },
   ],
