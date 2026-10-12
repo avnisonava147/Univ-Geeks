@@ -5,6 +5,7 @@ import StreamSelector from "./components/StreamSelector";
 import ClassSelector from "./components/ClassSelector";
 import SubjectSelector from "./components/SubjectSelector";
 import ChapterSelector from "./components/ChapterSelector";
+import SubscribePopup from "./components/SubscribePopup";
 import {
   getSubjects,
   streams,
@@ -46,6 +47,15 @@ export default function NotesPage() {
 
   const [selectedChapter, setSelectedChapter] =
   useState<string | null>(null);
+
+  // Subscription popup state
+const [showSubscribePopup, setShowSubscribePopup] = useState(false);
+
+const [pendingPdfAction, setPendingPdfAction] = useState<
+  "view" | "download" | null
+>(null);
+
+
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -601,9 +611,7 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
       {/* Heading */}
       <div className="mb-8">
         <h2 className="flex items-baseline gap-3 text-3xl font-semibold tracking-tight text-[#16213E]">
-          <span className="font-serif italic text-[#2F5FDE]">
-            5.
-          </span>
+          
 
           Your chapter notes
         </h2>
@@ -690,40 +698,44 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
             </div>
 
             {/* Buttons */}
-            <div className="flex flex-col gap-3 sm:flex-row">
+            
+{/* Buttons */}
+<div className="flex flex-col gap-3 sm:flex-row">
+  {/* View PDF */}
+  <a
+    href={selectedChapterData.pdf}
+    target="_blank"
+    rel="noopener noreferrer"
+    onClick={(event) => {
+      event.preventDefault();
+      setPendingPdfAction("view");
+      setShowSubscribePopup(true);
+    }}
+    className="group/button inline-flex items-center justify-center gap-2 rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2F5FDE] hover:shadow-lg"
+  >
+    <span className="text-base">👁</span>
+    View PDF
+    <span className="transition-transform duration-300 group-hover/button:translate-x-1">
+      →
+    </span>
+  </a>
 
-              {/* View PDF */}
-              <a
-                href={selectedChapterData.pdf}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group/button inline-flex items-center justify-center gap-2 rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2F5FDE] hover:shadow-lg"
-              >
-                <span className="text-base">
-                  👁
-                </span>
+  {/* Download PDF */}
+  <a
+    href={selectedChapterData.pdf}
+    download
+    onClick={(event) => {
+      event.preventDefault();
+      setPendingPdfAction("download");
+      setShowSubscribePopup(true);
+    }}
+    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-[#16213E] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-[#2F5FDE]"
+  >
+    <span className="text-base">↓</span>
+    Download PDF
+  </a>
+</div>
 
-                View PDF
-
-                <span className="transition-transform duration-300 group-hover/button:translate-x-1">
-                  →
-                </span>
-              </a>
-
-              {/* Download PDF */}
-              <a
-                href={selectedChapterData.pdf}
-                download
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-[#16213E] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-[#2F5FDE]"
-              >
-                <span className="text-base">
-                  ↓
-                </span>
-
-                Download PDF
-              </a>
-
-            </div>
 
           </div>
 
@@ -735,6 +747,43 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
 )}
 
       
+      {showSubscribePopup && (
+        <SubscribePopup
+          onClose={() => {
+            setShowSubscribePopup(false);
+            setPendingPdfAction(null);
+          }}
+          onContinue={() => {
+            const pdfUrl = selectedChapterData?.pdf;
+            const action = pendingPdfAction;
+
+            setShowSubscribePopup(false);
+            setPendingPdfAction(null);
+
+            if (!pdfUrl || !action) return;
+
+            if (action === "view") {
+              window.open(
+                pdfUrl,
+                "_blank",
+                "noopener,noreferrer"
+              );
+            } else if (action === "download") {
+              const link = document.createElement("a");
+              link.href = pdfUrl;
+              link.download = "";
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+            }
+          }}
+          
+youtubeUrl="https://www.youtube.com/@Himanshubhaiya8"
+instagramUrl="https://www.instagram.com/univ_geeks?igsh=MmRxYTN5ZTE2N2J2"
+
+        />
+      )}
+
 
     </main>
   );
