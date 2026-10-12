@@ -156,6 +156,11 @@ export default function Footer() {
                   Contact Us
                 </Link>
               </li>
+              <li>
+                <Link href="/donate" className="flex items-center gap-1.5 transition hover:text-cyan-400">
+                  <span>Support Us ❤️</span>
+                </Link>
+              </li>
             </ul>
           </div>
 

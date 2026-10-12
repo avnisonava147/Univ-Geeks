@@ -2,44 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-
-type NavbarProps = {
-  variant?: "light" | "dark" | "auto";
-};
-
-export default function Navbar({ variant = "auto" }: NavbarProps) {
-  const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const isDarkVariant = variant === "dark";
-
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "Notes", href: "/notes" },
-    { name: "PYQs", href: "/pyqs" },
-    { name: "Contact Us", href: "/contact" },
-  ];
-
-  const isActive = (href: string) => {
-    if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
-  };
 import { Menu, X, Bell } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -215,10 +177,10 @@ export default function Navbar() {
 
           {/* Explore Notes Button */}
           <Link
-            href="/notes"
+            href="/donate"
             className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2 text-sm font-bold text-white shadow-sm shadow-blue-500/20 transition hover:brightness-105 active:scale-95"
           >
-            Explore Notes
+            Donate Us
           </Link>
         </div>
 
