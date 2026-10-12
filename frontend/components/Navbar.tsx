@@ -9,6 +9,8 @@ import { usePathname } from "next/navigation";
 type NavbarProps = {
   variant?: "light" | "dark" | "auto";
 };
+import { Menu, X, Bell } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -183,6 +185,52 @@ export default function Navbar({
                 </div>
               )}
             </div>
+              </div>
+            )}
+          </div>
+
+          {/* Explore Notes Button */}
+          <Link
+            href="/donate"
+            className="rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 px-5 py-2 text-sm font-bold text-white shadow-sm shadow-blue-500/20 transition hover:brightness-105 active:scale-95"
+          >
+            Donate Us
+          </Link>
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          type="button"
+          aria-label="Toggle menu"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 md:hidden hover:bg-slate-100"
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          {isOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
+      </div>
+
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <nav className="border-t border-slate-100 bg-white/98 md:hidden rounded-b-2xl">
+          <div className="mx-auto flex max-w-7xl flex-col px-4 py-3 space-y-1">
+
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                    active
+                      ? "bg-blue-50 text-blue-600 font-bold"
+                      : "text-slate-700 hover:bg-slate-50 hover:text-blue-600"
+                  }`}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
 
             <Link
               href="/notes"
