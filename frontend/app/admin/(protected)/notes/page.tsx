@@ -1,7 +1,8 @@
 // app/admin/(protected)/notes/page.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { apiRequest } from "../_lib/api";
 import {
   ArrowUpDown,
   CheckCircle2,
@@ -67,18 +68,7 @@ const CLASS_META: Record<ClassLevel, { label: string; color: string }> = {
 
 const SUBJECT_OPTIONS = Object.keys(SUBJECT_COLORS);
 
-const INITIAL_NOTES: NoteDoc[] = [
-  { id: "n1", title: "Real Numbers", subject: "Mathematics", classLevel: "10", stream: "Common", chapterNo: 1, pages: 24, sizeMb: 1.8, downloads: 1240, status: "published", updatedAt: "2026-09-10", uploadedBy: "Amit Saxena", pdfUrl: "/pdfs/class-10/mathematics/1.pdf" },
-  { id: "n2", title: "Polynomials", subject: "Mathematics", classLevel: "10", stream: "Common", chapterNo: 2, pages: 18, sizeMb: 1.2, downloads: 0, status: "draft", updatedAt: "2026-09-12", uploadedBy: "Amit Saxena", pdfUrl: "/pdfs/class-10/mathematics/2.pdf" },
-  { id: "n3", title: "Chemical Reactions and Equations", subject: "Science", classLevel: "10", stream: "Common", chapterNo: 1, pages: 30, sizeMb: 2.6, downloads: 980, status: "published", updatedAt: "2026-09-08", uploadedBy: "Dr. Ritu Chauhan", pdfUrl: "/pdfs/class-10/science/1.pdf" },
-  { id: "n4", title: "Electricity", subject: "Science", classLevel: "10", stream: "Common", chapterNo: 11, pages: 34, sizeMb: 3.1, downloads: 1523, status: "published", updatedAt: "2026-09-05", uploadedBy: "Er. Amit Saxena", pdfUrl: "/pdfs/class-10/science/11.pdf" },
-  { id: "n5", title: "Electric Charges and Fields", subject: "Physics", classLevel: "12", stream: "Science", chapterNo: 1, pages: 28, sizeMb: 2.2, downloads: 864, status: "published", updatedAt: "2026-09-11", uploadedBy: "Er. Amit Saxena", pdfUrl: "/pdfs/class-12/science/physics/1.pdf" },
-  { id: "n6", title: "Electrostatic Potential and Capacitance", subject: "Physics", classLevel: "12", stream: "Science", chapterNo: 2, pages: 32, sizeMb: 2.9, downloads: 0, status: "draft", updatedAt: "2026-09-14", uploadedBy: "Er. Amit Saxena", pdfUrl: "/pdfs/class-12/science/physics/2.pdf" },
-  { id: "n7", title: "Some Basic Concepts of Chemistry", subject: "Chemistry", classLevel: "11", stream: "Science", chapterNo: 1, pages: 22, sizeMb: 1.9, downloads: 712, status: "published", updatedAt: "2026-09-03", uploadedBy: "Dr. Ritu Chauhan", pdfUrl: "/pdfs/class-11/science/chemistry/1.pdf" },
-  { id: "n8", title: "Trigonometric Functions", subject: "Mathematics", classLevel: "11", stream: "Science", chapterNo: 3, pages: 26, sizeMb: 2.0, downloads: 590, status: "published", updatedAt: "2026-09-01", uploadedBy: "Sanjay Singhal", pdfUrl: "/pdfs/class-11/science/maths/3.pdf" },
-  { id: "n9", title: "Cell: The Unit of Life", subject: "Biology", classLevel: "11", stream: "Science", chapterNo: 8, pages: 25, sizeMb: 2.4, downloads: 0, status: "draft", updatedAt: "2026-09-13", uploadedBy: "Pooja Deshmukh", pdfUrl: "/pdfs/class-11/science/biology/8.pdf" },
-  { id: "n10", title: "Introduction to Accounting", subject: "Accountancy", classLevel: "11", stream: "Commerce", chapterNo: 1, pages: 20, sizeMb: 1.5, downloads: 356, status: "published", updatedAt: "2026-08-28", uploadedBy: "UnivGeeks Editorial", pdfUrl: "/pdfs/class-11/commerce/accountancy/1.pdf" },
-];
+// API data is fetched on mount; start with empty array
 
 const EMPTY_FORM = {
   title: "",
@@ -119,7 +109,9 @@ function subjectColor(subject: string) {
 }
 
 export default function NotesPage() {
-  const [notes, setNotes] = useState<NoteDoc[]>(INITIAL_NOTES);
+  const [notes, setNotes] = useState<NoteDoc[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [classFilter, setClassFilter] = useState<"" | ClassLevel>("");
   const [subjectFilter, setSubjectFilter] = useState("");
@@ -132,10 +124,43 @@ export default function NotesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ ...EMPTY_FORM });
+  const [saving, setSaving] = useState(false);
 
   const [previewNote, setPreviewNote] = useState<NoteDoc | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<NoteDoc | null>(null);
   const [toast, setToast] = useState<{ msg: string; kind: "success" | "info" } | null>(null);
+
+  // Fetch notes from API on mount
+  const fetchNotes = useCallback(async () => {
+    setLoading(true);
+    setApiError(null);
+    try {
+      const data = await apiRequest<any[]>("/api/admin/notes");
+      // Normalise backend shape -> frontend NoteDoc
+      const mapped: NoteDoc[] = data.map((n: any) => ({
+        id: n.id,
+        title: n.title ?? "",
+        subject: n.subject ?? "",
+        classLevel: (n.classLevel ?? "10") as ClassLevel,
+        stream: (n.stream ?? "Common") as StreamName,
+        chapterNo: n.chapterNo ?? 1,
+        pages: n.pages ?? 1,
+        sizeMb: n.sizeMb ?? 1.0,
+        downloads: n.downloads ?? 0,
+        status: (n.status ?? "published") as NoteStatus,
+        updatedAt: n.updatedAt ? n.updatedAt.split("T")[0] : "",
+        uploadedBy: n.uploadedBy ?? "Admin",
+        pdfUrl: n.pdfUrl ?? "",
+      }));
+      setNotes(mapped);
+    } catch (err: any) {
+      setApiError(err.message ?? "Failed to load notes.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchNotes(); }, [fetchNotes]);
 
   // Auto-dismiss toasts (setState happens in the timer callback, not render).
   useEffect(() => {
@@ -201,39 +226,36 @@ export default function NotesPage() {
     });
   }
 
-  function bulkSetStatus(status: NoteStatus) {
-    const stamp = todayISO();
-    setNotes((prev) =>
-      prev.map((n) => (selectedIds.has(n.id) ? { ...n, status, updatedAt: stamp } : n))
-    );
+  async function bulkSetStatus(status: NoteStatus) {
+    const ids = Array.from(selectedIds);
+    await Promise.all(ids.map((id) => apiRequest(`/api/admin/notes/${id}/status`, { method: "PATCH" }).catch(() => {})));
     showToast(
       status === "published"
         ? `${selectedIds.size} note${selectedIds.size !== 1 ? "s" : ""} published`
         : `${selectedIds.size} note${selectedIds.size !== 1 ? "s" : ""} moved to drafts`
     );
     setSelectedIds(new Set());
+    await fetchNotes();
   }
 
-  function bulkDelete() {
-    const count = selectedIds.size;
-    setNotes((prev) => prev.filter((n) => !selectedIds.has(n.id)));
+  async function bulkDelete() {
+    const ids = Array.from(selectedIds);
+    const count = ids.length;
+    await Promise.all(ids.map((id) => apiRequest(`/api/admin/notes/${id}`, { method: "DELETE" }).catch(() => {})));
     setSelectedIds(new Set());
     showToast(`${count} note${count !== 1 ? "s" : ""} deleted`, "info");
+    await fetchNotes();
   }
 
-  function quickToggleStatus(note: NoteDoc) {
-    const nextStatus: NoteStatus = note.status === "published" ? "draft" : "published";
-    const stamp = todayISO();
-    setNotes((prev) =>
-      prev.map((n) =>
-        n.id === note.id
-          ? { ...n, status: nextStatus, updatedAt: stamp }
-          : n
-      )
-    );
-    showToast(
-      nextStatus === "published" ? `“${note.title}” published` : `“${note.title}” moved to drafts`
-    );
+  async function quickToggleStatus(note: NoteDoc) {
+    try {
+      await apiRequest(`/api/admin/notes/${note.id}/status`, { method: "PATCH" });
+      const nextStatus: NoteStatus = note.status === "published" ? "draft" : "published";
+      showToast(nextStatus === "published" ? `"${note.title}" published` : `"${note.title}" moved to drafts`);
+      await fetchNotes();
+    } catch (err: any) {
+      showToast(err.message ?? "Failed to toggle status", "info");
+    }
   }
 
   function openAdd() {
@@ -267,46 +289,54 @@ export default function NotesPage() {
     }));
   }
 
-  function saveNote() {
+  async function saveNote() {
     if (!form.title.trim() || !form.subject.trim()) return;
-
-    const stamp = todayISO();
+    setSaving(true);
     const subjectSlug = form.subject.trim().toLowerCase().replace(/\s+/g, "-");
     const pdfUrl =
       form.pdfFile.trim() ||
       `/pdfs/class-${form.classLevel}/${subjectSlug}/${form.chapterNo}.pdf`;
-
-    if (editingId) {
-      setNotes((prev) =>
-        prev.map((n) => (n.id === editingId ? { ...n, ...form, title: form.title.trim(), subject: form.subject.trim(), pdfUrl, updatedAt: stamp } : n))
-      );
-      showToast(`“${form.title.trim()}” updated`);
-    } else {
-      const newNote: NoteDoc = {
-        id: createNoteId(),
-        ...form,
-        title: form.title.trim(),
-        subject: form.subject.trim(),
-        pdfUrl,
-        updatedAt: stamp,
-        downloads: 0,
-      };
-      setNotes((prev) => [newNote, ...prev]);
-      showToast(`“${newNote.title}” uploaded`);
+    const body = {
+      title: form.title.trim(),
+      subject: form.subject.trim(),
+      classLevel: form.classLevel,
+      stream: form.stream,
+      chapterNo: form.chapterNo,
+      pages: form.pages,
+      sizeMb: form.sizeMb,
+      status: form.status,
+      uploadedBy: form.uploadedBy,
+      pdfUrl,
+      fileName: form.pdfFile || null,
+    };
+    try {
+      if (editingId) {
+        await apiRequest(`/api/admin/notes/${editingId}`, { method: "PUT", body: JSON.stringify(body) });
+        showToast(`"${form.title.trim()}" updated`);
+      } else {
+        await apiRequest("/api/admin/notes", { method: "POST", body: JSON.stringify(body) });
+        showToast(`"${form.title.trim()}" uploaded`);
+      }
+      setShowModal(false);
+      await fetchNotes();
+    } catch (err: any) {
+      showToast(err.message ?? "Failed to save note", "info");
+    } finally {
+      setSaving(false);
     }
-    setShowModal(false);
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!deleteTarget) return;
-    setNotes((prev) => prev.filter((n) => n.id !== deleteTarget.id));
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.delete(deleteTarget.id);
-      return next;
-    });
-    showToast(`“${deleteTarget.title}” deleted`, "info");
-    setDeleteTarget(null);
+    try {
+      await apiRequest(`/api/admin/notes/${deleteTarget.id}`, { method: "DELETE" });
+      showToast(`"${deleteTarget.title}" deleted`, "info");
+      setSelectedIds((prev) => { const next = new Set(prev); next.delete(deleteTarget.id); return next; });
+      setDeleteTarget(null);
+      await fetchNotes();
+    } catch (err: any) {
+      showToast(err.message ?? "Failed to delete note", "info");
+    }
   }
 
   function clearFilters() {
@@ -336,6 +366,25 @@ export default function NotesPage() {
         <FileText size={11} /> Draft
       </button>
     );
+
+  if (loading) {
+    return (
+      <div className="flex min-h-[300px] flex-col items-center justify-center gap-3">
+        <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#E5E0D5] border-t-[#E8A33D]" />
+        <p className="text-sm text-[#9CA3AF]">Loading notes from database…</p>
+      </div>
+    );
+  }
+
+  if (apiError) {
+    return (
+      <div className="flex min-h-[300px] flex-col items-center justify-center gap-3 text-center">
+        <p className="text-sm font-medium text-[#B0533E]">Failed to load notes</p>
+        <p className="text-xs text-[#9CA3AF]">{apiError}</p>
+        <button type="button" onClick={fetchNotes} className="mt-2 rounded-md bg-[#1C2B3A] px-4 py-2 text-sm font-medium text-white hover:bg-[#28394D]">Retry</button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -914,10 +963,10 @@ export default function NotesPage() {
               <button
                 type="button"
                 onClick={saveNote}
-                disabled={!form.title.trim() || !form.subject.trim()}
+                disabled={!form.title.trim() || !form.subject.trim() || saving}
                 className="rounded-md bg-[#1C2B3A] px-4 py-2 text-sm font-medium text-white transition-all hover:bg-[#28394D] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {editingId ? "Save Changes" : "Upload Note"}
+                {saving ? "Saving…" : editingId ? "Save Changes" : "Upload Note"}
               </button>
             </div>
           </div>

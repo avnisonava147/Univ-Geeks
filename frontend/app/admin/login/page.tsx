@@ -2,29 +2,47 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveAdminSession } from "../(protected)/_lib/session";
+import { apiRequest } from "../(protected)/_lib/api";
 
 function LoginPageInner() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
-  const [rememberMe,setRememberMe] = useState(false);
-  const [signingIn,setSigningIn] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [signingIn, setSigningIn] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>)=>{
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (signingIn) return;
+    setError(null);
 
-    // Frontend-only demo auth: any credentials are accepted until the
-    // backend login endpoint is wired up.
+    const trimmedEmail = email.trim();
+    const trimmedPass = password.trim();
+
+    if (!trimmedEmail || !trimmedPass) {
+      setError("Please enter both email/username and password.");
+      return;
+    }
+
     setSigningIn(true);
-    saveAdminSession(email.trim() || "admin@univgeeks.in");
+    try {
+      const res = await apiRequest<{ token: string; user?: { email: string } }>("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({
+          username: trimmedEmail,
+          password: trimmedPass,
+        }),
+      });
 
-    window.setTimeout(() => {
+      saveAdminSession(res.user?.email || trimmedEmail);
       router.push("/admin/dashboard");
-    }, 500);
-  }
+    } catch (err: any) {
+      setError(err.message || "Invalid credentials. Please verify your admin username and password.");
+      setSigningIn(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-white text-slate-900">
@@ -175,6 +193,18 @@ function LoginPageInner() {
                 Please sign in to access the admin panel.
               </p>
             </div>
+
+            {error && (
+              <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                <div className="flex items-center gap-2 font-semibold">
+                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  Authentication Error
+                </div>
+                <p className="mt-1">{error}</p>
+              </div>
+            )}
 
             <form className="space-y-6" onSubmit={handleSubmit} >
 
@@ -342,7 +372,7 @@ function LoginPageInner() {
             </form>
 
             <p className="mt-6 text-center text-xs text-slate-400">
-              Frontend demo — any email &amp; password signs you in.
+              Protected Univ-Geeks administration area.
             </p>
 
 

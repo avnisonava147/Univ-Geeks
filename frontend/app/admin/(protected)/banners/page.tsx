@@ -1,7 +1,8 @@
 // app/admin/(protected)/banners/page.tsx
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { apiRequest } from "../_lib/api";
 import {
   Plus,
   Pencil,
@@ -103,10 +104,31 @@ function formatDate(d: string) {
 }
 
 export default function BannersPage() {
-  const [banners, setBanners] = useState<Banner[]>(INITIAL_BANNERS);
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
   const [form, setForm] = useState({ ...EMPTY_FORM });
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const fetchBanners = useCallback(async () => {
+    try {
+      const data = await apiRequest<Banner[]>("/api/admin/banners");
+      setBanners(data || []);
+    } catch {
+      // Offline fallback
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBanners();
+  }, [fetchBanners]);
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const sorted = useMemo(
     () => [...banners].sort((a, b) => a.priority - b.priority),
@@ -115,10 +137,16 @@ export default function BannersPage() {
 
   const activeCount = banners.filter((b) => b.active).length;
 
-  function toggleActive(id: string) {
-    setBanners((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, active: !b.active } : b))
-    );
+  async function toggleActive(id: string) {
+    try {
+      await apiRequest(`/api/admin/banners/${id}/status`, { method: "PATCH" });
+      setBanners((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, active: !b.active } : b))
+      );
+      setToast("Banner status updated");
+    } catch (err: any) {
+      setToast(err.message || "Failed to update banner status");
+    }
   }
 
   function movePriority(id: string, dir: "up" | "down") {
@@ -139,13 +167,19 @@ export default function BannersPage() {
     );
   }
 
-  function deleteBanner(id: string) {
-    setBanners((prev) => prev.filter((b) => b.id !== id));
+  async function deleteBanner(id: string) {
+    try {
+      await apiRequest(`/api/admin/banners/${id}`, { method: "DELETE" });
+      setBanners((prev) => prev.filter((b) => b.id !== id));
+      setToast("Banner deleted");
+    } catch (err: any) {
+      setToast(err.message || "Failed to delete banner");
+    }
   }
 
   function openAdd() {
     setEditingBanner(null);
-    setForm({ ...EMPTY_FORM });
+    setForm({ ...EMPTY_FORM, priority: banners.length + 1 });
     setShowModal(true);
   }
 
@@ -163,22 +197,33 @@ export default function BannersPage() {
     setShowModal(true);
   }
 
-  function saveModal() {
+  async function saveModal() {
     if (!form.title.trim()) return;
-    if (editingBanner) {
-      setBanners((prev) =>
-        prev.map((b) =>
-          b.id === editingBanner.id ? { ...b, ...form } : b
-        )
-      );
-    } else {
-      const newBanner: Banner = {
-        id: `b${Date.now()}`,
-        ...form,
-      };
-      setBanners((prev) => [...prev, newBanner]);
+    setLoading(true);
+    try {
+      if (editingBanner) {
+        const updated = await apiRequest<Banner>(`/api/admin/banners/${editingBanner.id}`, {
+          method: "PUT",
+          body: JSON.stringify(form),
+        });
+        setBanners((prev) =>
+          prev.map((b) => (b.id === editingBanner.id ? { ...b, ...updated } : b))
+        );
+        setToast("Banner updated successfully");
+      } else {
+        const created = await apiRequest<Banner>("/api/admin/banners", {
+          method: "POST",
+          body: JSON.stringify(form),
+        });
+        setBanners((prev) => [...prev, created]);
+        setToast("Banner created successfully");
+      }
+      setShowModal(false);
+    } catch (err: any) {
+      setToast(err.message || "Failed to save banner");
+    } finally {
+      setLoading(false);
     }
-    setShowModal(false);
   }
 
   return (

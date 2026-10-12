@@ -159,6 +159,8 @@ export default function Footer() {
               <li>
                 <Link href="/donate" className="flex items-center gap-1.5 transition hover:text-cyan-400">
                   <span>Support Us ❤️</span>
+                </Link>
+              </li>
 
               <li>
                 <Link href="https://t.me/Univgeeks_svh" target="_blank"  className="transition hover:text-cyan-400">
@@ -249,6 +251,13 @@ export default function Footer() {
             <span className="text-slate-400">
               100% Free Study Portal
             </span>
+            <span className="text-slate-700">•</span>
+            <Link
+              href="/admin/login"
+              className="text-slate-500 hover:text-slate-300 transition text-[11px]"
+            >
+              Admin Login
+            </Link>
             <button
               type="button"
               onClick={scrollToTop}

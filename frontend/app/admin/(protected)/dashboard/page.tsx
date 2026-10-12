@@ -15,15 +15,15 @@ import {
   Send,
   Sparkles,
 } from "lucide-react";
+import { apiRequest } from "../_lib/api";
 
-/* ---------------------------- Mock data ---------------------------- */
+/* ---------------------------- Mock/default data (overridden by API) ---------------------------- */
 
-const stats = [
-  { label: "Total Users", value: 2340, delta: "+124 this month", accent: "#1C2B3A", icon: Users, href: "/admin/users" },
-  { label: "Total Notes", value: 186, delta: "+12 this month", accent: "#E8A33D", icon: StickyNote, href: "/admin/notes" },
-  { label: "Total PYQs", value: 94, delta: "+8 this month", accent: "#6B8F71", icon: FileQuestion, href: "/admin/pyqs" },
-  { label: "Total Quizzes", value: 37, delta: "+3 this month", accent: "#B0533E", icon: Brain, href: "/admin/quizzes" },
-  { label: "Total Blogs", value: 52, delta: "+5 this month", accent: "#5B7A99", icon: Newspaper, href: "/admin/blogs" },
+const DEFAULT_STATS = [
+  { label: "Total Notes", value: 0, delta: "Loading…", accent: "#E8A33D", icon: StickyNote, href: "/admin/notes" },
+  { label: "Total PYQs", value: 0, delta: "Loading…", accent: "#6B8F71", icon: FileQuestion, href: "/admin/pyqs" },
+  { label: "Active Banners", value: 0, delta: "Loading…", accent: "#B0533E", icon: Newspaper, href: "/admin/banners" },
+  { label: "Total Downloads", value: 0, delta: "Loading…", accent: "#5B7A99", icon: TrendingUp, href: "/admin/notes" },
 ];
 
 const weeklyDownloads = [
@@ -36,14 +36,8 @@ const weeklyDownloads = [
   { day: "Sun", value: 580 },
 ];
 
-const contentMix = [
-  { label: "Notes", value: 186, color: "#E8A33D" },
-  { label: "PYQs", value: 94, color: "#6B8F71" },
-  { label: "Quizzes", value: 37, color: "#B0533E" },
-  { label: "Blogs", value: 52, color: "#5B7A99" },
-];
 
-const recentActivity = [
+const STATIC_ACTIVITY = [
   { text: "New note uploaded — Class 12 Physics: Electrostatics", time: "12 min ago", color: "#E8A33D" },
   { text: "Quiz \"RBSE Chemistry Mock 3\" created", time: "48 min ago", color: "#B0533E" },
   { text: "User Priya Sharma signed up", time: "1 hr ago", color: "#5B7A99" },
@@ -96,7 +90,7 @@ function StatCard({
   icon: Icon,
   href,
   delay,
-}: (typeof stats)[number] & { delay: number }) {
+}: (typeof DEFAULT_STATS)[number] & { delay: number }) {
   const animated = useCountUp(value, 800 + delay * 300);
 
   return (
@@ -128,9 +122,38 @@ function StatCard({
 /* ------------------------------ Page ------------------------------- */
 
 export default function DashboardPage() {
+  const [liveStats, setLiveStats] = useState(DEFAULT_STATS);
+  const [recentActivity, setRecentActivity] = useState(STATIC_ACTIVITY);
+  const [contentMix, setContentMix] = useState([{ label: "Notes", value: 0, color: "#E8A33D" }, { label: "PYQs", value: 0, color: "#6B8F71" }]);
+  const [statsLoading, setStatsLoading] = useState(true);
   const maxDownload = Math.max(...weeklyDownloads.map((d) => d.value));
-  const mixTotal = contentMix.reduce((s, m) => s + m.value, 0);
+  const mixTotal = contentMix.reduce((s, m) => s + m.value, 0) || 1;
   const totalQuestions = pendingQuestions.length;
+
+  useEffect(() => {
+    apiRequest<any>("/api/admin/dashboard/stats")
+      .then((data) => {
+        setLiveStats([
+          { label: "Total Notes", value: data.totalNotes ?? 0, delta: `${data.totalNotes ?? 0} in library`, accent: "#E8A33D", icon: StickyNote, href: "/admin/notes" },
+          { label: "Total PYQs", value: data.totalPyqs ?? 0, delta: `${data.totalPyqs ?? 0} papers`, accent: "#6B8F71", icon: FileQuestion, href: "/admin/pyqs" },
+          { label: "Active Banners", value: data.totalBanners ?? 0, delta: `${data.totalBanners ?? 0} banners`, accent: "#B0533E", icon: Newspaper, href: "/admin/banners" },
+          { label: "Total Downloads", value: data.totalDownloads ?? 0, delta: "all-time downloads", accent: "#5B7A99", icon: TrendingUp, href: "/admin/notes" },
+        ]);
+        setContentMix([
+          { label: "Notes", value: data.totalNotes ?? 0, color: "#E8A33D" },
+          { label: "PYQs", value: data.totalPyqs ?? 0, color: "#6B8F71" },
+        ]);
+        if (data.recentActivity && data.recentActivity.length > 0) {
+          setRecentActivity(data.recentActivity.map((a: any) => ({
+            text: a.text,
+            time: a.time ? new Date(a.time).toLocaleDateString("en-IN", { day: "2-digit", month: "short" }) : "Recently",
+            color: a.color ?? "#E8A33D",
+          })));
+        }
+      })
+      .catch(() => {})
+      .finally(() => setStatsLoading(false));
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -146,8 +169,8 @@ export default function DashboardPage() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        {stats.map((s, i) => (
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {liveStats.map((s, i) => (
           <StatCard key={s.label} {...s} delay={i * 70} />
         ))}
       </div>

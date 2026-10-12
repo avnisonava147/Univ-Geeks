@@ -24,30 +24,58 @@ export default async function YearPYQPage({
 
   const formattedChapter = chapter || null;
 
-  const papers = [
-    {
-      title: formattedChapter
-        ? `${formattedChapter} Question Paper`
-        : `${formattedSubject} Question Paper`,
-      subtitle: formattedChapter
-        ? `RBSE Class 12 ${formattedSubject} • ${formattedChapter} • ${year}`
-        : `RBSE Class 12 ${formattedSubject} • ${year}`,
-      type: "Question Paper",
-      icon: "📄",
-      free: true,
-    },
-    {
-      title: formattedChapter
-        ? `${formattedChapter} Solution`
-        : `${formattedSubject} Solution`,
-      subtitle: formattedChapter
-        ? `Solved answers for ${formattedChapter} • ${year}`
-        : `Solved answers for ${year} examination`,
-      type: "Solution",
-      icon: "✅",
-      free: false,
-    },
-  ];
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  let realPyqs: any[] = [];
+  try {
+    const res = await fetch(
+      `${backendUrl}/api/pyqs?subject=${encodeURIComponent(formattedSubject)}&year=${encodeURIComponent(year)}`,
+      { cache: "no-store" }
+    );
+    if (res.ok) {
+      realPyqs = await res.json();
+    }
+  } catch {
+    // Backend offline fallback
+  }
+
+  const papers = realPyqs.length > 0
+    ? realPyqs.map((p: any) => ({
+        id: p.id,
+        title: p.title || `${formattedSubject} Question Paper`,
+        subtitle: `${p.exam || "RBSE"} ${p.classLevel || "Class 12"} ${p.subject} • ${p.year}${p.chapter ? ` • ${p.chapter}` : ""}`,
+        type: "Question Paper",
+        icon: "📄",
+        free: true,
+        pdfUrl: p.fileUrl || "",
+      }))
+    : [
+        {
+          id: "default-qp",
+          title: formattedChapter
+            ? `${formattedChapter} Question Paper`
+            : `${formattedSubject} Question Paper`,
+          subtitle: formattedChapter
+            ? `RBSE Class 12 ${formattedSubject} • ${formattedChapter} • ${year}`
+            : `RBSE Class 12 ${formattedSubject} • ${year}`,
+          type: "Question Paper",
+          icon: "📄",
+          free: true,
+          pdfUrl: "",
+        },
+        {
+          id: "default-sol",
+          title: formattedChapter
+            ? `${formattedChapter} Solution`
+            : `${formattedSubject} Solution`,
+          subtitle: formattedChapter
+            ? `Solved answers for ${formattedChapter} • ${year}`
+            : `Solved answers for ${year} examination`,
+          type: "Solution",
+          icon: "✅",
+          free: false,
+          pdfUrl: "",
+        },
+      ];
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -170,10 +198,10 @@ export default async function YearPYQPage({
 
           <div className="grid gap-5 md:grid-cols-2">
 
-            {papers.map((paper) => (
+            {papers.map((paper, idx) => (
 
               <article
-                key={paper.type}
+                key={paper.id || `${paper.type}-${idx}`}
                 className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
               >
 
@@ -232,11 +260,10 @@ export default async function YearPYQPage({
                 </div>
 
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
-<PaperActions
-  title={paper.title}
-  pdfUrl=""
-/>
-
+                  <PaperActions
+                    title={paper.title}
+                    pdfUrl={paper.pdfUrl}
+                  />
                 </div>
 
               </article>

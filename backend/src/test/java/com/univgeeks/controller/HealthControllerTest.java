@@ -9,7 +9,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.univgeeks.security.JwtAuthenticationFilter;
+import com.univgeeks.security.JwtTokenProvider;
+import com.univgeeks.security.SecurityConfig;
+import org.springframework.context.annotation.Import;
+
 @WebMvcTest(HealthController.class)
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class, JwtTokenProvider.class})
 public class HealthControllerTest {
 
     @Autowired
