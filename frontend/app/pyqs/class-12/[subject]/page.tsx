@@ -1,8 +1,9 @@
 import Link from "next/link";
-import ChapterList from "../../../components/ChapterList";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import SubjectHero from "../../../components/SubjectHero";
+import ChapterList from "../../../../components/ChapterList";
+import SubjectHero from "../../../../components/SubjectHero";
+
 
 type PageProps = {
   params: Promise<{
@@ -251,15 +252,13 @@ export default async function SubjectPage({
                   {/* Buttons */}
                   <div className="mt-6 grid gap-3 sm:grid-cols-2">
 
-                    <Link
-                      href={`/pyqs/${subject}/2025`}
+                    <Link href={`/pyqs/class-12/${subject}/2025`}
                       className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 font-bold text-white transition hover:bg-blue-700"
                     >
                       🛒 Buy Full Book for ₹1
                     </Link>
 
-                    <Link
-                      href={`/pyqs/${subject}/2025`}
+                   <Link href={`/pyqs/class-12/${subject}/2025`}
                       className="flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-white px-5 py-3.5 font-bold text-slate-800 transition hover:bg-blue-50"
                     >
                       👁️ View Free Sample
@@ -306,7 +305,7 @@ export default async function SubjectPage({
                 </TOCItem>
 
                 <TOCItem>
-                  What&apos;s Inside
+                  What's Inside
                 </TOCItem>
 
                 <TOCItem>
@@ -345,25 +344,25 @@ export default async function SubjectPage({
 
                 <RelatedSubject
                   name="Physics"
-                  href="/pyqs/physics"
+                  href="/pyqs/class-12/physics"
                   icon="⚛️"
                 />
 
                 <RelatedSubject
                   name="Chemistry"
-                  href="/pyqs/chemistry"
+                  href="/pyqs/class-12/chemistry"
                   icon="🧪"
                 />
 
                 <RelatedSubject
                   name="Mathematics"
-                  href="/pyqs/mathematics"
+                  href="/pyqs/class-12/mathematics"
                   icon="📐"
                 />
 
                 <RelatedSubject
                   name="Biology"
-                  href="/pyqs/biology"
+                  href="/pyqs/class-12/biology"
                   icon="🧬"
                 />
 
