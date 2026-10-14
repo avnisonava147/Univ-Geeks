@@ -165,7 +165,7 @@ export default function SubjectHero({
 
 
 {/* Stats */}
-<div className="mt-7 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
+<div className="mt-7 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-3">
   {/* Resources */}
   <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.08] px-3 py-3 shadow-sm backdrop-blur-md transition hover:bg-white/[0.12]">
     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.08] text-lg">
