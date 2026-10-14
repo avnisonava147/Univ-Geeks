@@ -76,7 +76,7 @@ export default function Footer() {
 
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-400">
               Empowering Rajasthan & State Board students with high-yield chapter notes,
-              13+ years of chapter-wise PYQs (2013-2025), and formula sheets to ace exams with confidence.
+              13+ years of chapter-wise PYQs (2013-2026), and formula sheets to ace exams with confidence.
             </p>
 
             {/* Social / Connect */}

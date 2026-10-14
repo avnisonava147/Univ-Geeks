@@ -102,6 +102,33 @@ const subjectData: Record<
       "Biodiversity and Conservation",
     ],
   },
+
+
+  hindi: {
+    name: "Hindi",
+    thumbnail: "/hindi-thumbnail.png",
+    theme: "hindi",
+    chapters: [
+      "अपठित गद्यांश",
+      "आरोह – काव्य खंड",
+      "आरोह – गद्य खंड",
+      "वितान",
+      "अभिव्यक्ति और माध्यम",
+    ],
+  },
+
+  english: {
+    name: "English",
+    thumbnail: "/english-thumbnail.png",
+    theme: "english",
+    chapters: [
+      "Reading Comprehension",
+      "Flamingo – Prose",
+      "Flamingo – Poetry",
+      "Vistas – Supplementary Reader",
+      "Writing Skills",
+    ],
+  },
 };
 
 export default async function SubjectPage({
@@ -109,9 +136,25 @@ export default async function SubjectPage({
 }: PageProps) {
   const { subject } = await params;
 
-  const data =
-    subjectData[subject.toLowerCase()] ||
-    subjectData.chemistry;
+
+  const data = subjectData[subject.toLowerCase()];
+
+  if (!data) {
+    return (
+      <main className="min-h-screen bg-slate-50 p-10 text-center">
+        <h1 className="text-2xl font-bold text-[#092653]">
+          Subject not found
+        </h1>
+        <Link
+          href="/pyqs/class-12"
+          className="mt-4 inline-block text-blue-600 underline"
+        >
+          Back to Class 12 PYQs
+        </Link>
+      </main>
+    );
+  }
+
 
   const subjectName = data.name;
 
@@ -143,7 +186,7 @@ export default async function SubjectPage({
 
           <FeatureCard
             icon="🗓️"
-            title="2020 – 2025"
+            title="2020 – 2026"
             description="6+ Years of PYQs"
           />
 
@@ -155,8 +198,8 @@ export default async function SubjectPage({
 
           <FeatureCard
             icon="⚡"
-            title="Just ₹1"
-            description="Affordable for everyone"
+            title="Easy Access"
+            description="Find papers in a few clicks"
           />
 
         </div>
@@ -203,13 +246,13 @@ export default async function SubjectPage({
                         Chapterwise PYQs
 
                         <span className="block">
-                          (2020 – 2025)
+                          (2020 – 2026)
                         </span>
                       </h2>
                     </div>
 
                     <span className="rounded-full bg-blue-600 px-5 py-2 text-sm font-bold text-white">
-                      ₹1 Only
+                      Latest Year
                     </span>
 
                   </div>
@@ -226,7 +269,7 @@ export default async function SubjectPage({
                     <InfoBox
                       icon="🗓️"
                       title="6+ Years"
-                      subtitle="2020 – 2025"
+                      subtitle="2020 – 2026"
                     />
 
                     <InfoBox
@@ -255,13 +298,13 @@ export default async function SubjectPage({
                     <Link href={`/pyqs/class-12/${subject}/2025`}
                       className="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3.5 font-bold text-white transition hover:bg-blue-700"
                     >
-                      🛒 Buy Full Book for ₹1
+                      📚 Explore Question Papers
                     </Link>
 
-                   <Link href={`/pyqs/class-12/${subject}/2025`}
+                    <Link href={`/pyqs/class-12/${subject}/2025`}
                       className="flex items-center justify-center gap-2 rounded-xl border border-blue-200 bg-white px-5 py-3.5 font-bold text-slate-800 transition hover:bg-blue-50"
                     >
-                      👁️ View Free Sample
+                      👁️ View Sample
                     </Link>
 
                   </div>
@@ -364,6 +407,17 @@ export default async function SubjectPage({
                   name="Biology"
                   href="/pyqs/class-12/biology"
                   icon="🧬"
+                />
+
+                <RelatedSubject
+                  name="Hindi"
+                  href="/pyqs/class-12/hindi"
+                  icon="📚"
+                />
+                <RelatedSubject
+                  name="English"
+                  href="/pyqs/class-12/english"
+                  icon="📖"
                 />
 
               </div>
@@ -483,11 +537,10 @@ function TOCItem({
 }) {
   return (
     <div
-      className={`rounded-lg px-4 py-3 text-sm font-medium transition ${
-        active
-          ? "bg-blue-50 font-bold text-blue-600"
-          : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
-      }`}
+      className={`rounded-lg px-4 py-3 text-sm font-medium transition ${active
+        ? "bg-blue-50 font-bold text-blue-600"
+        : "text-slate-600 hover:bg-slate-50 hover:text-blue-600"
+        }`}
     >
       {children}
     </div>

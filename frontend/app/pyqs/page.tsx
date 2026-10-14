@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
 
+
 const classes = [
   {
     id: "10",
@@ -13,8 +14,9 @@ const classes = [
     banner: "/class-10-banner.png",
     theme: "from-blue-100 via-sky-50 to-white",
     accent: "text-blue-700",
-    button: "Coming Soon",
-    available: false,
+    button: "Explore PYQs",
+    available: true,
+    href: "/pyqs/class-10",
   },
   {
     id: "11",
@@ -26,6 +28,7 @@ const classes = [
     accent: "text-cyan-800",
     button: "Coming Soon",
     available: false,
+    href: "#",
   },
   {
     id: "12",
@@ -37,8 +40,10 @@ const classes = [
     accent: "text-indigo-700",
     button: "Explore PYQs",
     available: true,
+    href: "/pyqs/class-12",
   },
 ];
+
 
 export default function ClassesPage() {
   return (
@@ -157,23 +162,25 @@ export default function ClassesPage() {
               </>
             );
 
-            return item.available ? (
+
+return item.available ? (
   <Link
     key={item.id}
-    href="/pyqs/class-12"
-                className="group overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                {cardContent}
-              </Link>
-            ) : (
-              <article
-                key={item.id}
-                aria-disabled="true"
-                className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white opacity-90 shadow-sm"
-              >
-                {cardContent}
-              </article>
-            );
+    href={item.href}
+    className="group overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+  >
+    {cardContent}
+  </Link>
+) : (
+  <article
+    key={item.id}
+    aria-disabled="true"
+    className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white opacity-90 shadow-sm"
+  >
+    {cardContent}
+  </article>
+);
+
           })}
         </div>
       </section>
