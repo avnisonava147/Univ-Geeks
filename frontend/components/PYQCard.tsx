@@ -1,7 +1,10 @@
+
 import Link from "next/link";
+
 type PYQCardProps = {
   subject: string;
   className?: string;
+  classLevel?: "class-10" | "class-12";
   years: number[];
   thumbnail: string;
 };
@@ -9,23 +12,25 @@ type PYQCardProps = {
 export default function PYQCard({
   subject,
   className = "Class 12",
+  classLevel = "class-12",
   years,
   thumbnail,
 }: PYQCardProps) {
   const latestYear = Math.max(...years);
   const oldestYear = Math.min(...years);
 
+  const subjectSlug = subject.toLowerCase().replace(/\s+/g, "-");
+  const subjectHref = `/pyqs/${classLevel}/${subjectSlug}`;
+
   return (
     <div className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      
       {/* Thumbnail */}
-    <div className="relative h-64 sm:h-72 overflow-hidden bg-slate-100">
-  <img
-    src={thumbnail}
-    alt={`${className} ${subject} PYQ`}
-    className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
-  />
-        
+      <div className="relative h-64 overflow-hidden bg-slate-100 sm:h-72">
+        <img
+          src={thumbnail}
+          alt={`${className} ${subject} PYQ`}
+          className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+        />
 
         {/* Class Badge */}
         <div className="absolute bottom-4 right-4 rounded-full bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-md">
@@ -35,7 +40,6 @@ export default function PYQCard({
 
       {/* Content */}
       <div className="p-5">
-        
         <h2 className="text-xl font-bold text-slate-900">
           {className} {subject}
         </h2>
@@ -46,7 +50,6 @@ export default function PYQCard({
 
         {/* Years Info */}
         <div className="mt-5 flex items-center justify-between rounded-xl bg-blue-50 px-4 py-4">
-          
           <div>
             <p className="text-sm font-bold text-slate-900">
               {years.length} Years of PYQs
@@ -58,26 +61,21 @@ export default function PYQCard({
           </div>
 
           <div className="text-right">
-            <p className="text-xs text-slate-500">
-              Latest
-            </p>
+            <p className="text-xs text-slate-500">Latest</p>
 
             <p className="text-lg font-bold text-blue-600">
               {latestYear}
             </p>
           </div>
-
         </div>
 
         {/* Button */}
-
-<Link
-  href={`/pyqs/class-12/${subject.toLowerCase()}`}
-  className="block w-full rounded-xl bg-blue-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
->
-  View Papers →
-</Link>
-
+        <Link
+          href={subjectHref}
+          className="mt-4 block w-full rounded-xl bg-blue-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
+        >
+          View Papers →
+        </Link>
       </div>
     </div>
   );

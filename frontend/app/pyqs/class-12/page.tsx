@@ -53,6 +53,24 @@ const pyqs = [
     icon: "🧬",
     accent: "biology",
   },
+
+  {
+    subject: "Hindi",
+    className: "Class 12",
+    years: [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013],
+    thumbnail: "/hindi-thumbnail.png",
+    icon: "📚",
+    accent: "hindi",
+  },
+  {
+    subject: "English",
+    className: "Class 12",
+    years: [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013],
+    thumbnail: "/english-thumbnail.png",
+    icon: "📖",
+    accent: "english",
+  },
+
 ];
 
 const bannerMessages = [
@@ -203,7 +221,7 @@ export default function PYQsPage() {
                   </h3>
 
                   <p className="mt-1 text-sm text-blue-200">
-                    2020 – 2025
+                    2020 – 2026
                   </p>
                 </div>
 
@@ -434,6 +452,32 @@ export default function PYQsPage() {
               <span>→</span>
             </Link>
 
+            <Link
+              href="/pyqs/class-12/hindi"
+              className="mobile-subject-card"
+            >
+              <span className="text-2xl">📚</span>
+              <div className="flex-1">
+                <h3>Hindi</h3>
+                <p>Previous year question papers</p>
+              </div>
+              <span>→</span>
+            </Link>
+
+            <Link
+              href="/pyqs/class-12/english"
+              className="mobile-subject-card"
+            >
+              <span className="text-2xl">📖</span>
+              <div className="flex-1">
+                <h3>English</h3>
+                <p>Previous year question papers</p>
+              </div>
+              <span>→</span>
+            </Link>
+
+
+
           </div>
 
         </div>
@@ -454,16 +498,18 @@ export default function PYQsPage() {
               { name: "Chemistry", label: "🧪 Chemistry" },
               { name: "Mathematics", label: "▣ Mathematics" },
               { name: "Biology", label: "🧬 Biology" },
+              { name: "Hindi", label: "📚 Hindi" },
+              { name: "English", label: "📖 English" },
+
             ].map((item) => (
               <button
                 key={item.name}
                 type="button"
                 onClick={() => setSelectedSubject(item.name)}
-                className={`whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold transition ${
-                  selectedSubject === item.name
-                    ? "bg-blue-600 text-white shadow-sm"
-                    : "border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
-                }`}
+                className={`whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold transition ${selectedSubject === item.name
+                  ? "bg-blue-600 text-white shadow-sm"
+                  : "border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
+                  }`}
               >
                 {item.label}
               </button>
@@ -510,7 +556,8 @@ export default function PYQsPage() {
             </h3>
 
             <p className="mt-1 text-sm text-slate-500">
-              Try searching for Physics, Chemistry, Mathematics or Biology.
+              Try searching for Physics, Chemistry, Mathematics, Biology, Hindi or English.
+
             </p>
 
           </div>

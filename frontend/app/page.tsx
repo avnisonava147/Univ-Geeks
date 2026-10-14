@@ -646,7 +646,7 @@ UnivGeeks - Students ka Platform</span>
             <div className="lg:col-span-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-200/70 bg-white/80 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-cyan-800 shadow-sm backdrop-blur-sm">
                 <span>📅</span>
-                <span>13+ Years Archive • 2013–2025</span>
+                <span>13+ Years Archive • 2013–2026</span>
               </div>
 
               <h2 className="mt-5 text-3xl font-extrabold leading-[1.15] text-slate-900 sm:text-4xl lg:text-5xl">
@@ -667,7 +667,7 @@ UnivGeeks - Students ka Platform</span>
               {/* 3 short chips — easy to scan */}
               <ul className="mt-7 flex flex-wrap gap-2.5">
                 {[
-                  "🗓️ 2013–2025 Solved",
+                  "🗓️ 2013–2026 Solved",
                   "🎯 Chapter-wise sorted",
                   "🇮🇳 Hindi + English",
                 ].map((chip) => (

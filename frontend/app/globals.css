@@ -1305,3 +1305,67 @@ body {
 main {
   background: #ffffff !important;
 }
+
+
+/* =========================================================
+   CLASS 10 — FIVE SUBJECT CARD STACK
+   Scoped styles: Class 12 remains unchanged
+   ========================================================= */
+
+/* Class 10: improve visibility of all five subject cards */
+
+.class-10-subject-stack .subject-card-biology {
+  transform: translate(12px, -160px) rotate(3deg);
+  z-index: 5;
+}
+
+.class-10-subject-stack .subject-card-mathematics {
+  transform: translate(-10px, -80px) rotate(1.5deg);
+  z-index: 4;
+}
+
+.class-10-subject-stack .subject-card-chemistry {
+  transform: translate(10px, 0) rotate(-1deg);
+  z-index: 3;
+}
+
+.class-10-subject-stack .subject-card-physics {
+  transform: translate(-12px, 80px) rotate(-2deg);
+  z-index: 2;
+}
+
+.class-10-subject-stack .subject-card-english {
+  transform: translate(8px, 160px) rotate(-3deg);
+  z-index: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(219, 234, 254, 0.98),
+    rgba(191, 219, 254, 0.96)
+  );
+  color: #0f172a;
+}
+
+.class-10-subject-stack .subject-card-biology:hover {
+  transform: translate(5px, -165px) rotate(0) scale(1.02);
+  z-index: 10;
+}
+
+.class-10-subject-stack .subject-card-mathematics:hover {
+  transform: translate(-5px, -85px) rotate(0) scale(1.02);
+  z-index: 10;
+}
+
+.class-10-subject-stack .subject-card-chemistry:hover {
+  transform: translate(5px, -5px) rotate(0) scale(1.02);
+  z-index: 10;
+}
+
+.class-10-subject-stack .subject-card-physics:hover {
+  transform: translate(-5px, 75px) rotate(0) scale(1.02);
+  z-index: 10;
+}
+
+.class-10-subject-stack .subject-card-english:hover {
+  transform: translate(5px, 155px) rotate(0) scale(1.02);
+  z-index: 10;
+}
