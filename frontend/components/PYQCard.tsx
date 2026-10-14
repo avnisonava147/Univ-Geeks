@@ -70,8 +70,9 @@ export default function PYQCard({
         </div>
 
         {/* Button */}
- <Link
-  href={`/pyqs/${subject.toLowerCase()}`}
+
+<Link
+  href={`/pyqs/class-12/${subject.toLowerCase()}`}
   className="block w-full rounded-xl bg-blue-600 px-4 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
 >
   View Papers →

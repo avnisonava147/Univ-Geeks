@@ -167,7 +167,7 @@ export default function HomePage() {
         description:
           "Electrostatics, Optics, Magnetism, Semiconductor & Modern Physics.",
         notesHref: "/notes",
-        pyqHref: "/pyqs/physics",
+       pyqHref: "/pyqs/class-12/physics",
       },
       {
         name: "Chemistry",
@@ -178,7 +178,7 @@ export default function HomePage() {
         description:
           "Solutions, Electrochemistry, Organic Reactions & Coordination Compounds.",
         notesHref: "/notes",
-        pyqHref: "/pyqs/chemistry",
+       pyqHref: "/pyqs/class-12/chemistry",
       },
       {
         name: "Mathematics",
@@ -189,7 +189,7 @@ export default function HomePage() {
         description:
           "Calculus, Matrices, Determinants, Vectors & 3D Geometry.",
         notesHref: "/notes",
-        pyqHref: "/pyqs/mathematics",
+        pyqHref: "/pyqs/class-12/mathematics",
       },
       {
         name: "Biology",
@@ -200,7 +200,7 @@ export default function HomePage() {
         description:
           "Genetics, Reproduction, Biotechnology, Ecology & Human Physiology.",
         notesHref: "/notes",
-        pyqHref: "/pyqs",
+        pyqHref: "/pyqs/class-12/biology",
       },
     ],
 

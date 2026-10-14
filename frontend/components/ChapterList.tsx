@@ -159,9 +159,9 @@ export default function ChapterList({
 
               {/* VIEW PAPERS */}
               <Link
-  href={`/pyqs/${subject.toLowerCase()}/2025?chapter=${encodeURIComponent(
-    chapter
-  )}`}
+  href={`/pyqs/class-12/${subject.toLowerCase()}/2025?chapter=${encodeURIComponent(
+  chapter
+)}`}
   className="flex items-center justify-center gap-2 rounded-lg border border-blue-200 px-4 py-2 text-sm font-bold text-blue-600 transition hover:bg-blue-600 hover:text-white"
 >
   View Papers →
