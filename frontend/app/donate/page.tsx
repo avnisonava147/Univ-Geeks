@@ -63,22 +63,22 @@ function YoutubeIcon({ size = 20 }: { size?: number }) {
 
 const tiers = [
   {
-    amount: 149,
+    amount: 11,
     label: "Chhota Sa Saath",
     funds: "Ek student ko ek hafte tak free notes & PYQs chalate rakhta hai.",
   },
   {
-    amount: 499,
+    amount: 51,
     label: "UnivGeeks Supporter",
     funds: "Ek mahine ka server + domain ka kharcha nikaal deta hai.",
   },
   {
-    amount: 999,
+    amount: 101,
     label: "UnivGeeks Champion",
     funds: "Ek naya chapter solve karke notes banane ka kharcha cover karta hai.",
   },
   {
-    amount: 2499,
+    amount: 151,
     label: "UnivGeeks Hero",
     funds: "Ek poore subject ka PYQ update + platform ki nayi improvement.",
   },
