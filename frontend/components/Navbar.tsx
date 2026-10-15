@@ -7,10 +7,10 @@ import { useState, useEffect } from "react";
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "Notes", href: "/notes" },
   { label: "PYQs", href: "/pyqs" },
-  { label: "About", href: "/about" },
+  { label: "Notes", href: "/notes" },
   { label: "Contact Us", href: "/contact" },
+  { label: "About Us", href: "/about" },
 ];
 
 export default function Navbar() {
@@ -65,8 +65,8 @@ export default function Navbar() {
             <img
               src="/logo.png"
               alt="UnivGeeks Logo"
-              className={`rounded-xl border border-slate-200 shadow-xs transition-all duration-300 ${
-                isScrolled ? "h-9 w-9" : "h-10 w-10"
+              className={`rounded-full border border-slate-200 shadow-xs transition-all duration-300 ${
+                isScrolled ? "h-10 w-10" : "h-11 w-11"
               }`}
             />
 
