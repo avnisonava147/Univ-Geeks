@@ -147,7 +147,7 @@ const class10Subjects: Subject[] = [
   },
 
   {
-    name: "Computer Applications",
+    name: "Class 10 Syllabus",
     icon: "💻",
     style: "bg-blue-50 text-blue-600",
     chapters: [],
@@ -197,6 +197,12 @@ const class11Subjects: Record<Stream, Subject[]> = {
       style: "bg-pink-50 text-pink-600",
       chapters: [],
     },
+    {
+    name: "Class 11 Syllabus",
+    icon: "💻",
+    style: "bg-blue-50 text-blue-600",
+    chapters: [],
+  },
   ],
 
   Commerce: [
@@ -218,6 +224,12 @@ const class11Subjects: Record<Stream, Subject[]> = {
       style: "bg-green-50 text-green-600",
       chapters: [],
     },
+    {
+    name: "Class 11 Syllabus",
+    icon: "💻",
+    style: "bg-blue-50 text-blue-600",
+    chapters: [],
+  },
   ],
 
   Arts: [
@@ -245,6 +257,12 @@ const class11Subjects: Record<Stream, Subject[]> = {
       style: "bg-pink-50 text-pink-600",
       chapters: [],
     },
+    {
+    name: "Class 11 Syllabus",
+    icon: "💻",
+    style: "bg-blue-50 text-blue-600",
+    chapters: [],
+  },
   ],
 };
 
@@ -291,6 +309,12 @@ const class12Subjects: Record<Stream, Subject[]> = {
       style: "bg-pink-50 text-pink-600",
       chapters: [],
     },
+    {
+    name: "Class 12 Syllabus",
+    icon: "💻",
+    style: "bg-blue-50 text-blue-600",
+    chapters: [],
+  },
   ],
 
   Commerce: [
@@ -312,6 +336,12 @@ const class12Subjects: Record<Stream, Subject[]> = {
       style: "bg-green-50 text-green-600",
       chapters: [],
     },
+    {
+    name: "Class 12 Syllabus",
+    icon: "💻",
+    style: "bg-blue-50 text-blue-600",
+    chapters: [],
+  },
   ],
 
   Arts: [
@@ -339,6 +369,12 @@ const class12Subjects: Record<Stream, Subject[]> = {
       style: "bg-pink-50 text-pink-600",
       chapters: [],
     },
+    {
+    name: "Class 12 Syllabus",
+    icon: "💻",
+    style: "bg-blue-50 text-blue-600",
+    chapters: [],
+  },
   ],
 };
 

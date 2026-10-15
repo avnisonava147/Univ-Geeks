@@ -1,8 +1,7 @@
+
 "use client";
 
 import type { Stream } from "../data/notesData";
-import { streamInfo } from "../data/notesData";
-import { Atom, BarChart3, Palette } from "lucide-react";
 
 type StreamSelectorProps = {
   selectedStream: Stream;
@@ -17,6 +16,12 @@ const streamColors: Record<Stream, string> = {
   Arts: "#EB5757",
 };
 
+const streamBanners: Record<Stream, string> = {
+  Science: "/class-12-science.jpeg",
+  Commerce: "/class-12-commerce.jpeg",
+  Arts: "/class-12-arts.jpeg",
+};
+
 export default function StreamSelector({
   selectedStream,
   onStreamChange,
@@ -25,18 +30,15 @@ export default function StreamSelector({
   sectionRef: React.RefObject<HTMLElement | null>;
 }) {
   return (
-   <section
-  ref={sectionRef}
-  className="border-b border-slate-200 bg-[#F8FAFF] px-6 py-14"
->
+    <section
+      ref={sectionRef}
+      className="border-b border-slate-200 bg-[#F8FAFF] px-6 py-14"
+    >
       <div className="mx-auto max-w-7xl">
-
         {/* Heading */}
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="flex items-baseline gap-3 text-3xl font-semibold tracking-tight text-[#16213E]">
-              
-
+            <h2 className="text-3xl font-semibold tracking-tight text-[#16213E]">
               Select your stream
             </h2>
 
@@ -45,6 +47,7 @@ export default function StreamSelector({
             </p>
           </div>
 
+          {/* Current selection */}
           <div className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-[#5B6478]">
             Selected:{" "}
             <span className="font-semibold text-[#2F5FDE]">
@@ -54,128 +57,49 @@ export default function StreamSelector({
         </div>
 
         {/* Stream Cards */}
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {streams.map((stream) => {
             const active = selectedStream === stream;
             const color = streamColors[stream];
-            const info = streamInfo[stream];
 
             return (
               <button
                 key={stream}
                 type="button"
                 onClick={() => onStreamChange(stream)}
-                className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 text-left transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+                aria-pressed={active}
+                className="group relative flex h-[326px] flex-col justify-end overflow-hidden rounded-2xl border bg-white p-0 text-left transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
                 style={{
-                  borderTop: `4px solid ${color}`,
+                  borderColor: active ? color : "#E2E8F0",
+                  borderLeftWidth: "4px",
+                  boxShadow: active
+                    ? `0 12px 30px ${color}20`
+                    : undefined,
                 }}
               >
-                {/* Background glow */}
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-5"
-                  style={{ backgroundColor: color }}
+                {/* Full-card banner image */}
+                <img
+                  src={streamBanners[stream]}
+                  alt={`${stream} stream banner`}
+                  className="absolute inset-0 z-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
 
-                <div className="relative flex items-center justify-between">
+                {/* Dark gradient behind the title */}
+                <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
 
-                  {/* Icon */}
-                  <div
-                    className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl transition-all duration-300 group-hover:scale-110 group-hover:rotate-6"
-                    style={{
-                      backgroundColor: `${color}18`,
-                      color,
-                    }}
-                  >
-                    {stream === "Science" ? (
-  <Atom size={26} strokeWidth={2} />
-) : stream === "Commerce" ? (
-  <BarChart3 size={26} strokeWidth={2} />
-) : (
-  <Palette size={26} strokeWidth={2} />
-)}
-                  </div>
-
-                  {/* Arrow */}
-                  <div
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-lg transition-all duration-300 group-hover:translate-x-1"
-                    style={
-                      active
-                        ? {
-                            backgroundColor: color,
-                            borderColor: color,
-                            color: "white",
-                          }
-                        : {
-                            color,
-                          }
-                    }
-                  >
-                    →
-                  </div>
-                </div>
-
-                {/* Stream Name */}
-                <h3 className="relative mt-6 text-xl font-semibold text-[#16213E]">
+                {/* Stream name */}
+                <h3 className="pointer-events-none relative z-20 mb-5 ml-5 text-left text-2xl font-bold text-white drop-shadow-md">
                   {stream}
                 </h3>
 
-                {/* Description */}
-                <p className="relative mt-2 max-w-sm text-sm leading-6 text-[#5B6478]">
-                  {info.description}
-                </p>
-
-                {/* Subjects preview */}
-                <div className="relative mt-4 flex flex-wrap gap-2">
-                  {stream === "Science" && (
-                    <>
-                      <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600">
-                        Physics
-                      </span>
-                      <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-medium text-cyan-600">
-                        Chemistry
-                      </span>
-                      <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-medium text-orange-600">
-                        Mathematics
-                      </span>
-                    </>
-                  )}
-
-                  {stream === "Commerce" && (
-                    <>
-                      <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600">
-                        Accountancy
-                      </span>
-                      <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-600">
-                        Business
-                      </span>
-                      <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-600">
-                        Economics
-                      </span>
-                    </>
-                  )}
-
-                  {stream === "Arts" && (
-                    <>
-                      <span className="rounded-full bg-orange-50 px-3 py-1 text-xs font-medium text-orange-600">
-                        History
-                      </span>
-                      <span className="rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-600">
-                        Political Science
-                      </span>
-                      <span className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-medium text-cyan-600">
-                        Geography
-                      </span>
-                    </>
-                  )}
-                </div>
-
                 {/* Active bottom line */}
-                {active && (
-                  <div
-                    className="absolute bottom-0 left-0 h-1 w-full"
-                    style={{ backgroundColor: color }}
-                  />
-                )}
+                <div
+                  className="pointer-events-none absolute bottom-0 left-0 z-30 h-1 w-full origin-left transition-transform duration-300"
+                  style={{
+                    backgroundColor: color,
+                    transform: active ? "scaleX(1)" : "scaleX(0)",
+                  }}
+                />
               </button>
             );
           })}
@@ -184,3 +108,4 @@ export default function StreamSelector({
     </section>
   );
 }
+
