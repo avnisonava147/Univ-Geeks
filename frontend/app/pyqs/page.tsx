@@ -99,7 +99,7 @@ function PosterCard({ item, index }: { item: (typeof classes)[number]; index: nu
     >
       <div className="ug-inner flex h-full flex-col">
         {/* Poster */}
-        <div className="relative aspect-[941/1672] overflow-hidden bg-slate-100">
+        <div className="relative aspect-[3/4] overflow-hidden bg-slate-100">
           {/* Fallback number, only visible if the poster file is missing */}
           <span className="ug-num absolute inset-0 flex items-center justify-center text-[8rem] font-black opacity-30">
             {item.id}
@@ -256,8 +256,11 @@ export default function ClassesPage() {
         <div className="ug-aurora ug-a3" aria-hidden="true" />
 
         {/* Top area: floating dots and the big PYQ outline */}
-        <section className="relative h-6 sm:h-8">
-          <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+       <section className="relative h-8 sm:h-10">
+          <div
+            className="pointer-events-none absolute inset-0 overflow-hidden"
+            aria-hidden="true"
+          >
             {Array.from({ length: 18 }).map((_, i) => (
               <span
                 key={i}
@@ -271,6 +274,7 @@ export default function ClassesPage() {
               />
             ))}
           </div>
+
           <span
             aria-hidden="true"
             className="ug-ghost pointer-events-none absolute -right-10 top-2 select-none text-[16rem] font-black leading-none sm:text-[22rem]"
@@ -279,21 +283,23 @@ export default function ClassesPage() {
           </span>
         </section>
 
-       
         {/* Subjects strip */}
-<div
-  className="ug-marquee relative mb-0 py-1 sm:py-2"
-  aria-hidden="true"
-  style={{
-    background: "rgba(7, 13, 43, 0.88)",
-    borderColor: "rgba(255, 255, 255, 0.12)",
-  }}
->
+        <div
+          className="ug-marquee relative z-10 mt-0 mb-4 py-1 sm:py-2"
+          aria-hidden="true"
+          style={{
+            background: "rgba(7, 13, 43, 0.88)",
+            borderColor: "rgba(255, 255, 255, 0.12)",
+          }}
+        >
           <div className="ug-track">
             {[0, 1].map((k) => (
               <div key={k} className="flex shrink-0 items-center">
                 {subjects.map((name) => (
-                  <span key={name + k} className="flex items-center text-lg font-bold text-blue-200/80">
+                  <span
+                    key={name + k}
+                    className="flex items-center text-lg font-bold text-blue-200/80"
+                  >
                     <span className="px-8">{name}</span>
                     <span className="text-cyan-300/70">✦</span>
                   </span>
@@ -302,16 +308,13 @@ export default function ClassesPage() {
             ))}
           </div>
         </div>
-
-        {/* Class cards */}
-        <section className="relative mx-auto max-w-6xl px-5 pt-0 pb-24 sm:px-8">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
-            {classes.map((item, i) => (
-              <PosterCard key={item.id} item={item} index={i} />
-            ))}
-          </div>
+                {/* Class Posters */}
+       <section className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-stretch gap-6 px-5 pb-12 pt-3 sm:grid-cols-2 sm:px-8 lg:grid-cols-4">
+          {classes.map((item, index) => (
+            <PosterCard key={item.id} item={item} index={index} />
+          ))}
         </section>
-      </div>
+        </div>
     </main>
   
 );
