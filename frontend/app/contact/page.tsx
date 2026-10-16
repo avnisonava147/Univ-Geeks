@@ -58,13 +58,72 @@ function Reveal({
 // =====================================================
 
 export default function ContactPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (loading) return;
 
-    setSubmitted(true);
-    event.currentTarget.reset();
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    const trimmedSubject = subject.trim();
+    const trimmedMessage = message.trim();
+
+    if (!trimmedName || !trimmedEmail || !trimmedSubject || !trimmedMessage) {
+      setErrorMessage("Please fill in all required fields.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+
+    setLoading(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch("/api/questions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: trimmedName,
+          email: trimmedEmail,
+          subject: trimmedSubject,
+          message: trimmedMessage,
+        }),
+      });
+
+      if (!response.ok) {
+        let msg = `Submission failed (${response.status})`;
+        try {
+          const data = await response.json();
+          if (data && (data.message || data.error)) {
+            msg = data.message || data.error;
+          }
+        } catch {}
+        throw new Error(msg);
+      }
+
+      setSubmitted(true);
+      setName("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+    } catch (err: any) {
+      setErrorMessage(err.message || "Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -317,6 +376,22 @@ export default function ContactPage() {
                 </div>
               )}
 
+              {/* Error Message */}
+
+              {errorMessage && (
+                <div className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-center">
+
+                  <p className="text-sm font-semibold text-red-700">
+                    Submission Failed
+                  </p>
+
+                  <p className="mt-1 text-xs text-red-600">
+                    {errorMessage}
+                  </p>
+
+                </div>
+              )}
+
 
               {/* Form */}
 
@@ -343,8 +418,11 @@ export default function ContactPage() {
                       name="name"
                       type="text"
                       placeholder="Enter your name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       required
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                      disabled={loading}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:opacity-60"
                     />
 
                   </div>
@@ -364,8 +442,11 @@ export default function ContactPage() {
                       name="email"
                       type="email"
                       placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
-                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                      disabled={loading}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:opacity-60"
                     />
 
                   </div>
@@ -389,8 +470,11 @@ export default function ContactPage() {
                     name="subject"
                     type="text"
                     placeholder="What would you like to talk about?"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
                     required
-                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                    disabled={loading}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:opacity-60"
                   />
 
                 </div>
@@ -412,8 +496,11 @@ export default function ContactPage() {
                     name="message"
                     rows={5}
                     placeholder="Write your message here..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                     required
-                    className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                    disabled={loading}
+                    className="w-full resize-none rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:opacity-60"
                   />
 
                 </div>
@@ -425,9 +512,10 @@ export default function ContactPage() {
 
                   <button
                     type="submit"
-                    className="group inline-flex items-center gap-2 rounded-full bg-[#061A40] px-7 py-3 text-sm font-semibold text-white shadow-md transition duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-lg"
+                    disabled={loading}
+                    className="group inline-flex items-center gap-2 rounded-full bg-[#061A40] px-7 py-3 text-sm font-semibold text-white shadow-md transition duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-lg disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:bg-[#061A40] disabled:cursor-not-allowed"
                   >
-                    Send Message
+                    {loading ? "Sending..." : "Send Message"}
 
                     <span className="transition-transform duration-300 group-hover:translate-x-1">
                       →

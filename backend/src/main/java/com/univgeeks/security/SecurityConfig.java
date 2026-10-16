@@ -76,6 +76,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
                         .requestMatchers(HttpMethod.HEAD, "/api/files/**").permitAll()
 
+                        // Public Contact Us / Question submission
+                        .requestMatchers(HttpMethod.POST, "/api/questions").permitAll()
+
                         // Protected verification endpoint
                         .requestMatchers(HttpMethod.GET, "/api/auth/me").authenticated()
 

@@ -66,6 +66,21 @@ public class AuthControllerTest {
     }
 
     @Test
+    public void testLogin_WithEmailField_Success() throws Exception {
+        LoginResponse response = new LoginResponse(validToken, "admin", "admin@univgeeks.in");
+        when(adminService.authenticate(eq("admin@univgeeks.in"), eq("ValidPassword123!"))).thenReturn(response);
+
+        String jsonPayload = "{\"email\":\"admin@univgeeks.in\",\"password\":\"ValidPassword123!\"}";
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonPayload))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value(validToken))
+                .andExpect(jsonPath("$.username").value("admin"));
+    }
+
+    @Test
     public void testLogin_IncorrectPassword_Fails() throws Exception {
         when(adminService.authenticate(eq("admin"), eq("WrongPassword")))
                 .thenThrow(new BadCredentialsException("Invalid username or password"));

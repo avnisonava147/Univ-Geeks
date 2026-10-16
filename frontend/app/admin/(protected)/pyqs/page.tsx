@@ -25,6 +25,7 @@ type Pyq = {
   subject: string;
   exam: string;
   year: string;
+  chapter?: string;
   fileUrl: string;
   uploadedAt: string;
   downloads: number;
@@ -37,6 +38,11 @@ const subjectColors: Record<string, string> = {
   Mathematics: "#E8A33D",
   Biology: "#B0533E",
   Science: "#8D6FA3",
+  "Social Science": "#8C7B6E",
+  English: "#8D6FA3",
+  Hindi: "#B0533E",
+  Sanskrit: "#6B8F71",
+  "Computer Applications": "#5B7A99",
 };
 
 type SortKey = "title" | "year" | "downloads";
@@ -68,6 +74,7 @@ export default function PyqsPage() {
         subject: p.subject ?? "",
         exam: p.exam ?? "",
         year: p.year ?? "",
+        chapter: p.chapter ?? "",
         fileUrl: p.fileUrl ?? "",
         uploadedAt: p.uploadedAt ? p.uploadedAt.split("T")[0] : "",
         downloads: p.downloads ?? 0,
@@ -278,6 +285,11 @@ export default function PyqsPage() {
                     <span className="text-xs font-medium px-2 py-0.5 bg-[#1C2B3A]/5 text-[#1C2B3A] rounded">{pyq.exam}</span>
                   </div>
                   <h3 className="text-base font-semibold text-[#1C2B3A] mt-3 leading-snug">{pyq.title}</h3>
+                  {pyq.chapter && (
+                    <p className="text-xs text-[#5B7A99] font-medium mt-0.5 truncate">
+                      {pyq.chapter}
+                    </p>
+                  )}
                   <div className="flex items-center gap-2 text-xs text-[#9CA3AF] mt-1.5">
                     <span>{pyq.classLevel}</span>
                     <span>&middot;</span>
@@ -347,7 +359,14 @@ export default function PyqsPage() {
                   <td className="px-5 py-3" onClick={(e) => e.stopPropagation()}>
                     <input type="checkbox" checked={selected.has(pyq.id)} onChange={(e) => toggleSelect(pyq.id, e)} className="accent-[#1C2B3A] cursor-pointer" />
                   </td>
-                  <td className="px-2 py-3 text-[#1C2B3A] font-medium max-w-[240px] truncate">{pyq.title}</td>
+                  <td className="px-2 py-3 text-[#1C2B3A] font-medium max-w-[240px]">
+                    <div className="truncate">{pyq.title}</div>
+                    {pyq.chapter && (
+                      <div className="text-[11px] text-[#5B7A99] truncate font-normal">
+                        Ch: {pyq.chapter}
+                      </div>
+                    )}
+                  </td>
                   <td className="px-2 py-3 text-[#374151]">
                     <span className="text-xs bg-[#1C2B3A]/5 text-[#1C2B3A] px-2 py-0.5 rounded font-medium">{pyq.exam}</span>
                   </td>
@@ -396,7 +415,8 @@ export default function PyqsPage() {
               <div>
                 <h2 className="text-sm font-semibold text-[#1C2B3A]">{previewPyq.title}</h2>
                 <p className="text-xs text-[#9CA3AF] mt-0.5">
-                  {previewPyq.exam} &middot; {previewPyq.subject} &middot; {previewPyq.year} &middot; {previewPyq.downloads} downloads
+                  {previewPyq.exam} &middot; {previewPyq.subject}
+                  {previewPyq.chapter ? ` (${previewPyq.chapter})` : ""} &middot; {previewPyq.year} &middot; {previewPyq.downloads} downloads
                 </p>
               </div>
               <div className="flex items-center gap-3">
