@@ -779,8 +779,8 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
             }
           }}
           
-youtubeUrl="https://www.youtube.com/@Himanshubhaiya8"
-instagramUrl="https://www.instagram.com/univ_geeks?igsh=MmRxYTN5ZTE2N2J2"
+                youtubeUrl="https://www.youtube.com/@Himanshubhaiya8"
+                instagramUrl="https://www.instagram.com/univ_geeks?igsh=MmRxYTN5ZTE2N2J2"
 
         />
       )}
