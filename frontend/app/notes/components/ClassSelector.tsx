@@ -7,6 +7,7 @@ import { classInfo } from "../data/notesData";
 type ClassSelectorProps = {
   selectedClass: ClassName;
   onClassChange: (className: ClassName) => void;
+  onClass11Click?: () => void;
 };
 
 const classColors: Record<ClassName, string> = {
@@ -24,9 +25,13 @@ const classBanners: Record<ClassName, string> = {
 export default function ClassSelector({
   selectedClass,
   onClassChange,
+  onClass11Click,
 }: ClassSelectorProps) {
   return (
-    <section className="border-b border-slate-200 bg-white px-6 py-14">
+    <section
+      id="choose-class-section"
+      className="border-b border-slate-200 bg-white px-6 py-14"
+    >
       <div className="mx-auto max-w-7xl">
         {/* Heading */}
         <div className="mb-7 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -58,9 +63,16 @@ export default function ClassSelector({
               <button
                 key={className}
                 type="button"
-                onClick={() => onClassChange(className)}
+                onClick={() => {
+                  if (className === "11") {
+                    onClass11Click?.();
+                    return;
+                  }
+
+                  onClassChange(className);
+                }}
                 aria-label={`Select Class ${className}`}
-                aria-pressed={active}
+                aria-pressed={className === "11" ? false : active}
                 className="group relative overflow-hidden rounded-2xl border border-slate-200 border-l-4 bg-white p-0 text-left transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
                 style={{
                   borderLeftColor: color,
@@ -80,7 +92,7 @@ export default function ClassSelector({
                 />
 
                 {/* Selected class indicator */}
-                {active && (
+                {active && className !== "11" && (
                   <div
                     className="absolute bottom-0 left-0 z-20 h-1 w-full"
                     style={{ backgroundColor: color }}
@@ -94,3 +106,5 @@ export default function ClassSelector({
     </section>
   );
 }
+
+

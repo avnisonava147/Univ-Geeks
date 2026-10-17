@@ -6,6 +6,7 @@ import ClassSelector from "./components/ClassSelector";
 import SubjectSelector from "./components/SubjectSelector";
 import ChapterSelector from "./components/ChapterSelector";
 import SubscribePopup from "./components/SubscribePopup";
+import Class11Popup from "./components/Class11Popup";
 import {
   getSubjects,
   streams,
@@ -55,6 +56,10 @@ const [showSubscribePopup, setShowSubscribePopup] = useState(false);
 const [pendingPdfAction, setPendingPdfAction] = useState<
   "view" | "download" | null
 >(null);
+
+const [showClass11Popup, setShowClass11Popup] = useState(false);
+
+const classSectionRef = useRef<HTMLDivElement | null>(null);
 
 
 
@@ -165,13 +170,20 @@ const heroBanners = [
     }
 
     // Search for Class 10, Class 11, or Class 12
-    const classMatch = term.match(
+    const classMatch = searchQuery.match(
       /^(?:class\s*)?(10|11|12)$/
     );
 
     
 if (classMatch) {
   const className = classMatch[1] as ClassName;
+
+   // Class 11: do not select it or show its subjects.
+  if (className === "11") {
+    setSearchMessage("");
+    setShowClass11Popup(true);
+    return;
+  }
 
   setSelectedClass(className);
   setSelectedSubject(null);
@@ -383,19 +395,31 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
                 key={className}
                 type="button"
                 aria-pressed={isActive}
-                onClick={() => {
-                  setSearchQuery("");
-                  setSearchMessage("");
-                  setSelectedClass(className);
-                  setSelectedSubject(null);
-                  setSelectedChapter(null);
+                
+onClick={() => {
+  // Class 11: go to the class cards without selecting it
+  if (className === "11") {
+    classSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+    return;
+  }
 
-                  if (className === "10") {
-                    scrollToSection(subjectSectionRef);
-                  } else {
-                    scrollToSection(streamSectionRef);
-                  }
-                }}
+  // Preserve existing Class 10 and Class 12 behavior
+  setSearchQuery("");
+  setSearchMessage("");
+  setSelectedClass(className);
+  setSelectedSubject(null);
+  setSelectedChapter(null);
+
+  if (className === "10") {
+    scrollToSection(subjectSectionRef);
+  } else {
+    scrollToSection(streamSectionRef);
+  }
+}}
+
                 className={`rounded-full border px-6 py-3 text-sm font-semibold transition duration-300 hover:-translate-y-0.5 ${
                   isActive
                     ? "border-cyan-400 bg-cyan-400 text-[#041B33] shadow-lg shadow-cyan-400/20"
@@ -537,23 +561,28 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
       
 
 
-      {/* STEP 1 */}
-      <ClassSelector
-  selectedClass={selectedClass}
-  onClassChange={(className) => {
-    setSearchQuery("");
-    setSearchMessage("");
-    setSelectedClass(className);
-    setSelectedSubject(null);
-    setSelectedChapter(null);
+ 
+{/* STEP 1 */}
+<div ref={classSectionRef}>
+  <ClassSelector
+    selectedClass={selectedClass}
+    onClass11Click={() => setShowClass11Popup(true)}
+    onClassChange={(className) => {
+      setSearchQuery("");
+      setSearchMessage("");
+      setSelectedClass(className);
+      setSelectedSubject(null);
+      setSelectedChapter(null);
 
-    if (className === "10") {
-      scrollToSection(subjectSectionRef);
-    } else {
-      scrollToSection(streamSectionRef);
-    }
-  }}
-/>
+      if (className === "10") {
+        scrollToSection(subjectSectionRef);
+      } else {
+        scrollToSection(streamSectionRef);
+      }
+    }}
+  />
+</div>
+
 
      {/* STEP 2 - STREAM */}
 {(selectedClass === "11" || selectedClass === "12") && (
@@ -784,6 +813,26 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
 
         />
       )}
+
+
+
+{showClass11Popup && (
+  <Class11Popup
+    onClose={() => {
+      setShowClass11Popup(false);
+
+      setTimeout(() => {
+        classSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }}
+    youtubeUrl="https://www.youtube.com/@Himanshubhaiya8"
+    instagramUrl="https://www.instagram.com/univ_geeks?igsh=MmRxYTN5ZTE2N2J2"
+  />
+)}
+
 
 
       <Footer />
