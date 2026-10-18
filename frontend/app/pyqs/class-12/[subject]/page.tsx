@@ -25,7 +25,6 @@ const subjectData: Record<
     thumbnail: "/chemistry-thumbnail.png",
     theme: "chemistry",
     chapters: [
-      "Solid State",
       "Solutions",
       "Electrochemistry",
       "Chemical Kinetics",
@@ -36,8 +35,7 @@ const subjectData: Record<
       "Aldehydes, Ketones and Carboxylic Acids",
       "Amines",
       "Biomolecules",
-      "Chemistry in Everyday Life",
-    ],
+],
   },
 
   physics: {
@@ -58,6 +56,7 @@ const subjectData: Record<
       "Dual Nature of Radiation and Matter",
       "Atoms",
       "Nuclei",
+      "Semiconductor Electronics"
     ],
   },
 
