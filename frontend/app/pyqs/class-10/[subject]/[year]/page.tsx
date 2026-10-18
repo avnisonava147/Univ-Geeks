@@ -21,6 +21,10 @@ const subjectNames: Record<string, string> = {
   biology: "Biology",
   hindi: "Hindi",
   english: "English",
+  "social-science": "Social Science",
+  science: "Science",
+  sanskrit: "Sanskrit",
+  "computer-applications": "Computer Applications",
 };
 
 export default async function YearPYQPage({
@@ -37,30 +41,68 @@ export default async function YearPYQPage({
 
   const formattedChapter = chapter?.trim() || null;
 
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  let uploadedPyqs: any[] = [];
+  try {
+    const res = await fetch(`${backendUrl}/api/pyqs?classLevel=Class%2010`, {
+      cache: "no-store",
+    });
+    if (res.ok) {
+      uploadedPyqs = await res.json();
+    }
+  } catch {
+    // fallback if backend is unreachable
+  }
 
-  // Placeholder cards for English and Hindi medium question papers.
-  const papers = [
-    {
-      title: formattedChapter
-        ? `${formattedChapter} Question Paper`
-        : `${formattedSubject} Question Paper`,
-      subtitle: formattedChapter
-        ? `RBSE Class 10 ${formattedSubject} • ${formattedChapter} • ${year} • English Medium`
-        : `RBSE Class 10 ${formattedSubject} • ${year} • English Medium`,
-      type: "English Medium",
-      icon: "📄",
-    },
-    {
-      title: formattedChapter
-        ? `${formattedChapter} Question Paper`
-        : `${formattedSubject} Question Paper`,
-      subtitle: formattedChapter
-        ? `RBSE Class 10 ${formattedSubject} • ${formattedChapter} • ${year} • Hindi Medium`
-        : `RBSE Class 10 ${formattedSubject} • ${year} • Hindi Medium`,
-      type: "Hindi Medium",
-      icon: "📄",
-    },
-  ];
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+  const matchingUploadedPapers = uploadedPyqs.filter((p: any) => {
+    if (!p.fileUrl) return false;
+    const subMatch = norm(p.subject || "") === norm(formattedSubject);
+    const yrMatch = !year || (p.year && p.year.toString() === year.toString());
+    if (!subMatch || !yrMatch) return false;
+
+    if (formattedChapter) {
+      if (!p.chapter) return false;
+      const chNorm = norm(p.chapter);
+      const targetNorm = norm(formattedChapter);
+      return chNorm === targetNorm || chNorm.includes(targetNorm) || targetNorm.includes(chNorm);
+    }
+    return true;
+  });
+
+  const papers = matchingUploadedPapers.length > 0
+    ? matchingUploadedPapers.map((p: any) => ({
+        title: p.title || (formattedChapter ? `${formattedChapter} Question Paper` : `${formattedSubject} PYQ ${p.year}`),
+        subtitle: `RBSE Class 10 ${p.subject} • ${p.chapter || "Full Paper"} • ${p.year}`,
+        type: p.exam || "RBSE Board Paper",
+        icon: "📄",
+        pdfUrl: p.fileUrl,
+      }))
+    : [
+        {
+          title: formattedChapter
+            ? `${formattedChapter} Question Paper`
+            : `${formattedSubject} Question Paper`,
+          subtitle: formattedChapter
+            ? `RBSE Class 10 ${formattedSubject} • ${formattedChapter} • ${year} • English Medium`
+            : `RBSE Class 10 ${formattedSubject} • ${year} • English Medium`,
+          type: "English Medium",
+          icon: "📄",
+          pdfUrl: "",
+        },
+        {
+          title: formattedChapter
+            ? `${formattedChapter} Question Paper`
+            : `${formattedSubject} Question Paper`,
+          subtitle: formattedChapter
+            ? `RBSE Class 10 ${formattedSubject} • ${formattedChapter} • ${year} • Hindi Medium`
+            : `RBSE Class 10 ${formattedSubject} • ${year} • Hindi Medium`,
+          type: "Hindi Medium",
+          icon: "📄",
+          pdfUrl: "",
+        },
+      ];
 
 
   return (
@@ -203,7 +245,7 @@ export default async function YearPYQPage({
                 </div>
 
                 <div className="mt-5">
-                  <PaperActions title={paper.title} pdfUrl="" />
+                  <PaperActions title={paper.title} pdfUrl={paper.pdfUrl} />
                 </div>
               </article>
             ))}

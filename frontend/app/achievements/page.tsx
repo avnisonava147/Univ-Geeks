@@ -370,18 +370,6 @@ export default function AchievementsPage() {
         </div>
       </section>
 
-        <p className="mt-3 text-xs font-bold tracking-wider text-yellow-300 sm:text-sm">
-          ACHIEVE
-        </p>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
       <Footer />
     </main>
   );

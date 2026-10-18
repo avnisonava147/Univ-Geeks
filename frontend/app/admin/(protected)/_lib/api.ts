@@ -1,4 +1,4 @@
-// frontend/app/admin/(protected)/_lib/api.ts
+import { getAdminSession } from "./session";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
@@ -9,6 +9,12 @@ export async function apiRequest<T = any>(
   const url = endpoint.startsWith("http") ? endpoint : `${BACKEND_URL}${endpoint}`;
 
   const headers = new Headers(options.headers || {});
+
+  // Add Authorization header from admin session if available
+  const session = getAdminSession();
+  if (session?.token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${session.token}`);
+  }
 
   // If body is NOT FormData and Content-Type is not explicitly set, set application/json
   if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) {

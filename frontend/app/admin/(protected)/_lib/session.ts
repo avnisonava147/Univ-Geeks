@@ -10,6 +10,7 @@ export const ADMIN_SESSION_KEY = "univgeeks-admin-session";
 
 export type AdminSession = {
   email: string;
+  token?: string;
   loggedInAt: string;
 };
 
@@ -59,9 +60,10 @@ export function subscribeAdminSession(listener: Listener): () => void {
   };
 }
 
-export function saveAdminSession(email: string): AdminSession {
+export function saveAdminSession(email: string, token?: string): AdminSession {
   const session: AdminSession = {
     email,
+    token,
     loggedInAt: new Date().toISOString(),
   };
   snapshot = session;

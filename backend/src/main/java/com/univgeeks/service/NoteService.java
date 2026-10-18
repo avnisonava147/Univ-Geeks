@@ -55,9 +55,69 @@ public class NoteService {
 
             if (localCache.isEmpty()) {
                 seedInitialNotes();
+            } else {
+                correctAllCachedStreams();
             }
         } catch (Exception ex) {
             log.warn("Could not initialize local Notes cache: {}", ex.getMessage());
+        }
+    }
+
+    public String deriveStream(String subject, String classLevel, String requestedStream) {
+        if ("10".equals(classLevel)) {
+            return "Common";
+        }
+        if (subject == null) {
+            return (requestedStream != null && !requestedStream.isBlank()) ? requestedStream : "Science";
+        }
+        String s = subject.trim().toLowerCase();
+        if (s.equals("physics") || s.equals("chemistry") || s.equals("mathematics") || s.equals("biology")) {
+            return "Science";
+        }
+        if (s.equals("accountancy") || s.equals("business studies") || s.equals("economics")) {
+            return "Commerce";
+        }
+        if (s.equals("history") || s.equals("political science") || s.equals("geography") || s.equals("sociology")) {
+            return "Arts";
+        }
+        if (requestedStream != null && !requestedStream.isBlank() && !"Common".equalsIgnoreCase(requestedStream)) {
+            return requestedStream;
+        }
+        return "Science";
+    }
+
+    public boolean normalizeNote(Note n) {
+        if (n == null) return false;
+        boolean changed = false;
+        String derived = deriveStream(n.getSubject(), n.getClassLevel(), n.getStream());
+        if (derived != null && !derived.equalsIgnoreCase(n.getStream())) {
+            log.info("Correcting note '{}' ({}, class {}) stream from '{}' to '{}'",
+                    n.getTitle(), n.getSubject(), n.getClassLevel(), n.getStream(), derived);
+            n.setStream(derived);
+            changed = true;
+        }
+        if (n.getPdfUrl() != null && !n.getPdfUrl().isBlank()
+                && !n.getPdfUrl().startsWith("http") && !n.getPdfUrl().startsWith("/")) {
+            log.info("Normalizing note '{}' pdfUrl from '{}' to '/api/files/{}'",
+                    n.getTitle(), n.getPdfUrl(), n.getPdfUrl().trim());
+            n.setPdfUrl("/api/files/" + n.getPdfUrl().trim());
+            changed = true;
+        }
+        return changed;
+    }
+
+    private synchronized void correctAllCachedStreams() {
+        boolean modified = false;
+        for (Note n : localCache.values()) {
+            if (normalizeNote(n)) {
+                modified = true;
+                try {
+                    noteRepository.save(n);
+                } catch (Exception ignored) {}
+            }
+        }
+        if (modified) {
+            persistCacheToFile();
         }
     }
 
@@ -103,23 +163,22 @@ public class NoteService {
     }
 
     public List<Note> getPublishedNotes(String classLevel, String stream, String subject) {
+        List<Note> results;
         try {
             if (classLevel != null && !classLevel.isEmpty() && stream != null && !stream.isEmpty() && subject != null && !subject.isEmpty()) {
-                return noteRepository.findByClassLevelAndStreamIgnoreCaseAndSubjectIgnoreCaseAndStatusIgnoreCase(classLevel, stream, subject, "published");
+                results = noteRepository.findByClassLevelAndStreamIgnoreCaseAndSubjectIgnoreCaseAndStatusIgnoreCase(classLevel, stream, subject, "published");
+            } else if (classLevel != null && !classLevel.isEmpty() && stream != null && !stream.isEmpty()) {
+                results = noteRepository.findByClassLevelAndStreamIgnoreCaseAndStatusIgnoreCase(classLevel, stream, "published");
+            } else if (classLevel != null && !classLevel.isEmpty()) {
+                results = noteRepository.findByClassLevelAndStatusIgnoreCase(classLevel, "published");
+            } else if (subject != null && !subject.isEmpty()) {
+                results = noteRepository.findBySubjectIgnoreCaseAndStatusIgnoreCase(subject, "published");
+            } else {
+                results = noteRepository.findByStatusIgnoreCase("published");
             }
-            if (classLevel != null && !classLevel.isEmpty() && stream != null && !stream.isEmpty()) {
-                return noteRepository.findByClassLevelAndStreamIgnoreCaseAndStatusIgnoreCase(classLevel, stream, "published");
-            }
-            if (classLevel != null && !classLevel.isEmpty()) {
-                return noteRepository.findByClassLevelAndStatusIgnoreCase(classLevel, "published");
-            }
-            if (subject != null && !subject.isEmpty()) {
-                return noteRepository.findBySubjectIgnoreCaseAndStatusIgnoreCase(subject, "published");
-            }
-            return noteRepository.findByStatusIgnoreCase("published");
         } catch (Exception ex) {
             log.warn("MongoDB unavailable in getPublishedNotes, using local cache: {}", ex.getMessage());
-            return localCache.values().stream()
+            results = localCache.values().stream()
                     .filter(n -> "published".equalsIgnoreCase(n.getStatus()))
                     .filter(n -> classLevel == null || classLevel.isEmpty() || classLevel.equalsIgnoreCase(n.getClassLevel()))
                     .filter(n -> stream == null || stream.isEmpty() || stream.equalsIgnoreCase(n.getStream()))
@@ -128,32 +187,50 @@ public class NoteService {
                             ? b.getUpdatedAt().compareTo(a.getUpdatedAt()) : 0)
                     .collect(Collectors.toList());
         }
+
+        for (Note n : results) {
+            normalizeNote(n);
+        }
+        return results;
     }
 
     public Optional<Note> getPublishedNoteById(String id) {
+        Optional<Note> opt;
         try {
-            return noteRepository.findById(id).filter(n -> "published".equalsIgnoreCase(n.getStatus()));
+            opt = noteRepository.findById(id).filter(n -> "published".equalsIgnoreCase(n.getStatus()));
         } catch (Exception ex) {
-            return Optional.ofNullable(localCache.get(id)).filter(n -> "published".equalsIgnoreCase(n.getStatus()));
+            opt = Optional.ofNullable(localCache.get(id)).filter(n -> "published".equalsIgnoreCase(n.getStatus()));
         }
+        opt.ifPresent(this::normalizeNote);
+        return opt;
     }
 
     public List<Note> getAllNotes() {
         try {
             List<Note> fromDb = noteRepository.findAllByOrderByUpdatedAtDesc();
             if (fromDb != null && !fromDb.isEmpty()) {
+                boolean modified = false;
                 for (Note n : fromDb) {
+                    if (normalizeNote(n)) {
+                        modified = true;
+                        try {
+                            noteRepository.save(n);
+                        } catch (Exception ignored) {}
+                    }
                     if (n.getId() != null) {
                         localCache.put(n.getId(), n);
                     }
                 }
-                persistCacheToFile();
+                if (modified) {
+                    persistCacheToFile();
+                }
                 return fromDb;
             }
         } catch (Exception ex) {
             log.warn("MongoDB unavailable in getAllNotes, using local cache: {}", ex.getMessage());
         }
 
+        correctAllCachedStreams();
         return localCache.values().stream()
                 .sorted((a, b) -> (b.getUpdatedAt() != null && a.getUpdatedAt() != null)
                         ? b.getUpdatedAt().compareTo(a.getUpdatedAt()) : 0)
@@ -174,13 +251,17 @@ public class NoteService {
         note.setTitle(request.getTitle().trim());
         note.setSubject(request.getSubject().trim());
         note.setClassLevel(request.getClassLevel().trim());
-        note.setStream(request.getStream() != null ? request.getStream().trim() : "Common");
+        note.setStream(deriveStream(note.getSubject(), note.getClassLevel(), request.getStream()));
         note.setChapterNo(request.getChapterNo());
         note.setPages(request.getPages() > 0 ? request.getPages() : 1);
         note.setSizeMb(request.getSizeMb() > 0 ? request.getSizeMb() : 1.0);
         note.setStatus(request.getStatus() != null && !request.getStatus().trim().isEmpty() ? request.getStatus().trim().toLowerCase() : "published");
         note.setUploadedBy(request.getUploadedBy() != null ? request.getUploadedBy().trim() : "Admin");
-        note.setPdfUrl(request.getPdfUrl() != null ? request.getPdfUrl().trim() : null);
+        String rawPdf = request.getPdfUrl() != null ? request.getPdfUrl().trim() : null;
+        if (rawPdf != null && !rawPdf.isEmpty() && !rawPdf.startsWith("http") && !rawPdf.startsWith("/")) {
+            rawPdf = "/api/files/" + rawPdf;
+        }
+        note.setPdfUrl(rawPdf);
         note.setFileName(request.getFileName() != null ? request.getFileName().trim() : null);
         note.setImageKitFileId(request.getImageKitFileId() != null ? request.getImageKitFileId().trim() : null);
         note.setDownloads(0);
@@ -219,12 +300,18 @@ public class NoteService {
         note.setTitle(request.getTitle().trim());
         note.setSubject(request.getSubject().trim());
         note.setClassLevel(request.getClassLevel().trim());
-        note.setStream(request.getStream() != null ? request.getStream().trim() : "Common");
+        note.setStream(deriveStream(note.getSubject(), note.getClassLevel(), request.getStream()));
         note.setChapterNo(request.getChapterNo());
         if (request.getPages() > 0) note.setPages(request.getPages());
         if (request.getSizeMb() > 0) note.setSizeMb(request.getSizeMb());
         if (request.getStatus() != null) note.setStatus(request.getStatus().trim().toLowerCase());
-        if (request.getPdfUrl() != null) note.setPdfUrl(request.getPdfUrl().trim());
+        if (request.getPdfUrl() != null) {
+            String rawPdf = request.getPdfUrl().trim();
+            if (!rawPdf.isEmpty() && !rawPdf.startsWith("http") && !rawPdf.startsWith("/")) {
+                rawPdf = "/api/files/" + rawPdf;
+            }
+            note.setPdfUrl(rawPdf);
+        }
         if (request.getFileName() != null) note.setFileName(request.getFileName().trim());
         if (request.getImageKitFileId() != null) note.setImageKitFileId(request.getImageKitFileId().trim());
         note.setUpdatedAt(Instant.now());
@@ -313,5 +400,41 @@ public class NoteService {
                 noteRepository.save(n);
             });
         } catch (Exception ignored) {}
+    }
+
+    public Optional<Note> findByFileName(String fileName) {
+        if (fileName == null || fileName.isBlank()) return Optional.empty();
+        String decoded = fileName.trim();
+        try {
+            decoded = java.net.URLDecoder.decode(fileName, java.nio.charset.StandardCharsets.UTF_8).trim();
+        } catch (Exception ignored) {}
+
+        final String searchName = decoded.toLowerCase();
+        final String searchClean = searchName.replaceAll("[^a-zA-Z0-9.-]", "_");
+
+        return getAllNotes().stream()
+                .filter(n -> matchesNoteFileNameOrUrl(n, searchName, searchClean))
+                .findFirst();
+    }
+
+    private boolean matchesNoteFileNameOrUrl(Note n, String searchName, String searchClean) {
+        if (n == null) return false;
+        if (n.getFileName() != null) {
+            String fn = n.getFileName().trim().toLowerCase();
+            String fnClean = fn.replaceAll("[^a-zA-Z0-9.-]", "_");
+            if (fn.equals(searchName) || fn.endsWith("_" + searchName)
+                    || fnClean.equals(searchClean) || fnClean.endsWith("_" + searchClean)) {
+                return true;
+            }
+        }
+        if (n.getPdfUrl() != null) {
+            String url = n.getPdfUrl().trim().toLowerCase();
+            String urlClean = url.replaceAll("[^a-zA-Z0-9.-]", "_");
+            if (url.endsWith("/" + searchName) || url.endsWith("/" + searchClean)
+                    || urlClean.endsWith("/" + searchClean) || url.equals(searchName) || urlClean.equals(searchClean)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

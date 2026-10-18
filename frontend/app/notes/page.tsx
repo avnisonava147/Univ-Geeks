@@ -1,11 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import StreamSelector from "./components/StreamSelector";
 import ClassSelector from "./components/ClassSelector";
 import SubjectSelector from "./components/SubjectSelector";
 import ChapterSelector from "./components/ChapterSelector";
-import SubscribePopup from "./components/SubscribePopup";
+function normalizePdfUrl(url?: string | null): string {
+  if (!url) return "#";
+  const trimmed = url.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+  if (trimmed.startsWith("/")) {
+    return trimmed;
+  }
+  return `/api/files/${encodeURIComponent(trimmed)}`;
+}
+
 import {
   getSubjects,
   streams,
@@ -49,12 +60,20 @@ export default function NotesPage() {
   const [selectedChapter, setSelectedChapter] =
   useState<string | null>(null);
 
-  // Subscription popup state
-const [showSubscribePopup, setShowSubscribePopup] = useState(false);
 
-const [pendingPdfAction, setPendingPdfAction] = useState<
-  "view" | "download" | null
->(null);
+  // Uploaded notes from MongoDB
+  const [uploadedNotes, setUploadedNotes] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/notes")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setUploadedNotes(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
 
 
@@ -281,9 +300,35 @@ if (
   };
 
 
-const selectedChapterData = selectedSubjectData?.chapters.find(
-  (chapter) => chapter.id === selectedChapter
-);
+  const activeChapters = useMemo(() => {
+    if (!selectedSubjectData) return [];
+    return selectedSubjectData.chapters.map((ch, idx) => {
+      const chNumber = idx + 1;
+      const matchingNote = uploadedNotes.find(
+        (n) =>
+          n.status === "published" &&
+          n.classLevel === selectedClass &&
+          (selectedClass === "10" || !n.stream || n.stream.toLowerCase() === selectedStream.toLowerCase()) &&
+          n.subject?.toLowerCase() === selectedSubject?.toLowerCase() &&
+          (n.chapterNo === chNumber || n.title?.toLowerCase() === ch.name.toLowerCase()) &&
+          n.pdfUrl
+      );
+      if (matchingNote) {
+        return {
+          ...ch,
+          pdf: normalizePdfUrl(matchingNote.pdfUrl),
+        };
+      }
+      return {
+        ...ch,
+        pdf: normalizePdfUrl(ch.pdf),
+      };
+    });
+  }, [selectedSubjectData, selectedClass, selectedStream, selectedSubject, uploadedNotes]);
+
+  const selectedChapterData = activeChapters.find(
+    (chapter) => chapter.id === selectedChapter
+  );
 
   return (
     <main className="min-h-screen bg-white">
@@ -593,7 +638,7 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
 {selectedSubjectData && (
   <ChapterSelector
     sectionRef={chapterSectionRef}
-    chapters={selectedSubjectData.chapters}
+    chapters={activeChapters}
     selectedChapter={selectedChapter}
     onChapterChange={(chapter) =>
       setSelectedChapter(chapter.id)
@@ -704,14 +749,9 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
 <div className="flex flex-col gap-3 sm:flex-row">
   {/* View PDF */}
   <a
-    href={selectedChapterData.pdf}
+    href={normalizePdfUrl(selectedChapterData.pdf)}
     target="_blank"
     rel="noopener noreferrer"
-    onClick={(event) => {
-      event.preventDefault();
-      setPendingPdfAction("view");
-      setShowSubscribePopup(true);
-    }}
     className="group/button inline-flex items-center justify-center gap-2 rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2F5FDE] hover:shadow-lg"
   >
     <span className="text-base">👁</span>
@@ -723,13 +763,8 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
 
   {/* Download PDF */}
   <a
-    href={selectedChapterData.pdf}
+    href={normalizePdfUrl(selectedChapterData.pdf)}
     download
-    onClick={(event) => {
-      event.preventDefault();
-      setPendingPdfAction("download");
-      setShowSubscribePopup(true);
-    }}
     className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-[#16213E] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-[#2F5FDE]"
   >
     <span className="text-base">↓</span>
@@ -746,44 +781,6 @@ const selectedChapterData = selectedSubjectData?.chapters.find(
     </div>
   </section>
 )}
-
-      
-      {showSubscribePopup && (
-        <SubscribePopup
-          onClose={() => {
-            setShowSubscribePopup(false);
-            setPendingPdfAction(null);
-          }}
-          onContinue={() => {
-            const pdfUrl = selectedChapterData?.pdf;
-            const action = pendingPdfAction;
-
-            setShowSubscribePopup(false);
-            setPendingPdfAction(null);
-
-            if (!pdfUrl || !action) return;
-
-            if (action === "view") {
-              window.open(
-                pdfUrl,
-                "_blank",
-                "noopener,noreferrer"
-              );
-            } else if (action === "download") {
-              const link = document.createElement("a");
-              link.href = pdfUrl;
-              link.download = "";
-              document.body.appendChild(link);
-              link.click();
-              link.remove();
-            }
-          }}
-          
-youtubeUrl="https://www.youtube.com/@Himanshubhaiya8"
-instagramUrl="https://www.instagram.com/univ_geeks?igsh=MmRxYTN5ZTE2N2J2"
-
-        />
-      )}
 
 
       <Footer />

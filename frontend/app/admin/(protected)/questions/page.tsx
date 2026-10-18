@@ -1,7 +1,7 @@
 // app/admin/(protected)/questions/page.tsx
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   MessageCircleQuestion,
   Search,
@@ -9,13 +9,18 @@ import {
   X,
   Send,
   Clock,
+  Mail,
+  RefreshCw,
+  Loader2,
 } from "lucide-react";
+import { apiRequest } from "@/app/admin/(protected)/_lib/api";
 
 type QuestionStatus = "open" | "resolved";
 
 interface QuestionItem {
   id: string;
   student: string;
+  email: string;
   avatar: string;
   subject: string;
   question: string;
@@ -23,6 +28,7 @@ interface QuestionItem {
   status: QuestionStatus;
   reply: string | null;
   repliedAt?: string | null;
+  createdAt?: string;
 }
 
 const SUBJECT_COLORS: Record<string, string> = {
@@ -34,84 +40,49 @@ const SUBJECT_COLORS: Record<string, string> = {
   General: "#8C7B6E",
 };
 
-const INITIAL_QUESTIONS: QuestionItem[] = [
-  {
-    id: "q-1",
-    student: "Rohit Kumar",
-    avatar: "RK",
-    subject: "Physics",
-    question: "Difference between AC and DC generator? In AC generator slip rings are used, whereas in DC split rings are used. Is there any other fundamental construction difference?",
-    askedAt: "2 hrs ago",
-    status: "open",
-    reply: null,
-  },
-  {
-    id: "q-2",
-    student: "Neha Gupta",
-    avatar: "NG",
-    subject: "Mathematics",
-    question: "Can you explain integration by parts formula application when we have logarithmic combined with algebraic expressions?",
-    askedAt: "6 hrs ago",
-    status: "open",
-    reply: null,
-  },
-  {
-    id: "q-3",
-    student: "Aman Singh",
-    avatar: "AS",
-    subject: "General",
-    question: "Which chapters are most important for Rajasthan board exams in 2026? Please prioritize high weightage units.",
-    askedAt: "1 day ago",
-    status: "open",
-    reply: null,
-  },
-  {
-    id: "q-4",
-    student: "Priya Sharma",
-    avatar: "PS",
-    subject: "Chemistry",
-    question: "Why does ortho-nitrophenol have lower boiling point than para-nitrophenol despite having the same molecular formula?",
-    askedAt: "2 days ago",
-    status: "resolved",
-    reply: "Ortho-nitrophenol shows intramolecular hydrogen bonding (chelation) which prevents intermolecular associations, while para-nitrophenol forms strong intermolecular hydrogen bonds, requiring more thermal energy to boil.",
-    repliedAt: "1 day ago",
-  },
-  {
-    id: "q-5",
-    student: "Ankit Verma",
-    avatar: "AV",
-    subject: "Biology",
-    question: "What is the key role of Sertoli cells in human male reproduction?",
-    askedAt: "3 days ago",
-    status: "resolved",
-    reply: "Sertoli cells (nurse cells) provide nutrition and structural support to developing germ cells (spermatozoa) and secrete inhibin.",
-    repliedAt: "2 days ago",
-  },
-  {
-    id: "q-6",
-    student: "Kavita Rao",
-    avatar: "KR",
-    subject: "Science",
-    question: "How do lenses correct hypermetropia (farsightedness)? Which lens type is required?",
-    askedAt: "3 days ago",
-    status: "open",
-    reply: null,
-  },
-  {
-    id: "q-7",
-    student: "Deepak Yadav",
-    avatar: "DY",
-    subject: "Physics",
-    question: "Derive lens maker's formula considering two spherical refracting surfaces.",
-    askedAt: "4 days ago",
-    status: "resolved",
-    reply: "Use the single spherical refraction formula 1/f = (n - 1)(1/R1 - 1/R2) by summing refractions at both interfaces in thin lens approximation.",
-    repliedAt: "3 days ago",
-  },
-];
+function formatRelativeTime(dateStr?: string): string {
+  if (!dateStr) return "Recently";
+  try {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    if (diffMs < 0) return "Just now";
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHours = Math.floor(diffMin / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffDays > 7) {
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    }
+    if (diffDays >= 1) {
+      return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    }
+    if (diffHours >= 1) {
+      return `${diffHours} hr${diffHours > 1 ? "s" : ""} ago`;
+    }
+    if (diffMin >= 1) {
+      return `${diffMin} min ago`;
+    }
+    return "Just now";
+  } catch {
+    return "Recently";
+  }
+}
+
+function getInitials(name?: string): string {
+  if (!name) return "ST";
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
 export default function QuestionsPage() {
-  const [questions, setQuestions] = useState<QuestionItem[]>(INITIAL_QUESTIONS);
+  const [questions, setQuestions] = useState<QuestionItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [search, setSearch] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState<"All" | QuestionStatus>("All");
@@ -119,9 +90,52 @@ export default function QuestionsPage() {
   const [replyText, setReplyText] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  const subjects = useMemo(() => {
-    return ["All", "Physics", "Chemistry", "Mathematics", "Biology", "Science", "General"];
+  const loadQuestions = useCallback(async (isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
+    setError(null);
+    try {
+      const data = await apiRequest<any[]>("/api/admin/questions");
+      const mapped: QuestionItem[] = (Array.isArray(data) ? data : []).map((q) => {
+        const studentName = q.name || q.student || "Anonymous Student";
+        const rawStatus = (q.status || "open").toLowerCase();
+        const normStatus: QuestionStatus = rawStatus === "resolved" ? "resolved" : "open";
+        return {
+          id: q.id,
+          student: studentName,
+          email: q.email || "",
+          avatar: getInitials(studentName),
+          subject: q.subject || "General",
+          question: q.message || q.question || "",
+          askedAt: formatRelativeTime(q.createdAt),
+          status: normStatus,
+          reply: q.reply || null,
+          repliedAt: q.repliedAt ? formatRelativeTime(q.repliedAt) : null,
+          createdAt: q.createdAt,
+        };
+      });
+      setQuestions(mapped);
+    } catch (err: any) {
+      setError(err.message || "Failed to load questions from backend");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadQuestions();
+  }, [loadQuestions]);
+
+  const subjects = useMemo(() => {
+    const defaultList = ["All", "Physics", "Chemistry", "Mathematics", "Biology", "Science", "General"];
+    const fromQuestions = Array.from(new Set(questions.map((q) => q.subject).filter(Boolean)));
+    const merged = Array.from(new Set([...defaultList, ...fromQuestions]));
+    return merged;
+  }, [questions]);
 
   const openCount = useMemo(() => questions.filter((q) => q.status === "open").length, [questions]);
   const resolvedCount = useMemo(() => questions.filter((q) => q.status === "resolved").length, [questions]);
@@ -130,7 +144,8 @@ export default function QuestionsPage() {
     return questions.filter((q) => {
       const matchSearch =
         q.student.toLowerCase().includes(search.toLowerCase()) ||
-        q.question.toLowerCase().includes(search.toLowerCase());
+        q.question.toLowerCase().includes(search.toLowerCase()) ||
+        q.email.toLowerCase().includes(search.toLowerCase());
       const matchSubject = subjectFilter === "All" || q.subject === subjectFilter;
       const matchStatus = statusFilter === "All" || q.status === statusFilter;
       return matchSearch && matchSubject && matchStatus;
@@ -142,27 +157,42 @@ export default function QuestionsPage() {
     setReplyText(q.reply || "");
   }
 
-  function handleSendReply() {
+  async function handleSendReply() {
     if (!selectedQuestion || !replyText.trim()) return;
+    const qId = selectedQuestion.id;
+    const text = replyText.trim();
 
-    setQuestions((prev) =>
-      prev.map((item) =>
-        item.id === selectedQuestion.id
-          ? { ...item, reply: replyText.trim(), status: "resolved", repliedAt: "Just now" }
-          : item
-      )
-    );
+    try {
+      await apiRequest(`/api/admin/questions/${qId}/reply`, {
+        method: "POST",
+        body: JSON.stringify({ reply: text, status: "resolved" }),
+      });
 
-    setSelectedQuestion((prev) =>
-      prev ? { ...prev, reply: replyText.trim(), status: "resolved", repliedAt: "Just now" } : null
-    );
+      setQuestions((prev) =>
+        prev.map((item) =>
+          item.id === qId
+            ? { ...item, reply: text, status: "resolved", repliedAt: "Just now" }
+            : item
+        )
+      );
+
+      setSelectedQuestion((prev) =>
+        prev ? { ...prev, reply: text, status: "resolved", repliedAt: "Just now" } : null
+      );
+    } catch (err: any) {
+      alert("Failed to send reply: " + err.message);
+    }
   }
 
-  function handleToggleResolved(id: string) {
+  async function handleToggleResolved(id: string) {
+    const current = questions.find((item) => item.id === id);
+    if (!current) return;
+    const nextStatus: QuestionStatus = current.status === "open" ? "resolved" : "open";
+
+    // Optimistic UI update
     setQuestions((prev) =>
       prev.map((item) => {
         if (item.id === id) {
-          const nextStatus = item.status === "open" ? "resolved" : "open";
           return { ...item, status: nextStatus };
         }
         return item;
@@ -171,18 +201,53 @@ export default function QuestionsPage() {
 
     if (selectedQuestion && selectedQuestion.id === id) {
       setSelectedQuestion((prev) =>
-        prev ? { ...prev, status: prev.status === "open" ? "resolved" : "open" } : null
+        prev ? { ...prev, status: nextStatus } : null
       );
+    }
+
+    try {
+      await apiRequest(`/api/admin/questions/${id}/status`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: nextStatus }),
+      });
+    } catch (err: any) {
+      // Revert on error
+      setQuestions((prev) =>
+        prev.map((item) => {
+          if (item.id === id) {
+            return { ...item, status: current.status };
+          }
+          return item;
+        })
+      );
+      if (selectedQuestion && selectedQuestion.id === id) {
+        setSelectedQuestion((prev) =>
+          prev ? { ...prev, status: current.status } : null
+        );
+      }
+      alert("Failed to update status: " + err.message);
     }
   }
 
-  function handleBulkResolve() {
-    setQuestions((prev) =>
-      prev.map((item) =>
-        selectedIds.has(item.id) ? { ...item, status: "resolved" } : item
-      )
-    );
-    setSelectedIds(new Set());
+  async function handleBulkResolve() {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+
+    try {
+      await apiRequest("/api/admin/questions/bulk-resolve", {
+        method: "POST",
+        body: JSON.stringify({ ids }),
+      });
+
+      setQuestions((prev) =>
+        prev.map((item) =>
+          selectedIds.has(item.id) ? { ...item, status: "resolved" } : item
+        )
+      );
+      setSelectedIds(new Set());
+    } catch (err: any) {
+      alert("Failed to resolve selected questions: " + err.message);
+    }
   }
 
   function toggleSelect(id: string, e: React.SyntheticEvent) {
@@ -201,12 +266,35 @@ export default function QuestionsPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-semibold text-[#1C2B3A]">Questions (Q&amp;A)</h1>
-        <p className="text-sm text-[#6B7280] mt-1">
-          Review, answer, and manage student questions.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#1C2B3A]">Questions (Q&amp;A)</h1>
+          <p className="text-sm text-[#6B7280] mt-1">
+            Review, answer, and manage student questions submitted via Contact Us.
+          </p>
+        </div>
+        <button
+          onClick={() => loadQuestions(true)}
+          disabled={loading || refreshing}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-[#E5E0D5] rounded-md bg-white text-[#1C2B3A] hover:bg-[#FAF7F2] transition-colors disabled:opacity-50"
+        >
+          <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
+          {refreshing ? "Refreshing..." : "Refresh"}
+        </button>
       </div>
+
+      {/* Error Banner */}
+      {error && (
+        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-center justify-between">
+          <p>{error}</p>
+          <button
+            onClick={() => loadQuestions(true)}
+            className="text-xs font-semibold underline hover:no-underline ml-4"
+          >
+            Retry
+          </button>
+        </div>
+      )}
 
       {/* Summary Stat Chips */}
       <div className="flex flex-wrap gap-2.5">
@@ -232,7 +320,7 @@ export default function QuestionsPage() {
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
           <input
             type="text"
-            placeholder="Search student or question..."
+            placeholder="Search student, email, or question..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full pl-9"
@@ -274,11 +362,20 @@ export default function QuestionsPage() {
 
       {/* Table */}
       <div className="bg-white rounded-md border border-[#E5E0D5] overflow-hidden">
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <Loader2 size={32} className="text-[#E8A33D] animate-spin mb-3" />
+            <p className="text-sm text-[#6B7280] font-medium">Loading questions from MongoDB...</p>
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <MessageCircleQuestion size={36} className="text-[#9CA3AF] mb-3" />
-            <p className="text-sm text-[#6B7280] font-medium">No questions match your filters.</p>
-            <p className="text-xs text-[#9CA3AF] mt-1">Try clearing search keywords or filters.</p>
+            <p className="text-sm text-[#6B7280] font-medium">No questions found.</p>
+            <p className="text-xs text-[#9CA3AF] mt-1">
+              {questions.length === 0
+                ? "Questions submitted via the Contact Us form will appear here."
+                : "Try clearing search keywords or filters."}
+            </p>
           </div>
         ) : (
           <table className="w-full text-sm">
@@ -334,7 +431,12 @@ export default function QuestionsPage() {
                         >
                           {item.avatar}
                         </div>
-                        <span className="font-medium text-[#1C2B3A]">{item.student}</span>
+                        <div>
+                          <p className="font-medium text-[#1C2B3A]">{item.student}</p>
+                          {item.email && (
+                            <p className="text-[11px] text-[#9CA3AF]">{item.email}</p>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
@@ -448,6 +550,17 @@ export default function QuestionsPage() {
                     <p className="text-xs text-[#9CA3AF] flex items-center gap-1 mt-0.5">
                       <Clock size={12} /> Asked {selectedQuestion.askedAt}
                     </p>
+                    {selectedQuestion.email && (
+                      <p className="text-xs text-[#5B7A99] flex items-center gap-1 mt-1">
+                        <Mail size={12} />
+                        <a
+                          href={`mailto:${selectedQuestion.email}`}
+                          className="hover:underline"
+                        >
+                          {selectedQuestion.email}
+                        </a>
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -475,7 +588,7 @@ export default function QuestionsPage() {
                 <label className="block text-xs font-semibold uppercase tracking-wider text-[#9CA3AF] mb-2">
                   Student&apos;s Query
                 </label>
-                <div className="bg-[#FAF7F2] rounded-md p-4 text-sm text-[#1C2B3A] border border-[#E5E0D5] leading-relaxed">
+                <div className="bg-[#FAF7F2] rounded-md p-4 text-sm text-[#1C2B3A] border border-[#E5E0D5] leading-relaxed whitespace-pre-wrap">
                   {selectedQuestion.question}
                 </div>
               </div>
@@ -493,7 +606,7 @@ export default function QuestionsPage() {
                       </span>
                     )}
                   </div>
-                  <div className="bg-[#6B8F71]/5 border border-[#6B8F71]/20 rounded-md p-4 text-sm text-[#374151] leading-relaxed">
+                  <div className="bg-[#6B8F71]/5 border border-[#6B8F71]/20 rounded-md p-4 text-sm text-[#374151] leading-relaxed whitespace-pre-wrap">
                     {selectedQuestion.reply}
                   </div>
                 </div>

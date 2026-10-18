@@ -168,14 +168,111 @@ public class AdminResourceController {
         return ResponseEntity.ok(noteService.getAllNotes());
     }
 
-    @PostMapping("/admin/notes")
+    @PostMapping(value = "/admin/notes", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Note> createNote(@Valid @RequestBody NoteRequest request) {
         Note created = noteService.createNote(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @PutMapping("/admin/notes/{id}")
+    @PostMapping(value = "/admin/notes", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Note> createNoteMultipart(
+            @RequestParam("title") String title,
+            @RequestParam("classLevel") String classLevel,
+            @RequestParam("subject") String subject,
+            @RequestParam(value = "stream", required = false) String stream,
+            @RequestParam(value = "chapterNo", required = false, defaultValue = "1") int chapterNo,
+            @RequestParam(value = "pages", required = false, defaultValue = "1") int pages,
+            @RequestParam(value = "sizeMb", required = false, defaultValue = "1.0") double sizeMb,
+            @RequestParam(value = "status", required = false, defaultValue = "published") String status,
+            @RequestParam(value = "uploadedBy", required = false, defaultValue = "Admin") String uploadedBy,
+            @RequestParam(value = "pdfUrl", required = false) String pdfUrl,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title is required");
+        }
+        if (classLevel == null || classLevel.trim().isEmpty()) {
+            throw new IllegalArgumentException("Class level is required");
+        }
+        if (subject == null || subject.trim().isEmpty()) {
+            throw new IllegalArgumentException("Subject is required");
+        }
+
+        NoteRequest request = new NoteRequest();
+        request.setTitle(title.trim());
+        request.setClassLevel(classLevel.trim());
+        request.setSubject(subject.trim());
+        request.setStream(stream != null ? stream.trim() : null);
+        request.setChapterNo(chapterNo);
+        request.setPages(pages);
+        request.setSizeMb(sizeMb);
+        request.setStatus(status != null ? status.trim() : "published");
+        request.setUploadedBy(uploadedBy != null ? uploadedBy.trim() : "Admin");
+
+        if (file != null && !file.isEmpty()) {
+            FileUploadResponse fileResponse;
+            if (imageKitService.isConfigured()) {
+                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+            } else {
+                fileResponse = fileStorageService.storeFile(file);
+            }
+            request.setPdfUrl(fileResponse.getUrl());
+            request.setFileName(fileResponse.getFileName());
+            request.setSizeMb(fileResponse.getSizeMb());
+            request.setImageKitFileId(fileResponse.getFileId());
+        } else if (pdfUrl != null && !pdfUrl.trim().isEmpty()) {
+            request.setPdfUrl(pdfUrl.trim());
+        }
+
+        Note created = noteService.createNote(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PutMapping(value = "/admin/notes/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Note> updateNote(@PathVariable String id, @Valid @RequestBody NoteRequest request) {
+        Note updated = noteService.updateNote(id, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping(value = "/admin/notes/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Note> updateNoteMultipart(
+            @PathVariable String id,
+            @RequestParam("title") String title,
+            @RequestParam("classLevel") String classLevel,
+            @RequestParam("subject") String subject,
+            @RequestParam(value = "stream", required = false) String stream,
+            @RequestParam(value = "chapterNo", required = false, defaultValue = "1") int chapterNo,
+            @RequestParam(value = "pages", required = false, defaultValue = "1") int pages,
+            @RequestParam(value = "sizeMb", required = false, defaultValue = "1.0") double sizeMb,
+            @RequestParam(value = "status", required = false, defaultValue = "published") String status,
+            @RequestParam(value = "pdfUrl", required = false) String pdfUrl,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
+        NoteRequest request = new NoteRequest();
+        request.setTitle(title.trim());
+        request.setClassLevel(classLevel.trim());
+        request.setSubject(subject.trim());
+        request.setStream(stream != null ? stream.trim() : null);
+        request.setChapterNo(chapterNo);
+        request.setPages(pages);
+        request.setSizeMb(sizeMb);
+        request.setStatus(status != null ? status.trim() : "published");
+
+        if (file != null && !file.isEmpty()) {
+            FileUploadResponse fileResponse;
+            if (imageKitService.isConfigured()) {
+                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+            } else {
+                fileResponse = fileStorageService.storeFile(file);
+            }
+            request.setPdfUrl(fileResponse.getUrl());
+            request.setFileName(fileResponse.getFileName());
+            request.setSizeMb(fileResponse.getSizeMb());
+            request.setImageKitFileId(fileResponse.getFileId());
+        } else if (pdfUrl != null && !pdfUrl.trim().isEmpty()) {
+            request.setPdfUrl(pdfUrl.trim());
+        }
+
         Note updated = noteService.updateNote(id, request);
         return ResponseEntity.ok(updated);
     }
@@ -203,14 +300,109 @@ public class AdminResourceController {
         return ResponseEntity.ok(bannerService.getAllBanners());
     }
 
-    @PostMapping("/admin/banners")
+    @PostMapping(value = "/admin/banners", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Banner> createBanner(@Valid @RequestBody BannerRequest request) {
         Banner created = bannerService.createBanner(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @PutMapping("/admin/banners/{id}")
+    @PostMapping(value = "/admin/banners", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Banner> createBannerMultipart(
+            @RequestParam("title") String title,
+            @RequestParam(value = "subtitle", required = false) String subtitle,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "linkUrl", required = false) String linkUrl,
+            @RequestParam(value = "imageUrl", required = false) String imageUrl,
+            @RequestParam(value = "imageColor", required = false, defaultValue = "#E8A33D") String imageColor,
+            @RequestParam(value = "priority", required = false, defaultValue = "1") int priority,
+            @RequestParam(value = "active", required = false, defaultValue = "true") boolean active,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "targetPage", required = false, defaultValue = "all") String targetPage,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title is required");
+        }
+
+        BannerRequest request = new BannerRequest();
+        request.setTitle(title.trim());
+        request.setSubtitle(subtitle != null ? subtitle.trim() : null);
+        request.setDescription(description != null ? description.trim() : null);
+        request.setLinkUrl(linkUrl != null ? linkUrl.trim() : "");
+        request.setImageUrl(imageUrl != null ? imageUrl.trim() : null);
+        request.setImageColor(imageColor != null ? imageColor.trim() : "#E8A33D");
+        request.setPriority(priority > 0 ? priority : 1);
+        request.setActive(active);
+        request.setStartDate(startDate != null ? startDate.trim() : null);
+        request.setEndDate(endDate != null ? endDate.trim() : null);
+        request.setTargetPage(targetPage != null ? targetPage.trim() : "all");
+
+        if (file != null && !file.isEmpty()) {
+            FileUploadResponse fileResponse;
+            if (imageKitService.isConfigured()) {
+                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/banners");
+            } else {
+                fileResponse = fileStorageService.storeFile(file);
+            }
+            request.setImageUrl(fileResponse.getUrl());
+            request.setImageKitFileId(fileResponse.getFileId());
+        }
+
+        Banner created = bannerService.createBanner(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PutMapping(value = "/admin/banners/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Banner> updateBanner(@PathVariable String id, @Valid @RequestBody BannerRequest request) {
+        Banner updated = bannerService.updateBanner(id, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping(value = "/admin/banners/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Banner> updateBannerMultipart(
+            @PathVariable String id,
+            @RequestParam("title") String title,
+            @RequestParam(value = "subtitle", required = false) String subtitle,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "linkUrl", required = false) String linkUrl,
+            @RequestParam(value = "imageUrl", required = false) String imageUrl,
+            @RequestParam(value = "imageColor", required = false, defaultValue = "#E8A33D") String imageColor,
+            @RequestParam(value = "priority", required = false, defaultValue = "1") int priority,
+            @RequestParam(value = "active", required = false, defaultValue = "true") boolean active,
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "targetPage", required = false, defaultValue = "all") String targetPage,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title is required");
+        }
+
+        BannerRequest request = new BannerRequest();
+        request.setTitle(title.trim());
+        request.setSubtitle(subtitle != null ? subtitle.trim() : null);
+        request.setDescription(description != null ? description.trim() : null);
+        request.setLinkUrl(linkUrl != null ? linkUrl.trim() : "");
+        request.setImageUrl(imageUrl != null ? imageUrl.trim() : null);
+        request.setImageColor(imageColor != null ? imageColor.trim() : "#E8A33D");
+        request.setPriority(priority > 0 ? priority : 1);
+        request.setActive(active);
+        request.setStartDate(startDate != null ? startDate.trim() : null);
+        request.setEndDate(endDate != null ? endDate.trim() : null);
+        request.setTargetPage(targetPage != null ? targetPage.trim() : "all");
+
+        if (file != null && !file.isEmpty()) {
+            FileUploadResponse fileResponse;
+            if (imageKitService.isConfigured()) {
+                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/banners");
+            } else {
+                fileResponse = fileStorageService.storeFile(file);
+            }
+            request.setImageUrl(fileResponse.getUrl());
+            request.setImageKitFileId(fileResponse.getFileId());
+        }
+
         Banner updated = bannerService.updateBanner(id, request);
         return ResponseEntity.ok(updated);
     }

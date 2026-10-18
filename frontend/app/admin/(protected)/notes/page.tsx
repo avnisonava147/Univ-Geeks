@@ -19,6 +19,9 @@ import {
   UploadCloud,
   X,
 } from "lucide-react";
+import { class10Subjects, getClass10Chapters } from "../../../notes/data/notesData";
+
+export { getClass10Chapters };
 
 type ClassLevel = "10" | "11" | "12";
 type StreamName = "Common" | "Science" | "Commerce" | "Arts";
@@ -57,6 +60,7 @@ const SUBJECT_COLORS: Record<string, string> = {
   Economics: "#E8A33D",
   English: "#8D6FA3",
   Hindi: "#B0533E",
+  Sanskrit: "#6B8F71",
   "Computer Applications": "#5B7A99",
 };
 
@@ -68,11 +72,35 @@ const CLASS_META: Record<ClassLevel, { label: string; color: string }> = {
 
 const SUBJECT_OPTIONS = Object.keys(SUBJECT_COLORS);
 
+export const STREAM_SUBJECTS: Record<StreamName, string[]> = {
+  Science: ["Physics", "Chemistry", "Mathematics", "Biology"],
+  Commerce: ["Accountancy", "Business Studies", "Economics"],
+  Arts: ["History", "Political Science", "Geography", "Sociology"],
+  Common: [
+    "Mathematics",
+    "Science",
+    "Social Science",
+    "English",
+    "Hindi",
+    "Sanskrit",
+    "Computer Applications",
+  ],
+};
+
+export function deriveStream(subject: string, classLevel: ClassLevel, savedStream?: StreamName): StreamName {
+  if (classLevel === "10") return "Common";
+  const s = (subject || "").trim().toLowerCase();
+  if (["physics", "chemistry", "mathematics", "biology"].includes(s)) return "Science";
+  if (["accountancy", "business studies", "economics"].includes(s)) return "Commerce";
+  if (["history", "political science", "geography", "sociology"].includes(s)) return "Arts";
+  return savedStream && savedStream !== "Common" ? savedStream : "Science";
+}
+
 // API data is fetched on mount; start with empty array
 
 const EMPTY_FORM = {
   title: "",
-  subject: "",
+  subject: "Mathematics",
   classLevel: "10" as ClassLevel,
   stream: "Common" as StreamName,
   chapterNo: 1,
@@ -124,6 +152,7 @@ export default function NotesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ ...EMPTY_FORM });
+  const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
 
   const [previewNote, setPreviewNote] = useState<NoteDoc | null>(null);
@@ -136,22 +165,27 @@ export default function NotesPage() {
     setApiError(null);
     try {
       const data = await apiRequest<any[]>("/api/admin/notes");
-      // Normalise backend shape -> frontend NoteDoc
-      const mapped: NoteDoc[] = data.map((n: any) => ({
-        id: n.id,
-        title: n.title ?? "",
-        subject: n.subject ?? "",
-        classLevel: (n.classLevel ?? "10") as ClassLevel,
-        stream: (n.stream ?? "Common") as StreamName,
-        chapterNo: n.chapterNo ?? 1,
-        pages: n.pages ?? 1,
-        sizeMb: n.sizeMb ?? 1.0,
-        downloads: n.downloads ?? 0,
-        status: (n.status ?? "published") as NoteStatus,
-        updatedAt: n.updatedAt ? n.updatedAt.split("T")[0] : "",
-        uploadedBy: n.uploadedBy ?? "Admin",
-        pdfUrl: n.pdfUrl ?? "",
-      }));
+      // Normalise backend shape -> frontend NoteDoc with derived stream correction
+      const mapped: NoteDoc[] = data.map((n: any) => {
+        const classLevel = (n.classLevel ?? "10") as ClassLevel;
+        const subject = n.subject ?? "";
+        const stream = deriveStream(subject, classLevel, (n.stream ?? "Common") as StreamName);
+        return {
+          id: n.id,
+          title: n.title ?? "",
+          subject,
+          classLevel,
+          stream,
+          chapterNo: n.chapterNo ?? 1,
+          pages: n.pages ?? 1,
+          sizeMb: n.sizeMb ?? 1.0,
+          downloads: n.downloads ?? 0,
+          status: (n.status ?? "published") as NoteStatus,
+          updatedAt: n.updatedAt ? n.updatedAt.split("T")[0] : "",
+          uploadedBy: n.uploadedBy ?? "Admin",
+          pdfUrl: n.pdfUrl ?? "",
+        };
+      });
       setNotes(mapped);
     } catch (err: any) {
       setApiError(err.message ?? "Failed to load notes.");
@@ -260,17 +294,29 @@ export default function NotesPage() {
 
   function openAdd() {
     setEditingId(null);
-    setForm({ ...EMPTY_FORM });
+    setSelectedPdfFile(null);
+    const initialSubject = STREAM_SUBJECTS.Common[0]; // "Mathematics"
+    const chList = getClass10Chapters(initialSubject);
+    setForm({
+      ...EMPTY_FORM,
+      classLevel: "10",
+      stream: "Common",
+      subject: initialSubject,
+      chapterNo: 1,
+      title: chList[0]?.name || "Real Numbers",
+    });
     setShowModal(true);
   }
 
   function openEdit(note: NoteDoc) {
+    const stream = deriveStream(note.subject, note.classLevel, note.stream);
     setEditingId(note.id);
+    setSelectedPdfFile(null);
     setForm({
       title: note.title,
       subject: note.subject,
       classLevel: note.classLevel,
-      stream: note.stream,
+      stream,
       chapterNo: note.chapterNo,
       pages: note.pages,
       sizeMb: note.sizeMb,
@@ -282,10 +328,44 @@ export default function NotesPage() {
   }
 
   function setFormClass(classLevel: ClassLevel) {
+    const nextStream: StreamName =
+      classLevel === "10"
+        ? "Common"
+        : form.stream === "Common"
+        ? "Science"
+        : form.stream;
+    const allowed = STREAM_SUBJECTS[nextStream] || [];
+    const nextSubject = allowed.includes(form.subject) ? form.subject : (allowed[0] || "");
+    const chList = classLevel === "10" ? getClass10Chapters(nextSubject) : [];
+    const nextChapterNo = classLevel === "10" && chList.length > 0 ? 1 : form.chapterNo;
+    const nextTitle = classLevel === "10" && chList.length > 0 ? chList[0].name : form.title;
     setForm((prev) => ({
       ...prev,
       classLevel,
-      stream: classLevel === "10" ? "Common" : prev.stream === "Common" ? "Science" : prev.stream,
+      stream: nextStream,
+      subject: nextSubject,
+      chapterNo: nextChapterNo,
+      title: nextTitle,
+    }));
+  }
+
+  function setFormStream(stream: StreamName) {
+    const allowed = STREAM_SUBJECTS[stream] || [];
+    const nextSubject = allowed.includes(form.subject) ? form.subject : (allowed[0] || "");
+    setForm((prev) => ({
+      ...prev,
+      stream,
+      subject: nextSubject,
+    }));
+  }
+
+  function handleFormSubjectChange(newSubject: string) {
+    const chList = form.classLevel === "10" ? getClass10Chapters(newSubject) : [];
+    setForm((prev) => ({
+      ...prev,
+      subject: newSubject,
+      chapterNo: form.classLevel === "10" && chList.length > 0 ? 1 : prev.chapterNo,
+      title: form.classLevel === "10" && chList.length > 0 ? chList[0].name : prev.title,
     }));
   }
 
@@ -293,30 +373,57 @@ export default function NotesPage() {
     if (!form.title.trim() || !form.subject.trim()) return;
     setSaving(true);
     const subjectSlug = form.subject.trim().toLowerCase().replace(/\s+/g, "-");
-    const pdfUrl =
-      form.pdfFile.trim() ||
-      `/pdfs/class-${form.classLevel}/${subjectSlug}/${form.chapterNo}.pdf`;
-    const body = {
-      title: form.title.trim(),
-      subject: form.subject.trim(),
-      classLevel: form.classLevel,
-      stream: form.stream,
-      chapterNo: form.chapterNo,
-      pages: form.pages,
-      sizeMb: form.sizeMb,
-      status: form.status,
-      uploadedBy: form.uploadedBy,
-      pdfUrl,
-      fileName: form.pdfFile || null,
-    };
+    const rawPdf = form.pdfFile.trim();
+    const fallbackPdfUrl = rawPdf
+      ? (rawPdf.startsWith("http") || rawPdf.startsWith("/") ? rawPdf : `/api/files/${rawPdf}`)
+      : `/pdfs/class-${form.classLevel}/${subjectSlug}/${form.chapterNo}.pdf`;
+    const stream = deriveStream(form.subject.trim(), form.classLevel, form.stream);
+
     try {
-      if (editingId) {
-        await apiRequest(`/api/admin/notes/${editingId}`, { method: "PUT", body: JSON.stringify(body) });
-        showToast(`"${form.title.trim()}" updated`);
+      if (selectedPdfFile) {
+        const formData = new FormData();
+        formData.append("title", form.title.trim());
+        formData.append("subject", form.subject.trim());
+        formData.append("classLevel", form.classLevel);
+        formData.append("stream", stream);
+        formData.append("chapterNo", String(form.chapterNo));
+        formData.append("pages", String(form.pages));
+        formData.append("sizeMb", String(form.sizeMb));
+        formData.append("status", form.status);
+        formData.append("uploadedBy", form.uploadedBy);
+        formData.append("file", selectedPdfFile);
+
+        if (editingId) {
+          await apiRequest(`/api/admin/notes/${editingId}`, { method: "PUT", body: formData });
+          showToast(`"${form.title.trim()}" updated`);
+        } else {
+          await apiRequest("/api/admin/notes", { method: "POST", body: formData });
+          showToast(`"${form.title.trim()}" uploaded`);
+        }
       } else {
-        await apiRequest("/api/admin/notes", { method: "POST", body: JSON.stringify(body) });
-        showToast(`"${form.title.trim()}" uploaded`);
+        const body = {
+          title: form.title.trim(),
+          subject: form.subject.trim(),
+          classLevel: form.classLevel,
+          stream,
+          chapterNo: form.chapterNo,
+          pages: form.pages,
+          sizeMb: form.sizeMb,
+          status: form.status,
+          uploadedBy: form.uploadedBy,
+          pdfUrl: fallbackPdfUrl,
+          fileName: form.pdfFile || null,
+        };
+
+        if (editingId) {
+          await apiRequest(`/api/admin/notes/${editingId}`, { method: "PUT", body: JSON.stringify(body) });
+          showToast(`"${form.title.trim()}" updated`);
+        } else {
+          await apiRequest("/api/admin/notes", { method: "POST", body: JSON.stringify(body) });
+          showToast(`"${form.title.trim()}" uploaded`);
+        }
       }
+      setSelectedPdfFile(null);
       setShowModal(false);
       await fetchNotes();
     } catch (err: any) {
@@ -821,24 +928,17 @@ export default function NotesPage() {
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
-                    if (file) setForm((prev) => ({ ...prev, pdfFile: file.name }));
+                    if (file) {
+                      setSelectedPdfFile(file);
+                      setForm((prev) => ({
+                        ...prev,
+                        pdfFile: file.name,
+                        sizeMb: Math.round((file.size / (1024 * 1024)) * 10) / 10 || 0.1,
+                      }));
+                    }
                   }}
                 />
               </label>
-
-              {/* Title */}
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">
-                  Chapter Title <span className="text-[#B0533E]">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="e.g. Quadratic Equations"
-                  className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
-                />
-              </div>
 
               {/* Class + Stream */}
               <div className="grid grid-cols-2 gap-3">
@@ -859,7 +959,7 @@ export default function NotesPage() {
                   <select
                     value={form.stream}
                     disabled={form.classLevel === "10"}
-                    onChange={(e) => setForm({ ...form, stream: e.target.value as StreamName })}
+                    onChange={(e) => setFormStream(e.target.value as StreamName)}
                     className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 disabled:cursor-not-allowed disabled:bg-[#FAF7F2] disabled:text-[#9CA3AF]"
                   >
                     {form.classLevel === "10" ? (
@@ -880,55 +980,106 @@ export default function NotesPage() {
                 <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">
                   Subject <span className="text-[#B0533E]">*</span>
                 </label>
-                <input
-                  type="text"
-                  list="note-subject-options"
+                <select
                   value={form.subject}
-                  onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                  placeholder="e.g. Mathematics"
+                  onChange={(e) => handleFormSubjectChange(e.target.value)}
                   className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
-                />
-                <datalist id="note-subject-options">
-                  {SUBJECT_OPTIONS.map((s) => (
-                    <option key={s} value={s} />
+                >
+                  <option value="" disabled>Select a subject</option>
+                  {(STREAM_SUBJECTS[form.stream] || []).map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
                   ))}
-                </datalist>
+                </select>
               </div>
 
-              {/* Chapter / pages / size */}
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">Chapter #</label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={form.chapterNo}
-                    onChange={(e) => setForm({ ...form, chapterNo: Math.max(1, Number(e.target.value) || 1) })}
-                    className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">Pages</label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={form.pages}
-                    onChange={(e) => setForm({ ...form, pages: Math.max(1, Number(e.target.value) || 1) })}
-                    className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">Size (MB)</label>
-                  <input
-                    type="number"
-                    min={0.1}
-                    step={0.1}
-                    value={form.sizeMb}
-                    onChange={(e) => setForm({ ...form, sizeMb: Math.max(0.1, Number(e.target.value) || 0.1) })}
-                    className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
-                  />
-                </div>
-              </div>
+              {/* Chapter Selection: Class 10 Dropdown vs General Title Input */}
+              {(() => {
+                const currentClass10Chapters = form.classLevel === "10" ? getClass10Chapters(form.subject) : [];
+                const isClass10WithChapters = form.classLevel === "10" && currentClass10Chapters.length > 0;
+
+                return (
+                  <>
+                    {isClass10WithChapters ? (
+                      <div>
+                        <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">
+                          Chapter <span className="text-[#B0533E]">*</span>
+                        </label>
+                        <select
+                          value={form.chapterNo}
+                          onChange={(e) => {
+                            const chNo = Number(e.target.value);
+                            const ch = currentClass10Chapters[chNo - 1];
+                            setForm((prev) => ({
+                              ...prev,
+                              chapterNo: chNo,
+                              title: ch ? ch.name : prev.title,
+                            }));
+                          }}
+                          className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+                        >
+                          {currentClass10Chapters.map((ch, idx) => (
+                            <option key={ch.id} value={idx + 1}>
+                              Chapter {idx + 1}: {ch.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">
+                          Chapter Title <span className="text-[#B0533E]">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={form.title}
+                          onChange={(e) => setForm({ ...form, title: e.target.value })}
+                          placeholder="e.g. Quadratic Equations"
+                          className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+                        />
+                      </div>
+                    )}
+
+                    {/* Chapter / pages / size */}
+                    <div className={isClass10WithChapters ? "grid grid-cols-2 gap-3" : "grid grid-cols-3 gap-3"}>
+                      {!isClass10WithChapters && (
+                        <div>
+                          <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">Chapter #</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={form.chapterNo}
+                            onChange={(e) => setForm({ ...form, chapterNo: Math.max(1, Number(e.target.value) || 1) })}
+                            className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">Pages</label>
+                        <input
+                          type="number"
+                          min={1}
+                          value={form.pages}
+                          onChange={(e) => setForm({ ...form, pages: Math.max(1, Number(e.target.value) || 1) })}
+                          className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">Size (MB)</label>
+                        <input
+                          type="number"
+                          min={0.1}
+                          step={0.1}
+                          value={form.sizeMb}
+                          onChange={(e) => setForm({ ...form, sizeMb: Math.max(0.1, Number(e.target.value) || 0.1) })}
+                          className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+                        />
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
 
               {/* Uploader + status */}
               <div className="flex items-center justify-between rounded-lg border border-[#E5E0D5] bg-[#FAF7F2]/60 px-4 py-3">
