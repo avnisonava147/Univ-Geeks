@@ -18,6 +18,8 @@ interface Banner {
   id: string;
   title: string;
   linkUrl: string;
+  imageUrl?: string;
+  imageKitFileId?: string;
   imageColor: string;
   priority: number;
   active: boolean;
@@ -81,6 +83,7 @@ const INITIAL_BANNERS: Banner[] = [
 const EMPTY_FORM = {
   title: "",
   linkUrl: "",
+  imageUrl: "",
   imageColor: "#E8A33D",
   priority: 1,
   active: true,
@@ -110,6 +113,8 @@ export default function BannersPage() {
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   const fetchBanners = useCallback(async () => {
     try {
@@ -179,15 +184,18 @@ export default function BannersPage() {
 
   function openAdd() {
     setEditingBanner(null);
+    setSelectedImageFile(null);
     setForm({ ...EMPTY_FORM, priority: banners.length + 1 });
     setShowModal(true);
   }
 
   function openEdit(b: Banner) {
     setEditingBanner(b);
+    setSelectedImageFile(null);
     setForm({
       title: b.title,
       linkUrl: b.linkUrl,
+      imageUrl: b.imageUrl || "",
       imageColor: b.imageColor,
       priority: b.priority,
       active: b.active,
@@ -201,10 +209,27 @@ export default function BannersPage() {
     if (!form.title.trim()) return;
     setLoading(true);
     try {
+      let body: any;
+      if (selectedImageFile) {
+        const formData = new FormData();
+        formData.append("title", form.title.trim());
+        formData.append("linkUrl", form.linkUrl.trim());
+        formData.append("imageColor", form.imageColor);
+        formData.append("priority", String(form.priority));
+        formData.append("active", String(form.active));
+        if (form.startDate) formData.append("startDate", form.startDate);
+        if (form.endDate) formData.append("endDate", form.endDate);
+        if (form.imageUrl) formData.append("imageUrl", form.imageUrl);
+        formData.append("file", selectedImageFile);
+        body = formData;
+      } else {
+        body = JSON.stringify(form);
+      }
+
       if (editingBanner) {
         const updated = await apiRequest<Banner>(`/api/admin/banners/${editingBanner.id}`, {
           method: "PUT",
-          body: JSON.stringify(form),
+          body,
         });
         setBanners((prev) =>
           prev.map((b) => (b.id === editingBanner.id ? { ...b, ...updated } : b))
@@ -213,12 +238,13 @@ export default function BannersPage() {
       } else {
         const created = await apiRequest<Banner>("/api/admin/banners", {
           method: "POST",
-          body: JSON.stringify(form),
+          body,
         });
         setBanners((prev) => [...prev, created]);
         setToast("Banner created successfully");
       }
       setShowModal(false);
+      setSelectedImageFile(null);
     } catch (err: any) {
       setToast(err.message || "Failed to save banner");
     } finally {
@@ -261,12 +287,16 @@ export default function BannersPage() {
           >
             {/* Image Preview */}
             <div
-              className="w-40 h-24 flex-shrink-0 flex items-center justify-center"
+              className="w-40 h-24 flex-shrink-0 flex items-center justify-center overflow-hidden"
               style={{ backgroundColor: b.imageColor }}
             >
-              <span className="text-white/80 text-xl font-bold tracking-wide">
-                {getInitials(b.title)}
-              </span>
+              {b.imageUrl ? (
+                <img src={b.imageUrl} alt={b.title} className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-white/80 text-xl font-bold tracking-wide">
+                  {getInitials(b.title)}
+                </span>
+              )}
             </div>
 
             {/* Content */}
@@ -381,11 +411,31 @@ export default function BannersPage() {
                       title="Pick background color"
                     />
                   </div>
-                  <div className="flex-1 border-2 border-dashed border-[#E5E0D5] rounded-md flex flex-col items-center justify-center gap-1.5 py-4 text-center cursor-pointer hover:border-[#E8A33D]/60 transition-colors">
+                  <label className="flex-1 border-2 border-dashed border-[#E5E0D5] rounded-md flex flex-col items-center justify-center gap-1.5 py-4 text-center cursor-pointer hover:border-[#E8A33D]/60 transition-colors relative overflow-hidden">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      onChange={(e) => {
+                        if (e.target.files?.[0]) {
+                          setSelectedImageFile(e.target.files[0]);
+                        }
+                      }}
+                    />
                     <UploadCloud size={22} className="text-[#9CA3AF]" />
-                    <p className="text-xs text-[#9CA3AF]">Click or drag to upload image</p>
-                    <p className="text-[10px] text-[#9CA3AF]">PNG, JPG up to 2MB</p>
-                  </div>
+                    <p className="text-xs text-[#9CA3AF]">
+                      {selectedImageFile
+                        ? selectedImageFile.name
+                        : form.imageUrl
+                        ? "Change banner image"
+                        : "Click or drag to upload image"}
+                    </p>
+                    <p className="text-[10px] text-[#9CA3AF]">
+                      {selectedImageFile
+                        ? `${(selectedImageFile.size / 1024 / 1024).toFixed(2)} MB (ImageKit direct upload)`
+                        : "PNG, JPG up to 5MB (uploads to ImageKit)"}
+                    </p>
+                  </label>
                 </div>
               </div>
 

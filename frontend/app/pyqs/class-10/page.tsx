@@ -49,6 +49,14 @@ const pyqs = [
     icon: "🌍",
     accent: "social-science",
   },
+  {
+    subject: "Sanskrit",
+    className: "Class 10",
+    years: [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013],
+    thumbnail: "/class-10-sanskrit.png",
+    icon: "🕉",
+    accent: "sanskrit",
+  },
 ];
 
 
@@ -392,6 +400,15 @@ export default function PYQsPage() {
     </div>
     <span>→</span>
   </Link>
+
+  <Link href="/pyqs/class-10/sanskrit" className="mobile-subject-card">
+    <span className="text-2xl">🕉</span>
+    <div className="flex-1">
+      <h3>Sanskrit</h3>
+      <p>Class 10 Previous Year Papers</p>
+    </div>
+    <span>→</span>
+  </Link>
 </div>
   </div>
       </section>
@@ -413,6 +430,7 @@ export default function PYQsPage() {
   { name: "English", label: "📖 English" },
   { name: "Hindi", label: "📚 Hindi" },
   { name: "Social Science", label: "🌍 Social Science" },
+  { name: "Sanskrit", label: "🕉 Sanskrit" },
 ].map((item) => (
 
               <button

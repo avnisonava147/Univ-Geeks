@@ -324,10 +324,35 @@ public class PyqService {
     }
 
     public Optional<Pyq> findByFileName(String fileName) {
-        if (fileName == null || fileName.isEmpty()) return Optional.empty();
+        if (fileName == null || fileName.isBlank()) return Optional.empty();
+        String decoded = fileName.trim();
+        try {
+            decoded = java.net.URLDecoder.decode(fileName, java.nio.charset.StandardCharsets.UTF_8).trim();
+        } catch (Exception ignored) {}
+
+        final String searchName = decoded.toLowerCase();
+        final String searchClean = searchName.replaceAll("[^a-zA-Z0-9.-]", "_");
+
         return getAllPyqs().stream()
-                .filter(p -> fileName.equals(p.getFileName()) ||
-                        (p.getFileUrl() != null && p.getFileUrl().endsWith("/" + fileName)))
+                .filter(p -> {
+                    if (p.getFileName() != null) {
+                        String fn = p.getFileName().trim().toLowerCase();
+                        String fnClean = fn.replaceAll("[^a-zA-Z0-9.-]", "_");
+                        if (fn.equals(searchName) || fn.endsWith("_" + searchName)
+                                || fnClean.equals(searchClean) || fnClean.endsWith("_" + searchClean)) {
+                            return true;
+                        }
+                    }
+                    if (p.getFileUrl() != null) {
+                        String url = p.getFileUrl().trim().toLowerCase();
+                        String urlClean = url.replaceAll("[^a-zA-Z0-9.-]", "_");
+                        if (url.endsWith("/" + searchName) || url.endsWith("/" + searchClean)
+                                || urlClean.endsWith("/" + searchClean) || url.equals(searchName) || urlClean.equals(searchClean)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
                 .findFirst();
     }
 

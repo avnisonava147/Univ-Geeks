@@ -89,33 +89,72 @@ public class FileStorageService {
         }
     }
 
+    public Path resolveFilePath(String fileName) {
+        if (fileName == null || fileName.isBlank()) return null;
+        try {
+            String decoded = fileName.trim();
+            try {
+                decoded = java.net.URLDecoder.decode(fileName, java.nio.charset.StandardCharsets.UTF_8).trim();
+            } catch (Exception ignored) {}
+
+            String sanitized = StringUtils.cleanPath(decoded);
+            if (sanitized.contains("..")) return null;
+
+            Path filePath = this.uploadPath.resolve(sanitized).normalize();
+            if (Files.exists(filePath)) {
+                return filePath;
+            }
+
+            // Also check with raw fileName
+            String rawSanitized = StringUtils.cleanPath(fileName.trim());
+            if (!rawSanitized.contains("..")) {
+                Path rawPath = this.uploadPath.resolve(rawSanitized).normalize();
+                if (Files.exists(rawPath)) {
+                    return rawPath;
+                }
+            }
+
+            // Fallback: check files in upload directory by suffix or normalized base
+            String targetLower = sanitized.toLowerCase();
+            String targetUnderscore = sanitized.replaceAll("[^a-zA-Z0-9.-]", "_").toLowerCase();
+
+            try (var stream = Files.list(this.uploadPath)) {
+                return stream.filter(p -> {
+                    String fn = p.getFileName().toString();
+                    String fnLower = fn.toLowerCase();
+                    String fnClean = fnLower.replaceAll("[^a-zA-Z0-9.-]", "_");
+
+                    return fnLower.equals(targetLower)
+                            || fnLower.endsWith("_" + targetLower)
+                            || fnLower.equals(targetUnderscore)
+                            || fnLower.endsWith("_" + targetUnderscore)
+                            || fnClean.equals(targetUnderscore)
+                            || fnClean.endsWith("_" + targetUnderscore);
+                }).findFirst().orElse(null);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public Resource loadFileAsResource(String fileName) {
         try {
-            String sanitized = StringUtils.cleanPath(fileName);
-            if (sanitized.contains("..")) {
-                throw new IllegalArgumentException("Invalid file path sequence: " + fileName);
+            Path filePath = resolveFilePath(fileName);
+            if (filePath != null && Files.exists(filePath)) {
+                Resource resource = new UrlResource(filePath.toUri());
+                if (resource.exists() && resource.isReadable()) {
+                    return resource;
+                }
             }
-            Path filePath = this.uploadPath.resolve(sanitized).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists() && resource.isReadable()) {
-                return resource;
-            } else {
-                throw new IllegalArgumentException("File not found or not readable: " + fileName);
-            }
+            throw new IllegalArgumentException("File not found or not readable: " + fileName);
         } catch (MalformedURLException ex) {
             throw new IllegalArgumentException("File path invalid: " + fileName, ex);
         }
     }
 
     public boolean fileExists(String fileName) {
-        try {
-            String sanitized = StringUtils.cleanPath(fileName);
-            if (sanitized.contains("..")) return false;
-            Path filePath = this.uploadPath.resolve(sanitized).normalize();
-            return Files.exists(filePath);
-        } catch (Exception e) {
-            return false;
-        }
+        Path path = resolveFilePath(fileName);
+        return path != null && Files.exists(path);
     }
 
     public boolean deleteFileIfExists(String fileName) {

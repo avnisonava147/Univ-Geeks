@@ -62,7 +62,7 @@ export default function Footer() {
               <img
                 src="/logo.png"
                 alt="UnivGeeks Logo"
-                className="h-10 w-10 rounded-xl border border-slate-700 bg-slate-900 p-0.5"
+                className="h-11 w-11 rounded-full   p-0.5"
               />
               <div>
                 <div className="text-lg font-black leading-none tracking-tight text-white">

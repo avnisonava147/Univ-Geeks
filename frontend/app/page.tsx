@@ -12,8 +12,8 @@ export const pyqs = [
     subject: "Physics",
     className: "Class 12",
     years: [
-      2025, 2024, 2023, 2022, 2021, 2020,
-      2019, 2018, 2017, 2016, 2015, 2014, 2013,
+      2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014,
+      2013,
     ],
     thumbnail: "/physics-thumbnail.png",
   },
@@ -21,8 +21,8 @@ export const pyqs = [
     subject: "Chemistry",
     className: "Class 12",
     years: [
-      2025, 2024, 2023, 2022, 2021, 2020,
-      2019, 2018, 2017, 2016, 2015, 2014, 2013,
+      2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014,
+      2013,
     ],
     thumbnail: "/chemistry-thumbnail.png",
   },
@@ -30,8 +30,8 @@ export const pyqs = [
     subject: "Mathematics",
     className: "Class 12",
     years: [
-      2025, 2024, 2023, 2022, 2021, 2020,
-      2019, 2018, 2017, 2016, 2015, 2014, 2013,
+      2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014,
+      2013,
     ],
     thumbnail: "/mathematics-thumbnail.png",
   },
@@ -39,9 +39,8 @@ export const pyqs = [
     subject: "Biology",
     className: "Class 12",
     years: [
-      2013, 2014, 2015, 2016, 2017,
-      2018, 2019, 2020, 2021, 2022,
-      2023, 2024, 2025,
+      2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
+      2025,
     ],
     thumbnail: "/biology-thumbnail.png",
   },
@@ -57,7 +56,7 @@ const studentReviews = [
     avatarGradient: "from-amber-500 to-orange-500",
     initials: "SR",
     review:
-      "UnivGeeks was my secret weapon for Class 12 board prep! The chapter-wise PYQs from 2013–2025 gave me an exact idea of recurring questions. The formula sheets helped me revise the complete Physics syllabus in just 2 hours before the exam.",
+      "UnivGeeks ne Class 12 board ki preparation mein meri kaafi help ki. Chapter-wise PYQs (2013–2025) se mujhe samajh aa gaya ki kaunse questions baar-baar pooche jaate hain. Formula sheets ki wajah se exam se pehle sirf 2 ghante mein poori Physics revise kar paayi.",
     tag: "Physics & Chemistry",
   },
   {
@@ -66,11 +65,11 @@ const studentReviews = [
     location: "Kota, Rajasthan",
     badge: "96.4% in Board Exams",
     rating: 5,
-    avatarGradient: "from-blue-600 to-cyan-600",
+    avatarGradient: "from-blue-500 to-indigo-500",
     initials: "RC",
     review:
-      "The handwritten notes and diagrams are clean, concise, and straight to the point. No fluff or confusing jargon. It helped me score 98 in Chemistry and cleared all my foundation concepts. Ab Padhega Rajasthan!",
-    tag: "Chemistry & Biology",
+      "Handwritten notes aur diagrams kaafi clear aur to-the-point hain. Koi extra confusing explanation nahi hai. In notes se Chemistry mein 98 score karne mein help mili aur basics bhi achhe se clear ho gaye. Ab Padhega Rajasthan!",
+    tag: "Chemistry & Handwritten Notes",
   },
   {
     name: "Jyoti Shekhawat",
@@ -78,11 +77,11 @@ const studentReviews = [
     location: "Jaipur, Rajasthan",
     badge: "97.4% State Rank",
     rating: 5,
-    avatarGradient: "from-rose-500 to-pink-600",
+    avatarGradient: "from-pink-500 to-rose-500",
     initials: "JS",
     review:
-      "Finding authentic Rajasthan board previous year questions with clean step-by-step solutions used to be impossible. UnivGeeks solved that completely. Every RBSE student in Rajasthan must use this platform!",
-    tag: "Complete PYQs Pack",
+      "Rajasthan Board ke genuine previous-year questions aur unke step-by-step solutions dhoondhna pehle kaafi mushkil tha. UnivGeeks par ye sab ek hi jagah mil gaya. Rajasthan ke RBSE students ke liye ye platform kaafi useful hai.",
+    tag: "PYQs & Solutions",
   },
   {
     name: "Manvendra Singh",
@@ -90,11 +89,11 @@ const studentReviews = [
     location: "Jodhpur, Rajasthan",
     badge: "95.8% in Class 10",
     rating: 5,
-    avatarGradient: "from-emerald-500 to-teal-600",
+    avatarGradient: "from-emerald-500 to-teal-500",
     initials: "MS",
     review:
-      "The Class 10 Science and Maths chapter summaries are incredible. When our school pre-boards were approaching, I only studied from these revision notes and scored 95+ in all core subjects.",
-    tag: "Class 10 All Subjects",
+      "Class 10 Science aur Maths ke chapter summaries kaafi useful hain. School ke pre-board paas aa rahe the, toh maine mainly inhi revision notes se preparation ki aur saare core subjects mein 95+ score kiya.",
+    tag: "Science & Mathematics",
   },
   {
     name: "Ananya Rathore",
@@ -102,11 +101,11 @@ const studentReviews = [
     location: "Udaipur, Rajasthan",
     badge: "Foundation Top Rank",
     rating: 5,
-    avatarGradient: "from-purple-600 to-indigo-600",
+    avatarGradient: "from-violet-500 to-purple-500",
     initials: "AR",
     review:
-      "The transition from Class 10 to 11 was tough, but the interactive formula sheets and structured PDFs made derivations easy to grasp. The UI is lightning-fast and completely free to use.",
-    tag: "Class 11 Science",
+      "Class 10 se 11 mein aane ke baad syllabus thoda tough laga, lekin interactive formula sheets aur properly arranged PDFs se derivations samajhna easy ho gaya. Website bhi fast chalti hai aur saara content free hai.",
+    tag: "Formula Sheets & Derivations",
   },
   {
     name: "Harsh Vardhan",
@@ -114,17 +113,18 @@ const studentReviews = [
     location: "Bikaner, Rajasthan",
     badge: "99/100 in Maths",
     rating: 5,
-    avatarGradient: "from-cyan-500 to-blue-600",
+    avatarGradient: "from-cyan-500 to-blue-500",
     initials: "HV",
     review:
-      "The 13-year question papers categorized by chapter are the best study resource available online. I practiced all calculus and algebra PYQs from here and scored 99 in Mathematics!",
-    tag: "Mathematics PYQs",
+      "Chapter-wise 13 saal ke question papers online milna kaafi helpful hai. Maine yahin se Calculus aur Algebra ke saare PYQs practice kiye, jisse Maths mein 99 score karne mein help mili.",
+    tag: "Mathematics & PYQs",
   },
 ];
 
 export default function HomePage() {
-  const [activeClassTab, setActiveClassTab] =
-    useState<"12" | "11" | "10">("12");
+  const [activeClassTab, setActiveClassTab] = useState<"12" | "11" | "10">(
+    "12",
+  );
 
   const [quickSearch, setQuickSearch] = useState("");
 
@@ -167,7 +167,7 @@ export default function HomePage() {
         description:
           "Electrostatics, Optics, Magnetism, Semiconductor & Modern Physics.",
         notesHref: "/notes",
-       pyqHref: "/pyqs/class-12/physics",
+        pyqHref: "/pyqs/class-12/physics",
       },
       {
         name: "Chemistry",
@@ -178,7 +178,7 @@ export default function HomePage() {
         description:
           "Solutions, Electrochemistry, Organic Reactions & Coordination Compounds.",
         notesHref: "/notes",
-       pyqHref: "/pyqs/class-12/chemistry",
+        pyqHref: "/pyqs/class-12/chemistry",
       },
       {
         name: "Mathematics",
@@ -186,8 +186,7 @@ export default function HomePage() {
         tag: "13 Years PYQs",
         color: "from-amber-600/20 to-orange-500/10",
         chapters: "13 Chapters",
-        description:
-          "Calculus, Matrices, Determinants, Vectors & 3D Geometry.",
+        description: "Calculus, Matrices, Determinants, Vectors & 3D Geometry.",
         notesHref: "/notes",
         pyqHref: "/pyqs/class-12/mathematics",
       },
@@ -303,7 +302,7 @@ export default function HomePage() {
     (s) =>
       quickSearch === "" ||
       s.name.toLowerCase().includes(quickSearch.toLowerCase()) ||
-      s.description.toLowerCase().includes(quickSearch.toLowerCase())
+      s.description.toLowerCase().includes(quickSearch.toLowerCase()),
   );
 
   return (
@@ -321,14 +320,12 @@ export default function HomePage() {
 
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
-            
             {/* Left Content Column (7 cols) */}
             <div className="text-center lg:col-span-7 lg:text-left">
               {/* Badge */}
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/30 bg-cyan-50 px-4 py-1.5 text-xs font-semibold text-cyan-700 shadow-sm sm:text-sm">
                 <span className="flex h-2 w-2 rounded-full bg-cyan-500 animate-ping" />
-                <span>
-UnivGeeks - Students ka Platform</span>
+                <span>UnivGeeks - Students ka Platform</span>
               </div>
 
               {/* Heading */}
@@ -340,7 +337,9 @@ UnivGeeks - Students ka Platform</span>
               </h1>
 
               {/* Subheading */}
-              <p className="mt-5 text-base leading-relaxed text-slate-600 sm:text-lg">Resources Kisi ki majboori nahi kisi ki padhai ki wajah banne chaiye
+              <p className="mt-5 text-base leading-relaxed text-slate-600 sm:text-lg">
+                Resources Kisi ki majboori nahi kisi ki padhai ki wajah banne
+                chaiye
               </p>
 
               {/* Action Buttons: Donate / Support Us */}
@@ -365,24 +364,35 @@ UnivGeeks - Students ka Platform</span>
                 </Link>
               </div>
 
-
               {/* Metrics Strip */}
               <div className="mt-10 grid grid-cols-2 gap-3 border-t border-slate-200/80 pt-6 sm:grid-cols-4">
                 <div className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-sm text-center lg:text-left">
                   <div className="text-2xl font-black text-cyan-600">13+</div>
-                  <div className="mt-0.5 text-xs text-slate-500 font-medium">Years PYQs</div>
+                  <div className="mt-0.5 text-xs text-slate-500 font-medium">
+                    Years PYQs
+                  </div>
                 </div>
                 <div className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-sm text-center lg:text-left">
                   <div className="text-2xl font-black text-blue-600">100%</div>
-                  <div className="mt-0.5 text-xs text-slate-500 font-medium">Free Study Notes</div>
+                  <div className="mt-0.5 text-xs text-slate-500 font-medium">
+                    Free Study Notes
+                  </div>
                 </div>
                 <div className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-sm text-center lg:text-left">
-                  <div className="text-2xl font-black text-indigo-600">Class 10-12</div>
-                  <div className="mt-0.5 text-xs text-slate-500 font-medium">RBSE & State</div>
+                  <div className="text-2xl font-black text-indigo-600">
+                    Class 10-12
+                  </div>
+                  <div className="mt-0.5 text-xs text-slate-500 font-medium">
+                    RBSE & State
+                  </div>
                 </div>
                 <div className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-sm text-center lg:text-left">
-                  <div className="text-2xl font-black text-amber-500">Chapter-Wise</div>
-                  <div className="mt-0.5 text-xs text-slate-500 font-medium">Organized</div>
+                  <div className="text-2xl font-black text-amber-500">
+                    Chapter-Wise
+                  </div>
+                  <div className="mt-0.5 text-xs text-slate-500 font-medium">
+                    Organized
+                  </div>
                 </div>
               </div>
             </div>
@@ -391,7 +401,6 @@ UnivGeeks - Students ka Platform</span>
             <div className="relative flex justify-center lg:col-span-5">
               <FloatingFormulaBook />
             </div>
-
           </div>
         </div>
       </section>
@@ -423,8 +432,9 @@ UnivGeeks - Students ka Platform</span>
             </h2>
 
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-blue-100/80 sm:text-base">
-              Real hard work, real results. Meet our top-scoring students who transformed their
-              board examination performance with UnivGeeks study material and PYQs.
+              Real hard work, real results. Meet our top-scoring students who
+              transformed their board examination performance with UnivGeeks
+              study material and PYQs.
             </p>
           </div>
 
@@ -516,7 +526,8 @@ UnivGeeks - Students ka Platform</span>
               <span className="text-lg">→</span>
             </Link>
             <p className="mt-3 text-xs text-blue-200/70">
-              Browse complete scores, testimonials, and past board marks on our achievements page.
+              Browse complete scores, testimonials, and past board marks on our
+              achievements page.
             </p>
           </div>
         </div>
@@ -559,7 +570,9 @@ UnivGeeks - Students ka Platform</span>
               {classTabOrder.map((c, i) => (
                 <button
                   key={c}
-                  ref={(el) => { tabButtonRefs.current[i] = el; }}
+                  ref={(el) => {
+                    tabButtonRefs.current[i] = el;
+                  }}
                   type="button"
                   onClick={() => setActiveClassTab(c)}
                   className={`relative z-10 rounded-xl px-6 py-2.5 text-sm font-bold transition-colors duration-200 ${
@@ -641,7 +654,6 @@ UnivGeeks - Students ka Platform</span>
 
         <div className="relative z-10 mx-auto max-w-7xl">
           <div className="grid items-center gap-14 lg:grid-cols-12">
-
             {/* Left Info Column (6 cols) — deliberately minimal */}
             <div className="lg:col-span-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-200/70 bg-white/80 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-cyan-800 shadow-sm backdrop-blur-sm">
@@ -660,8 +672,8 @@ UnivGeeks - Students ka Platform</span>
                 <span className="font-semibold text-slate-800">
                   13 saal ke board papers, ek jagah.
                 </span>{" "}
-                Padho, pattern pehchano aur exam se pehle apni taiyari pakki karo — bina
-                random PDFs dhoondhe.
+                Padho, pattern pehchano aur exam se pehle apni taiyari pakki
+                karo — bina random PDFs dhoondhe.
               </p>
 
               {/* 3 short chips — easy to scan */}
@@ -686,7 +698,9 @@ UnivGeeks - Students ka Platform</span>
                   className="group inline-flex items-center gap-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-cyan-600 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-500/20 transition-all hover:-translate-y-0.5 hover:shadow-cyan-500/25"
                 >
                   <span>Explore Class 12 PYQs</span>
-                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                  <span className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
                 </Link>
 
                 <span className="text-xs font-semibold text-slate-500">
@@ -699,7 +713,6 @@ UnivGeeks - Students ka Platform</span>
             <div className="lg:col-span-6">
               <PyqCarousel3D />
             </div>
-
           </div>
         </div>
       </section>
@@ -730,8 +743,9 @@ UnivGeeks - Students ka Platform</span>
             </h2>
 
             <p className="mt-3 text-base leading-relaxed text-slate-600 sm:text-lg">
-              Hear directly from Class 10, 11 &amp; 12 board exam achievers across Rajasthan who transformed
-              their scores with UnivGeeks notes, formula sheets, and solved PYQs.
+              Hear directly from Class 10, 11 &amp; 12 board exam achievers
+              across Rajasthan who transformed their scores with UnivGeeks
+              notes, formula sheets, and solved PYQs.
             </p>
 
             {/* Quick Trust Highlights */}
@@ -791,7 +805,10 @@ UnivGeeks - Students ka Platform</span>
                       <h4 className="truncate text-sm font-bold text-slate-900">
                         {review.name}
                       </h4>
-                      <span className="text-xs font-bold text-emerald-600" title="Verified Student">
+                      <span
+                        className="text-xs font-bold text-emerald-600"
+                        title="Verified Student"
+                      >
                         ✓
                       </span>
                     </div>
@@ -847,8 +864,8 @@ UnivGeeks - Students ka Platform</span>
               </h2>
 
               <p className="mx-auto mt-4 max-w-2xl text-base text-blue-100 sm:text-lg">
-                Join thousands of students using UnivGeeks for free structured notes,
-                13+ years of solved PYQs, and high-yield formula sheets.
+                Join thousands of students using UnivGeeks for free structured
+                notes, 13+ years of solved PYQs, and high-yield formula sheets.
               </p>
 
               <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">

@@ -28,15 +28,16 @@ function LoginPageInner() {
 
     setSigningIn(true);
     try {
-      const res = await apiRequest<{ token: string; user?: { email: string } }>("/api/auth/login", {
+      const res = await apiRequest<{ token: string; email?: string; username?: string; user?: { email: string } }>("/api/auth/login", {
         method: "POST",
         body: JSON.stringify({
           username: trimmedEmail,
+          email: trimmedEmail,
           password: trimmedPass,
         }),
       });
 
-      saveAdminSession(res.user?.email || trimmedEmail);
+      saveAdminSession(res.email || res.username || res.user?.email || trimmedEmail, res.token);
       router.push("/admin/dashboard");
     } catch (err: any) {
       setError(err.message || "Invalid credentials. Please verify your admin username and password.");
@@ -234,10 +235,10 @@ function LoginPageInner() {
 
                   <input
                     id="email"
-                    type="email"
+                    type="text"
                     value={email}
                     onChange={(e)=>setEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder="Enter your email or username"
                     className="h-14 w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:ring-4 focus:ring-blue-50"
                   />
                 </div>

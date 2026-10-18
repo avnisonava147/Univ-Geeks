@@ -1,16 +1,87 @@
 // app/admin/(protected)/pyqs/new/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud, X, AlertCircle } from "lucide-react";
 import { apiRequest } from "../../_lib/api";
+import { getClass10Chapters } from "../../../../notes/data/notesData";
+
+const CLASS_10_SUBJECTS = [
+  "Mathematics",
+  "Science",
+  "Social Science",
+  "English",
+  "Hindi",
+  "Sanskrit",
+  "Computer Applications",
+];
+
+const OTHER_CLASS_SUBJECTS = [
+  "Physics",
+  "Chemistry",
+  "Mathematics",
+  "Biology",
+  "Science",
+  "Hindi",
+  "English",
+];
 
 export default function NewPyqPage() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [classLevel, setClassLevel] = useState("Class 10");
+  const [subject, setSubject] = useState("Mathematics");
+  const [chapter, setChapter] = useState("");
+  const [customChapter, setCustomChapter] = useState("");
+  const [isCustomChapter, setIsCustomChapter] = useState(false);
+
+  const isClass10 = classLevel === "Class 10";
+
+  const availableSubjects = useMemo(() => {
+    return isClass10 ? CLASS_10_SUBJECTS : OTHER_CLASS_SUBJECTS;
+  }, [isClass10]);
+
+  const class10Chapters = useMemo(() => {
+    if (!isClass10) return [];
+    return getClass10Chapters(subject);
+  }, [isClass10, subject]);
+
+  function handleClassChange(newClass: string) {
+    setClassLevel(newClass);
+    if (newClass === "Class 10") {
+      if (!CLASS_10_SUBJECTS.includes(subject)) {
+        setSubject("Mathematics");
+      }
+    } else {
+      if (!OTHER_CLASS_SUBJECTS.includes(subject)) {
+        setSubject("Mathematics");
+      }
+    }
+    setChapter("");
+    setIsCustomChapter(false);
+    setCustomChapter("");
+  }
+
+  function handleSubjectChange(newSub: string) {
+    setSubject(newSub);
+    setChapter("");
+    setIsCustomChapter(false);
+    setCustomChapter("");
+  }
+
+  function handleChapterSelectChange(val: string) {
+    if (val === "__custom__") {
+      setIsCustomChapter(true);
+      setChapter("");
+    } else {
+      setIsCustomChapter(false);
+      setChapter(val);
+    }
+  }
 
   function handleFileSelect(selected: File | null) {
     setErrorMessage(null);
@@ -46,10 +117,11 @@ export default function NewPyqPage() {
 
       const title = (formObj.get("title") as string)?.trim();
       const exam = formObj.get("exam") as string;
-      const classLevel = formObj.get("classLevel") as string;
-      const subject = formObj.get("subject") as string;
       const year = formObj.get("year") as string;
-      const chapter = (formObj.get("chapter") as string)?.trim() || "";
+      
+      const resolvedChapter = isClass10
+        ? (isCustomChapter ? customChapter.trim() : chapter.trim())
+        : ((formObj.get("chapter") as string)?.trim() || "");
 
       if (!title) throw new Error("Title is required");
       if (!exam) throw new Error("Exam is required");
@@ -63,8 +135,8 @@ export default function NewPyqPage() {
       multipartData.append("classLevel", classLevel);
       multipartData.append("subject", subject);
       multipartData.append("year", year);
-      if (chapter) {
-        multipartData.append("chapter", chapter);
+      if (resolvedChapter) {
+        multipartData.append("chapter", resolvedChapter);
       }
       multipartData.append("published", "true");
       multipartData.append("file", file);
@@ -114,7 +186,7 @@ export default function NewPyqPage() {
             name="title"
             type="text"
             required
-            placeholder="e.g. class 12 pyqs"
+            placeholder="e.g. Class 10 Real Numbers PYQ 2025"
             className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D]"
           />
         </div>
@@ -141,7 +213,8 @@ export default function NewPyqPage() {
             <select
               name="classLevel"
               required
-              defaultValue="Class 12"
+              value={classLevel}
+              onChange={(e) => handleClassChange(e.target.value)}
               className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
             >
               <option value="Class 10">Class 10</option>
@@ -154,14 +227,13 @@ export default function NewPyqPage() {
             <select
               name="subject"
               required
-              defaultValue="Mathematics"
+              value={subject}
+              onChange={(e) => handleSubjectChange(e.target.value)}
               className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
             >
-              <option value="Physics">Physics</option>
-              <option value="Chemistry">Chemistry</option>
-              <option value="Mathematics">Mathematics</option>
-              <option value="Biology">Biology</option>
-              <option value="Science">Science</option>
+              {availableSubjects.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
             </select>
           </div>
 
@@ -180,15 +252,45 @@ export default function NewPyqPage() {
           </div>
         </div>
 
-        {/* Chapter (Optional) */}
+        {/* Chapter (Optional / Class 10 Dropdown) */}
         <div>
-          <label className="block text-sm font-medium text-[#1C2B3A] mb-1.5">Chapter (Optional)</label>
-          <input
-            name="chapter"
-            type="text"
-            placeholder="e.g. Electrostatics or Full Paper"
-            className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D]"
-          />
+          <label className="block text-sm font-medium text-[#1C2B3A] mb-1.5">
+            Chapter {isClass10 ? "(Select from Syllabus)" : "(Optional)"}
+          </label>
+          {isClass10 ? (
+            <div className="space-y-2">
+              <select
+                value={isCustomChapter ? "__custom__" : chapter}
+                onChange={(e) => handleChapterSelectChange(e.target.value)}
+                className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+              >
+                <option value="">-- Full Paper / General Question Paper --</option>
+                {class10Chapters.map((ch, idx) => (
+                  <option key={ch.id || idx} value={ch.name}>
+                    Chapter {idx + 1}: {ch.name}
+                  </option>
+                ))}
+                <option value="__custom__">Custom / Other Chapter...</option>
+              </select>
+
+              {isCustomChapter && (
+                <input
+                  type="text"
+                  value={customChapter}
+                  onChange={(e) => setCustomChapter(e.target.value)}
+                  placeholder="Enter custom chapter name"
+                  className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D]"
+                />
+              )}
+            </div>
+          ) : (
+            <input
+              name="chapter"
+              type="text"
+              placeholder="e.g. Electrostatics or Full Paper"
+              className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D]"
+            />
+          )}
         </div>
 
         {/* File upload */}

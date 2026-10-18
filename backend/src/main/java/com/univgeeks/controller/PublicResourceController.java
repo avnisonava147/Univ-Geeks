@@ -87,9 +87,19 @@ public class PublicResourceController {
     // ==========================================
     @GetMapping("/files/{fileName:.+}")
     public ResponseEntity<?> serveFile(@PathVariable String fileName) {
-        if (fileStorageService.fileExists(fileName)) {
-            Resource fileResource = fileStorageService.loadFileAsResource(fileName);
-            MediaType mediaType = fileStorageService.getMediaTypeForFileName(fileName);
+        String decoded = fileName;
+        try {
+            decoded = java.net.URLDecoder.decode(fileName, java.nio.charset.StandardCharsets.UTF_8);
+        } catch (Exception ignored) {}
+
+        if (fileStorageService.fileExists(decoded) || fileStorageService.fileExists(fileName)) {
+            Resource fileResource;
+            try {
+                fileResource = fileStorageService.loadFileAsResource(decoded);
+            } catch (Exception e) {
+                fileResource = fileStorageService.loadFileAsResource(fileName);
+            }
+            MediaType mediaType = fileStorageService.getMediaTypeForFileName(fileResource.getFilename());
 
             return ResponseEntity.ok()
                     .contentType(mediaType)
@@ -98,10 +108,20 @@ public class PublicResourceController {
         }
 
         // If not found locally on disk, check if a PYQ with this fileName exists and has an ImageKit cloud URL
-        Optional<Pyq> pyq = pyqService.findByFileName(fileName);
+        Optional<Pyq> pyq = pyqService.findByFileName(decoded);
+        if (pyq.isEmpty()) pyq = pyqService.findByFileName(fileName);
         if (pyq.isPresent() && pyq.get().getFileUrl() != null && pyq.get().getFileUrl().startsWith("http")) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                     .header(HttpHeaders.LOCATION, pyq.get().getFileUrl())
+                    .build();
+        }
+
+        // Also check if a Note with this fileName exists and has an ImageKit cloud URL
+        Optional<Note> note = noteService.findByFileName(decoded);
+        if (note.isEmpty()) note = noteService.findByFileName(fileName);
+        if (note.isPresent() && note.get().getPdfUrl() != null && note.get().getPdfUrl().startsWith("http")) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, note.get().getPdfUrl())
                     .build();
         }
 
