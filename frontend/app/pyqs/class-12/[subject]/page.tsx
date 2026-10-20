@@ -11,6 +11,10 @@ type PageProps = {
   }>;
 };
 
+export function generateStaticParams() {
+  return Object.keys(subjectData).map((subject) => ({ subject }));
+}
+
 const subjectData: Record<
   string,
   {

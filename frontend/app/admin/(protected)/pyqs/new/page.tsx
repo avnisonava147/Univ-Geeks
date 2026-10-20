@@ -35,6 +35,7 @@ export default function NewPyqPage() {
 
   const [classLevel, setClassLevel] = useState("Class 10");
   const [subject, setSubject] = useState("Mathematics");
+  const [medium, setMedium] = useState("Hindi Medium");
   const [chapter, setChapter] = useState("");
   const [customChapter, setCustomChapter] = useState("");
   const [isCustomChapter, setIsCustomChapter] = useState(false);
@@ -134,6 +135,7 @@ export default function NewPyqPage() {
       multipartData.append("exam", exam);
       multipartData.append("classLevel", classLevel);
       multipartData.append("subject", subject);
+      multipartData.append("medium", medium);
       multipartData.append("year", year);
       if (resolvedChapter) {
         multipartData.append("chapter", resolvedChapter);
@@ -291,6 +293,21 @@ export default function NewPyqPage() {
               className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D]"
             />
           )}
+        </div>
+
+        {/* Medium (Immediately after Chapter) */}
+        <div>
+          <label className="block text-sm font-medium text-[#1C2B3A] mb-1.5">Medium</label>
+          <select
+            name="medium"
+            required
+            value={medium}
+            onChange={(e) => setMedium(e.target.value)}
+            className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+          >
+            <option value="Hindi Medium">Hindi Medium</option>
+            <option value="English Medium">English Medium</option>
+          </select>
         </div>
 
         {/* File upload */}

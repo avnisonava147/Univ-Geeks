@@ -26,6 +26,7 @@ type Pyq = {
   exam: string;
   year: string;
   chapter?: string;
+  medium?: string;
   fileUrl: string;
   uploadedAt: string;
   downloads: number;
@@ -75,6 +76,7 @@ export default function PyqsPage() {
         exam: p.exam ?? "",
         year: p.year ?? "",
         chapter: p.chapter ?? "",
+        medium: p.medium ?? "",
         fileUrl: p.fileUrl ?? "",
         uploadedAt: p.uploadedAt ? p.uploadedAt.split("T")[0] : "",
         downloads: p.downloads ?? 0,
@@ -282,6 +284,11 @@ export default function PyqsPage() {
                     <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: `${subColor}1A`, color: subColor }}>
                       {pyq.subject}
                     </span>
+                    {pyq.medium && (
+                      <span className="text-xs font-medium px-2 py-0.5 bg-[#FAF7F2] text-[#1C2B3A] rounded border border-[#E5E0D5]">
+                        {pyq.medium}
+                      </span>
+                    )}
                     <span className="text-xs font-medium px-2 py-0.5 bg-[#1C2B3A]/5 text-[#1C2B3A] rounded">{pyq.exam}</span>
                   </div>
                   <h3 className="text-base font-semibold text-[#1C2B3A] mt-3 leading-snug">{pyq.title}</h3>
@@ -343,6 +350,7 @@ export default function PyqsPage() {
                 <th className="px-2 py-3 font-medium">Exam</th>
                 <th className="px-2 py-3 font-medium">Class</th>
                 <th className="px-2 py-3 font-medium">Subject</th>
+                <th className="px-2 py-3 font-medium">Medium</th>
                 <th className="px-2 py-3 font-medium cursor-pointer select-none" onClick={() => toggleSort("year")}>
                   <span className="flex items-center gap-1">Year <ArrowUpDown size={12} /></span>
                 </th>
@@ -375,6 +383,17 @@ export default function PyqsPage() {
                     <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: `${subjectColors[pyq.subject] ?? "#6B8F71"}1A`, color: subjectColors[pyq.subject] ?? "#6B8F71" }}>
                       {pyq.subject}
                     </span>
+                  </td>
+                  <td className="px-2 py-3">
+                    {pyq.medium ? (
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        pyq.medium.toLowerCase().includes("hindi") ? "bg-amber-50 text-amber-800" : "bg-blue-50 text-blue-800"
+                      }`}>
+                        {pyq.medium}
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400">—</span>
+                    )}
                   </td>
                   <td className="px-2 py-3 text-[#374151]">{pyq.year}</td>
                   <td className="px-2 py-3 text-[#9CA3AF]">{pyq.downloads}</td>

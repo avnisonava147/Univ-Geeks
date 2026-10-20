@@ -7,6 +7,7 @@ export type Chapter = {
   id: string;
   name: string;
   pdf: string;
+  isAvailable?: boolean;
 };
 
 export type Subject = {

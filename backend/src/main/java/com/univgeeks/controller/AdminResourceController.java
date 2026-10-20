@@ -92,6 +92,8 @@ public class AdminResourceController {
             @RequestParam("exam") String exam,
             @RequestParam("year") String year,
             @RequestParam(value = "chapter", required = false) String chapter,
+            @RequestParam(value = "medium", required = false) String medium,
+            @RequestParam(value = "fileUrl", required = false) String fileUrl,
             @RequestParam(value = "published", required = false, defaultValue = "true") boolean published,
             @RequestParam(value = "file", required = false) MultipartFile file
     ) {
@@ -117,22 +119,29 @@ public class AdminResourceController {
         request.setSubject(subject.trim());
         request.setExam(exam.trim());
         request.setYear(year.trim());
-        request.setChapter(chapter != null ? chapter.trim() : null);
+        request.setChapter(chapter != null && !chapter.trim().isEmpty() ? chapter.trim() : null);
+        request.setMedium(medium != null && !medium.trim().isEmpty() ? medium.trim() : null);
         request.setPublished(published);
 
         if (file != null && !file.isEmpty()) {
             FileUploadResponse fileResponse;
             if (imageKitService.isConfigured()) {
-                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/pyqs");
+                try {
+                    fileResponse = imageKitService.uploadFile(file, "/univ-geeks/pyqs");
+                } catch (Exception e) {
+                    fileResponse = fileStorageService.storeFile(file);
+                }
             } else {
-                throw new IllegalStateException(
-                        "ImageKit cloud storage is not configured. Please set IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, and IMAGEKIT_URL_ENDPOINT in backend/.env to enable cloud uploads."
-                );
+                fileResponse = fileStorageService.storeFile(file);
             }
             request.setFileUrl(fileResponse.getUrl());
             request.setFileName(fileResponse.getFileName());
             request.setFileSizeMb(fileResponse.getSizeMb());
             request.setImageKitFileId(fileResponse.getFileId());
+        } else if (fileUrl != null && !fileUrl.trim().isEmpty()) {
+            request.setFileUrl(fileUrl.trim());
+        } else {
+            throw new IllegalArgumentException("PDF file or fileUrl is required");
         }
 
         Pyq created = pyqService.createPyq(request);
