@@ -16,12 +16,30 @@ public class HealthController {
     @org.springframework.beans.factory.annotation.Value("${cors.allowed-origins:default}")
     private String configuredOrigins;
 
+    private final org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
+
+    public HealthController(@org.springframework.beans.factory.annotation.Autowired(required = false) org.springframework.data.mongodb.core.MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> healthCheck() {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", "UP");
         response.put("service", "Univ-Geeks Backend");
-        response.put("version", "1.0.1-cors-fix");
+        response.put("version", "1.0.2-mongo-fix");
+
+        if (mongoTemplate != null) {
+            try {
+                org.bson.Document ping = mongoTemplate.executeCommand(new org.bson.Document("ping", 1));
+                response.put("database", "CONNECTED");
+            } catch (Exception ex) {
+                response.put("database", "DISCONNECTED: " + ex.getMessage());
+            }
+        } else {
+            response.put("database", "STANDALONE_CACHE_MODE");
+        }
+
         response.put("allowedOrigins", com.univgeeks.security.SecurityConfig.GUARANTEED_ORIGINS);
         response.put("configuredOrigins", configuredOrigins);
         response.put("timestamp", Instant.now().toString());

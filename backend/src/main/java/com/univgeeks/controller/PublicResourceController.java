@@ -110,6 +110,23 @@ public class PublicResourceController {
         // If not found locally on disk, check if a PYQ with this fileName exists and has an ImageKit cloud URL
         Optional<Pyq> pyq = pyqService.findByFileName(decoded);
         if (pyq.isEmpty()) pyq = pyqService.findByFileName(fileName);
+
+        // Also check with random UUID / hex prefix stripped (e.g. "bfa2a9db_TCS-NQT-Paper-4.pdf" -> "TCS-NQT-Paper-4.pdf")
+        String stripped = decoded.replaceFirst("^[a-fA-F0-9]{8}_", "");
+        if (pyq.isEmpty()) {
+            pyq = pyqService.findByFileName(stripped);
+        }
+        if (pyq.isEmpty()) {
+            String baseToken = stripped.replaceAll("(?i)\\.pdf$", "").toLowerCase();
+            if (!baseToken.isBlank()) {
+                pyq = pyqService.getAllPyqs().stream()
+                        .filter(p -> p.getFileUrl() != null && p.getFileUrl().startsWith("http"))
+                        .filter(p -> (p.getFileName() != null && p.getFileName().toLowerCase().contains(baseToken))
+                                || (p.getFileUrl() != null && p.getFileUrl().toLowerCase().contains(baseToken)))
+                        .findFirst();
+            }
+        }
+
         if (pyq.isPresent() && pyq.get().getFileUrl() != null && pyq.get().getFileUrl().startsWith("http")) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                     .header(HttpHeaders.LOCATION, pyq.get().getFileUrl())
@@ -119,6 +136,20 @@ public class PublicResourceController {
         // Also check if a Note with this fileName exists and has an ImageKit cloud URL
         Optional<Note> note = noteService.findByFileName(decoded);
         if (note.isEmpty()) note = noteService.findByFileName(fileName);
+        if (note.isEmpty()) {
+            note = noteService.findByFileName(stripped);
+        }
+        if (note.isEmpty()) {
+            String baseToken = stripped.replaceAll("(?i)\\.pdf$", "").toLowerCase();
+            if (!baseToken.isBlank()) {
+                note = noteService.getAllNotes().stream()
+                        .filter(n -> n.getPdfUrl() != null && n.getPdfUrl().startsWith("http"))
+                        .filter(n -> (n.getFileName() != null && n.getFileName().toLowerCase().contains(baseToken))
+                                || (n.getPdfUrl() != null && n.getPdfUrl().toLowerCase().contains(baseToken)))
+                        .findFirst();
+            }
+        }
+
         if (note.isPresent() && note.get().getPdfUrl() != null && note.get().getPdfUrl().startsWith("http")) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                     .header(HttpHeaders.LOCATION, note.get().getPdfUrl())

@@ -11,6 +11,8 @@ import com.univgeeks.service.ImageKitService;
 import com.univgeeks.service.NoteService;
 import com.univgeeks.service.PyqService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class AdminResourceController {
+
+    private static final Logger log = LoggerFactory.getLogger(AdminResourceController.class);
 
     private final PyqService pyqService;
     private final NoteService noteService;
@@ -129,9 +133,11 @@ public class AdminResourceController {
                 try {
                     fileResponse = imageKitService.uploadFile(file, "/univ-geeks/pyqs");
                 } catch (Exception e) {
+                    log.warn("ImageKit upload failed for PYQ '{}': {}. Falling back to local storage.", file.getOriginalFilename(), e.getMessage());
                     fileResponse = fileStorageService.storeFile(file);
                 }
             } else {
+                log.warn("ImageKit cloud storage is not configured! PYQ '{}' will be stored on the local filesystem.", file.getOriginalFilename());
                 fileResponse = fileStorageService.storeFile(file);
             }
             request.setFileUrl(fileResponse.getUrl());
@@ -221,8 +227,14 @@ public class AdminResourceController {
         if (file != null && !file.isEmpty()) {
             FileUploadResponse fileResponse;
             if (imageKitService.isConfigured()) {
-                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+                try {
+                    fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+                } catch (Exception e) {
+                    log.warn("ImageKit upload failed for note '{}': {}. Falling back to local storage.", file.getOriginalFilename(), e.getMessage());
+                    fileResponse = fileStorageService.storeFile(file);
+                }
             } else {
+                log.warn("ImageKit cloud storage is not configured! Note '{}' will be stored on the local filesystem.", file.getOriginalFilename());
                 fileResponse = fileStorageService.storeFile(file);
             }
             request.setPdfUrl(fileResponse.getUrl());
@@ -270,8 +282,14 @@ public class AdminResourceController {
         if (file != null && !file.isEmpty()) {
             FileUploadResponse fileResponse;
             if (imageKitService.isConfigured()) {
-                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+                try {
+                    fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+                } catch (Exception e) {
+                    log.warn("ImageKit upload failed for note '{}': {}. Falling back to local storage.", file.getOriginalFilename(), e.getMessage());
+                    fileResponse = fileStorageService.storeFile(file);
+                }
             } else {
+                log.warn("ImageKit cloud storage is not configured! Note '{}' will be stored on the local filesystem.", file.getOriginalFilename());
                 fileResponse = fileStorageService.storeFile(file);
             }
             request.setPdfUrl(fileResponse.getUrl());

@@ -54,9 +54,43 @@ public class PyqService {
                 log.info("Loaded {} PYQs from local persistent cache", localCache.size());
             }
 
-            // If cache is empty, seed with known existing uploaded papers in uploads directory
-            if (localCache.isEmpty()) {
-                seedInitialUploads();
+            // Bidirectional sync with MongoDB Atlas: load from DB first to preserve production truth
+            try {
+                List<Pyq> dbList = pyqRepository.findAllByOrderByUploadedAtDesc();
+                if (dbList != null && !dbList.isEmpty()) {
+                    for (Pyq p : dbList) {
+                        if (p.getId() != null) {
+                            localCache.put(p.getId(), p);
+                        }
+                    }
+                    log.info("Synchronized {} PYQs from MongoDB Atlas", dbList.size());
+                }
+
+                // If local cache contains PYQs not yet in Atlas (e.g. uploaded during offline window), persist them safely
+                if (!localCache.isEmpty()) {
+                    int syncedToDb = 0;
+                    for (Pyq p : localCache.values()) {
+                        if (p.getId() != null && !pyqRepository.existsById(p.getId())) {
+                            try {
+                                pyqRepository.save(p);
+                                syncedToDb++;
+                            } catch (Exception ex) {
+                                log.warn("Could not sync cached PYQ '{}' to MongoDB: {}", p.getTitle(), ex.getMessage());
+                            }
+                        }
+                    }
+                    if (syncedToDb > 0) {
+                        log.info("Persisted {} previously uncommitted PYQs from cache into MongoDB Atlas", syncedToDb);
+                    }
+                    persistCacheToFile();
+                } else {
+                    seedInitialUploads();
+                }
+            } catch (Exception ex) {
+                log.warn("Could not query MongoDB for PYQs on startup (using cache fallback): {}", ex.getMessage());
+                if (localCache.isEmpty()) {
+                    seedInitialUploads();
+                }
             }
         } catch (Exception ex) {
             log.warn("Could not initialize local PYQ cache: {}", ex.getMessage());

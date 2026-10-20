@@ -13,8 +13,8 @@ RUN mvn dependency:go-offline -B || true
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Stage 2: Runtime environment
-FROM eclipse-temurin:21-jre-alpine
+# Stage 2: Runtime environment (using Ubuntu-based Jammy with glibc and full CA certificates)
+FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app
 
@@ -25,4 +25,4 @@ COPY --from=builder /app/target/*.jar app.jar
 ENV PORT=8080
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Djdk.tls.client.protocols=TLSv1.2,TLSv1.3", "-Djsse.enableSNIExtension=true", "-jar", "app.jar"]

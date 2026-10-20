@@ -127,6 +127,23 @@ public class PublicResourceControllerTest {
     }
 
     @Test
+    public void testPublicVisitors_RedirectsToImageKit_WhenHexPrefixedFileRequested() throws Exception {
+        when(fileStorageService.fileExists("bfa2a9db_TCS-NQT-Paper-4.pdf")).thenReturn(false);
+
+        Pyq pyq = new Pyq();
+        pyq.setId("pyq-4436a43d");
+        pyq.setFileName("TCS-NQT-Paper-4_Ww2ob21PR.pdf");
+        pyq.setFileUrl("https://ik.imagekit.io/eguapakpx/univ-geeks/pyqs/TCS-NQT-Paper-4_Ww2ob21PR.pdf");
+
+        when(pyqService.findByFileName("bfa2a9db_TCS-NQT-Paper-4.pdf")).thenReturn(java.util.Optional.empty());
+        when(pyqService.getAllPyqs()).thenReturn(List.of(pyq));
+
+        mockMvc.perform(get("/api/files/bfa2a9db_TCS-NQT-Paper-4.pdf"))
+                .andExpect(status().isFound())
+                .andExpect(header().string("Location", "https://ik.imagekit.io/eguapakpx/univ-geeks/pyqs/TCS-NQT-Paper-4_Ww2ob21PR.pdf"));
+    }
+
+    @Test
     public void testPublicVisitors_Returns404_WhenFileNotFound() throws Exception {
         when(fileStorageService.fileExists("non_existent.pdf")).thenReturn(false);
         when(pyqService.findByFileName("non_existent.pdf")).thenReturn(java.util.Optional.empty());
