@@ -7,13 +7,15 @@ import SubjectSelector from "./components/SubjectSelector";
 import ChapterSelector from "./components/ChapterSelector";
 import SubscribePopup from "./components/SubscribePopup";
 import Class11Popup from "./components/Class11Popup";
+import { getApiBaseUrl } from "@/app/_lib/apiConfig";
+
 function normalizePdfUrl(url?: string | null): string {
   if (!url) return "#";
   const trimmed = url.trim();
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
     return trimmed;
   }
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  const backendUrl = getApiBaseUrl();
   if (trimmed.startsWith("/")) {
     return backendUrl ? `${backendUrl}${trimmed}` : trimmed;
   }
@@ -139,7 +141,7 @@ export default function NotesPage() {
   const [uploadedNotes, setUploadedNotes] = useState<any[]>([]);
 
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    const backendUrl = getApiBaseUrl();
     fetch(`${backendUrl}/api/notes`)
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
@@ -150,7 +152,9 @@ export default function NotesPage() {
       .catch(() => {});
   }, []);
 
-const [showClass11Popup, setShowClass11Popup] = useState(false);
+  const [showSubscribePopup, setShowSubscribePopup] = useState(false);
+  const [pendingPdfAction, setPendingPdfAction] = useState<"view" | "download" | null>(null);
+  const [showClass11Popup, setShowClass11Popup] = useState(false);
 
 const classSectionRef = useRef<HTMLDivElement | null>(null);
 

@@ -1,12 +1,12 @@
 import { getAdminSession } from "./session";
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+import { getApiBaseUrl } from "@/app/_lib/apiConfig";
 
 export async function apiRequest<T = any>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = endpoint.startsWith("http") ? endpoint : `${BACKEND_URL}${endpoint}`;
+  const backendUrl = getApiBaseUrl();
+  const url = endpoint.startsWith("http") ? endpoint : `${backendUrl}${endpoint}`;
 
   const headers = new Headers(options.headers || {});
 

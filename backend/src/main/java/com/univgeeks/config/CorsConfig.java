@@ -11,7 +11,7 @@ import java.util.Arrays;
 @Configuration
 public class CorsConfig {
 
-    @Value("${cors.allowed-origins:http://localhost:3000,http://127.0.0.1:3000}")
+    @Value("${cors.allowed-origins:https://univsvh.in,https://www.univsvh.in,http://localhost:3000,http://127.0.0.1:3000}")
     private String allowedOrigins;
 
     @Bean
@@ -21,6 +21,7 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 String[] origins = Arrays.stream(allowedOrigins.split(","))
                         .map(String::trim)
+                        .map(s -> s.endsWith("/") ? s.substring(0, s.length() - 1) : s)
                         .filter(s -> !s.isEmpty())
                         .toArray(String[]::new);
 

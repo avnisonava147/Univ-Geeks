@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FileText } from "lucide-react";
 import { getClass10Chapters } from "@/app/notes/data/notesData";
+import { getApiBaseUrl } from "@/app/_lib/apiConfig";
 
 const subjectNames: Record<string, string> = {
   physics: "Physics",
@@ -117,7 +118,7 @@ export default function Class10YearPYQClient({
   const [uploadedPyqs, setUploadedPyqs] = useState<any[]>([]);
 
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    const backendUrl = getApiBaseUrl();
     fetch(
       `${backendUrl}/api/pyqs?classLevel=Class%2010&subject=${encodeURIComponent(
         formattedSubject
