@@ -1,1 +1,0 @@
-self.__SSG_MANIFEST=new Set(["\u002Fadmin\u002Fquizzes\u002F[id]\u002Fedit","\u002Fpyqs\u002Fclass-10\u002F[subject]","\u002Fpyqs\u002Fclass-10\u002F[subject]\u002F[year]","\u002Fpyqs\u002Fclass-12\u002F[subject]","\u002Fpyqs\u002Fclass-12\u002F[subject]\u002F[year]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
