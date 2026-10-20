@@ -20,11 +20,16 @@ const students = [
     score: "97.40%",
     image: "/students/3.png",
   },
+  {
+    name: "Maheep Bharadwaj",
+    score: "97.40%",
+    image: "/students/4.png",
+  },
 ];
 
 export default function StudentSuccess() {
   return (
-    <section className="relative overflow-hidden bg-[#061A40] px-6 py-14 text-white sm:py-16">
+    <section className="relative overflow-hidden bg-[#061A40] px-4 py-12 text-white sm:px-6 sm:py-16">
 
       {/* Background Glows */}
       <div className="pointer-events-none absolute -left-32 top-10 h-72 w-72 rounded-full bg-blue-500/20 blur-3xl" />
@@ -57,16 +62,16 @@ export default function StudentSuccess() {
         {/* Heading */}
         <div className="mx-auto max-w-2xl text-center">
 
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-blue-300">
+          <p className="text-xs sm:text-sm font-bold uppercase tracking-[0.2em] text-blue-300">
             Student Achievements
           </p>
 
-          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+          <h2 className="mt-2 sm:mt-3 text-2xl sm:text-4xl font-bold tracking-tight">
             Celebrating our
             <span className="text-blue-300"> students.</span>
           </h2>
 
-          <p className="mt-3 text-sm leading-6 text-slate-300 sm:text-base">
+          <p className="mt-2 sm:mt-3 text-xs leading-5 sm:text-base sm:leading-6 text-slate-300">
             Recognizing the effort, dedication and achievements
             of students in their learning journey.
           </p>
@@ -74,54 +79,54 @@ export default function StudentSuccess() {
         </div>
 
         {/* Achievement Content */}
-        <div className="mt-9 grid items-center gap-8 lg:grid-cols-[0.8fr_1.5fr]">
+        <div className="mt-8 sm:mt-9 grid items-center gap-6 sm:gap-8 lg:grid-cols-[0.8fr_1.5fr]">
 
           {/* Left Information */}
           <div className="text-center lg:text-left">
 
-            <p className="text-sm font-semibold uppercase tracking-widest text-blue-300">
+            <p className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-blue-300">
               Recent Highlights
             </p>
 
-            <h3 className="mt-3 text-2xl font-bold sm:text-3xl">
+            <h3 className="mt-2 sm:mt-3 text-xl sm:text-3xl font-bold">
               Effort that deserves
               <span className="text-blue-300"> recognition.</span>
             </h3>
 
-            <p className="mt-4 max-w-md text-sm leading-6 text-slate-300">
+            <p className="mt-3 sm:mt-4 max-w-md text-xs sm:text-sm leading-5 sm:leading-6 text-slate-300 mx-auto lg:mx-0">
               Every result represents consistent preparation,
               practice and the determination to keep learning.
             </p>
 
             {/* Stats */}
-            <div className="mt-7 flex justify-center gap-6 lg:justify-start">
+            <div className="mt-5 sm:mt-7 flex justify-center gap-4 sm:gap-6 lg:justify-start">
 
               <div>
-                <p className="text-2xl font-bold text-blue-300">
+                <p className="text-xl sm:text-2xl font-bold text-blue-300">
                   {students.length}
                 </p>
 
-                <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">
+                <p className="mt-1 text-[11px] sm:text-xs uppercase tracking-wide text-slate-400">
                   Featured Students
                 </p>
               </div>
 
-              <div className="border-l border-white/15 pl-6">
-                <p className="text-2xl font-bold text-blue-300">
+              <div className="border-l border-white/15 pl-4 sm:pl-6">
+                <p className="text-xl sm:text-2xl font-bold text-blue-300">
                   {students[0].score}
                 </p>
 
-                <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">
+                <p className="mt-1 text-[11px] sm:text-xs uppercase tracking-wide text-slate-400">
                   Top Result
                 </p>
               </div>
 
-              <div className="border-l border-white/15 pl-6">
-                <p className="text-2xl font-bold text-blue-300">
+              <div className="border-l border-white/15 pl-4 sm:pl-6">
+                <p className="text-xl sm:text-2xl font-bold text-blue-300">
                   2026
                 </p>
 
-                <p className="mt-1 text-xs uppercase tracking-wide text-slate-400">
+                <p className="mt-1 text-[11px] sm:text-xs uppercase tracking-wide text-slate-400">
                   Results
                 </p>
               </div>
@@ -130,14 +135,14 @@ export default function StudentSuccess() {
 
           </div>
 
-          {/* Student Cards */}
-          <div className="grid gap-4 sm:grid-cols-3">
+          {/* Student Cards - 2x2 Grid */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
 
             {students.map((student) => (
 
               <div
                 key={student.name}
-                className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg backdrop-blur-sm transition duration-300 hover:-translate-y-2 hover:border-blue-300/30 hover:bg-white/10"
+                className="group overflow-hidden rounded-xl sm:rounded-2xl border border-white/10 bg-white/5 shadow-lg backdrop-blur-sm transition duration-300 hover:-translate-y-1 sm:hover:-translate-y-2 hover:border-blue-300/30 hover:bg-white/10"
               >
 
                 <div className="overflow-hidden bg-white/5">
@@ -150,13 +155,13 @@ export default function StudentSuccess() {
                   />
                 </div>
 
-                <div className="px-4 py-3 text-center">
+                <div className="px-2.5 py-2 sm:px-4 sm:py-3 text-center">
 
-                  <h3 className="text-sm font-bold text-white">
+                  <h3 className="text-xs sm:text-sm font-bold text-white truncate">
                     {student.name}
                   </h3>
 
-                  <p className="mt-1 text-sm font-semibold text-blue-300">
+                  <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm font-semibold text-blue-300">
                     {student.score}
                   </p>
 

@@ -6,7 +6,6 @@ import PYQCard from "../../../components/PYQCard";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 
-
 const pyqs = [
   {
     subject: "Physics",
@@ -53,7 +52,6 @@ const pyqs = [
     icon: "🧬",
     accent: "biology",
   },
-
   {
     subject: "Hindi",
     className: "Class 12",
@@ -70,7 +68,6 @@ const pyqs = [
     icon: "📖",
     accent: "english",
   },
-
 ];
 
 const bannerMessages = [
@@ -124,9 +121,9 @@ export default function PYQsPage() {
         <div className="hero-dots pointer-events-none absolute left-0 top-0 h-40 w-40 opacity-40" />
         <div className="hero-dots pointer-events-none absolute bottom-0 right-0 h-40 w-40 opacity-30" />
 
-        <div className="relative mx-auto max-w-[1500px] px-5 py-10 sm:px-8 sm:py-12 lg:px-10 lg:py-14">
+        <div className="relative mx-auto max-w-[1500px] px-4 py-8 sm:px-8 sm:py-12 lg:px-10 lg:py-14">
 
-          <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_500px] xl:grid-cols-[minmax(0,1fr)_560px]">
+          <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_500px] xl:grid-cols-[minmax(0,1fr)_560px]">
 
             {/* =================================================
                 LEFT SIDE
@@ -134,7 +131,7 @@ export default function PYQsPage() {
             <div className="relative z-10">
 
               {/* Breadcrumb */}
-              <div className="mb-5 flex flex-wrap items-center gap-2 text-sm text-cyan-200">
+              <div className="mb-4 flex flex-wrap items-center gap-2 text-xs sm:text-sm text-cyan-200">
                 <Link
                   href="/"
                   className="transition hover:text-white"
@@ -156,14 +153,14 @@ export default function PYQsPage() {
               </div>
 
               {/* Resource Badge */}
-              <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-white/10 px-4 py-2 text-sm font-medium backdrop-blur-sm">
+              <div className="mb-4 sm:mb-5 inline-flex items-center gap-2 rounded-full border border-cyan-300/40 bg-white/10 px-3.5 py-1.5 text-xs sm:text-sm font-medium backdrop-blur-sm">
                 📚 Class 12 Resources
               </div>
 
               {/* Main Heading */}
               <h1
                 key={bannerText}
-                className="max-w-3xl text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl animate-banner-text"
+                className="max-w-3xl text-3xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl animate-banner-text"
               >
                 {bannerText === 0 ? (
                   <>
@@ -190,63 +187,63 @@ export default function PYQsPage() {
               </h1>
 
               {/* Description */}
-              <p className="mt-5 max-w-3xl text-sm leading-6 text-blue-100 sm:text-base lg:text-lg">
+              <p className="mt-4 sm:mt-5 max-w-3xl text-xs sm:text-base leading-relaxed text-blue-100 lg:text-lg">
                 Practice with chapter-wise previous year question papers
                 for Physics, Chemistry, Mathematics, Biology and more.
                 Prepare smarter with previous years’ board questions.
               </p>
 
               {/* Feature Cards */}
-              <div className="mt-8 grid max-w-5xl gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-2.5 sm:gap-3 xl:grid-cols-4">
 
                 {/* Card 1 */}
-                <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/15">
-                  <div className="text-2xl">📄</div>
+                <div className="rounded-2xl border border-white/15 bg-white/10 p-3 sm:p-4 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/15">
+                  <div className="text-xl sm:text-2xl">📄</div>
 
-                  <h3 className="mt-2 font-bold">
+                  <h3 className="mt-1.5 sm:mt-2 text-xs sm:text-base font-bold">
                     Chapter-wise PDFs
                   </h3>
 
-                  <p className="mt-1 text-sm text-blue-200">
+                  <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-blue-200">
                     Well Organized
                   </p>
                 </div>
 
                 {/* Card 2 */}
-                <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/15">
-                  <div className="text-2xl">🗓️</div>
+                <div className="rounded-2xl border border-white/15 bg-white/10 p-3 sm:p-4 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/15">
+                  <div className="text-xl sm:text-2xl">🗓️</div>
 
-                  <h3 className="mt-2 font-bold">
+                  <h3 className="mt-1.5 sm:mt-2 text-xs sm:text-base font-bold">
                     6+ Years of PYQs
                   </h3>
 
-                  <p className="mt-1 text-sm text-blue-200">
+                  <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-blue-200">
                     2020 – 2026
                   </p>
                 </div>
 
                 {/* Card 3 */}
-                <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/15">
-                  <div className="text-2xl">⚡</div>
+                <div className="rounded-2xl border border-white/15 bg-white/10 p-3 sm:p-4 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/15">
+                  <div className="text-xl sm:text-2xl">⚡</div>
 
-                  <h3 className="mt-2 font-bold">
+                  <h3 className="mt-1.5 sm:mt-2 text-xs sm:text-base font-bold">
                     Quick Revision
                   </h3>
 
-                  <p className="mt-1 text-sm text-blue-200">
+                  <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-blue-200">
                     Study Smarter
                   </p>
                 </div>
 
                 {/* Card 4 */}
-                <div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/15">
-                  <div className="text-2xl">🎯</div>
+                <div className="rounded-2xl border border-white/15 bg-white/10 p-3 sm:p-4 backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:bg-white/15">
+                  <div className="text-xl sm:text-2xl">🎯</div>
 
-                  <h3 className="mt-2 font-bold">
+                  <h3 className="mt-1.5 sm:mt-2 text-xs sm:text-base font-bold">
                     Exam Ready
                   </h3>
 
-                  <p className="mt-1 text-sm text-blue-200">
+                  <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-blue-200">
                     Score Higher
                   </p>
                 </div>
@@ -382,102 +379,49 @@ export default function PYQsPage() {
           </div>
 
           {/* =================================================
-              MOBILE SUBJECT STACK
+              MOBILE SUBJECT CARDS (UPDATED SPACING & PADDING)
           ================================================== */}
-          <div className="mt-10 grid gap-3 lg:hidden">
-
-            <div className="mb-1 flex items-center gap-2">
-              <span className="h-px flex-1 bg-white/10" />
-
-              <span className="text-xs font-semibold uppercase tracking-widest text-cyan-200">
-                Explore Subjects
+          <div className="mt-10 sm:mt-12 lg:hidden pt-4 border-t border-white/10">
+            <div className="mb-5 flex items-center gap-3 px-1">
+              <span className="h-px flex-1 bg-white/20" />
+              <span className="text-xs font-bold uppercase tracking-wider text-cyan-200">
+                Choose Subject
               </span>
-
-              <span className="h-px flex-1 bg-white/10" />
+              <span className="h-px flex-1 bg-white/20" />
             </div>
 
-            <Link
-              href="/pyqs/class-12/physics"
-              className="mobile-subject-card"
-            >
-              <span className="text-2xl">⚛</span>
-
-              <div className="flex-1">
-                <h3>Physics</h3>
-                <p>6+ years of PYQs</p>
-              </div>
-
-              <span>→</span>
-            </Link>
-
-            <Link
-              href="/pyqs/class-12/chemistry"
-              className="mobile-subject-card"
-            >
-              <span className="text-2xl">🧪</span>
-
-              <div className="flex-1">
-                <h3>Chemistry</h3>
-                <p>6+ years of PYQs</p>
-              </div>
-
-              <span>→</span>
-            </Link>
-
-            <Link
-              href="/pyqs/class-12/mathematics"
-              className="mobile-subject-card"
-            >
-              <span className="text-2xl">🧮</span>
-
-              <div className="flex-1">
-                <h3>Mathematics</h3>
-                <p>6+ years of PYQs</p>
-              </div>
-
-              <span>→</span>
-            </Link>
-
-            <Link
-              href="/pyqs/class-12/biology"
-              className="mobile-subject-card"
-            >
-              <span className="text-2xl">🧬</span>
-
-              <div className="flex-1">
-                <h3>Biology</h3>
-                <p>6+ years of PYQs</p>
-              </div>
-
-              <span>→</span>
-            </Link>
-
-            <Link
-              href="/pyqs/class-12/hindi"
-              className="mobile-subject-card"
-            >
-              <span className="text-2xl">📚</span>
-              <div className="flex-1">
-                <h3>Hindi</h3>
-                <p>Previous year question papers</p>
-              </div>
-              <span>→</span>
-            </Link>
-
-            <Link
-              href="/pyqs/class-12/english"
-              className="mobile-subject-card"
-            >
-              <span className="text-2xl">📖</span>
-              <div className="flex-1">
-                <h3>English</h3>
-                <p>Previous year question papers</p>
-              </div>
-              <span>→</span>
-            </Link>
-
-
-
+            <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3">
+              {[
+                { name: "Physics", icon: "⚛", href: "/pyqs/class-12/physics", papers: "13 Years PYQs" },
+                { name: "Chemistry", icon: "🧪", href: "/pyqs/class-12/chemistry", papers: "13 Years PYQs" },
+                { name: "Mathematics", icon: "🧮", href: "/pyqs/class-12/mathematics", papers: "13 Years PYQs" },
+                { name: "Biology", icon: "🧬", href: "/pyqs/class-12/biology", papers: "13 Years PYQs" },
+                { name: "Hindi", icon: "📚", href: "/pyqs/class-12/hindi", papers: "13 Years PYQs" },
+                { name: "English", icon: "📖", href: "/pyqs/class-12/english", papers: "13 Years PYQs" },
+              ].map((sub) => (
+                <Link
+                  key={sub.name}
+                  href={sub.href}
+                  className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur-md transition-all duration-200 hover:-translate-y-1 hover:border-cyan-300 hover:bg-white/15 shadow-sm active:scale-95"
+                >
+                  <div>
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 text-2xl shadow-inner transition-transform group-hover:scale-110">
+                      {sub.icon}
+                    </div>
+                    <h3 className="mt-3 text-sm font-bold text-white group-hover:text-cyan-300">
+                      {sub.name}
+                    </h3>
+                    <p className="mt-0.5 text-[11px] text-blue-200/80">
+                      {sub.papers}
+                    </p>
+                  </div>
+                  <div className="mt-3.5 flex items-center justify-between border-t border-white/10 pt-2.5 text-xs font-bold text-cyan-300">
+                    <span>Papers</span>
+                    <span className="transition-transform group-hover:translate-x-1">→</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
 
         </div>
@@ -487,10 +431,10 @@ export default function PYQsPage() {
           SUBJECT FILTERS + SEARCH
       ====================================================== */}
       <section className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-x-auto px-6 py-4">
+        <div className="mx-auto flex max-w-7xl flex-col sm:flex-row items-stretch sm:items-center gap-4 px-4 py-4 sm:px-6">
 
           {/* Subject Buttons */}
-          <div className="flex shrink-0 gap-3">
+          <div className="flex shrink-0 gap-2.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
 
             {[
               { name: "All", label: "▦ All Subjects" },
@@ -506,7 +450,7 @@ export default function PYQsPage() {
                 key={item.name}
                 type="button"
                 onClick={() => setSelectedSubject(item.name)}
-                className={`whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold transition ${selectedSubject === item.name
+                className={`whitespace-nowrap rounded-full px-5 py-2.5 text-xs sm:text-sm font-semibold transition ${selectedSubject === item.name
                   ? "bg-blue-600 text-white shadow-sm"
                   : "border border-slate-200 bg-white text-slate-700 hover:border-blue-300 hover:text-blue-600"
                   }`}
@@ -518,10 +462,10 @@ export default function PYQsPage() {
           </div>
 
           {/* Search */}
-          <div className="ml-auto min-w-[220px] shrink-0 sm:min-w-[260px]">
+          <div className="w-full sm:ml-auto sm:w-auto min-w-[200px] sm:min-w-[260px] shrink-0">
             <div className="relative">
 
-              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+              <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                 🔍
               </span>
 
@@ -543,9 +487,9 @@ export default function PYQsPage() {
           NO RESULTS
       ====================================================== */}
       {filteredPYQs.length === 0 && (
-        <div className="mx-auto my-12 max-w-7xl px-6">
+        <div className="mx-auto my-12 max-w-7xl px-4 sm:px-6">
 
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 sm:p-10 text-center">
 
             <div className="text-4xl">
               🔍
@@ -568,7 +512,7 @@ export default function PYQsPage() {
       {/* =====================================================
           PYQ CARDS
       ====================================================== */}
-      <section className="mx-auto max-w-7xl px-6 py-8">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
 
         <div className="mb-6">
 
@@ -582,7 +526,7 @@ export default function PYQsPage() {
 
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
 
           {filteredPYQs.map((pyq) => (
             <PYQCard

@@ -118,12 +118,12 @@ export default function SubjectHero({
         className={`subject-pattern subject-pattern-${config.pattern}`}
       />
 
-      <div className="relative mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-12 lg:px-8 lg:py-14">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_460px]">
+      <div className="relative mx-auto max-w-7xl px-4 py-6 sm:px-8 sm:py-12 lg:px-8 lg:py-14">
+        <div className="grid items-center gap-6 lg:grid-cols-[minmax(0,1fr)_380px] xl:grid-cols-[minmax(0,1fr)_460px] lg:gap-10">
           {/* LEFT CONTENT */}
           <div className="relative z-10">
             {/* Breadcrumb */}
-            <div className="mb-6 flex flex-wrap items-center gap-2 text-sm">
+            <div className="mb-3 sm:mb-6 flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
               <Link
                 href="/"
                 className="text-blue-200 transition hover:text-white"
@@ -142,85 +142,87 @@ export default function SubjectHero({
 
               <span className="text-white/40">›</span>
 
+              <Link
+                href={`/pyqs/${classLevel}`}
+                className="text-blue-200 transition hover:text-white"
+              >
+                Class {classNumber}
+              </Link>
+
+              <span className="text-white/40">›</span>
+
               <span className="font-semibold text-white">{subject}</span>
             </div>
 
             {/* Subject badge */}
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold shadow-sm backdrop-blur-md">
-              <span className="text-lg">{config.icon}</span>
-
+            <div className="mb-3 sm:mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs sm:px-4 sm:py-2 sm:text-sm font-semibold shadow-sm backdrop-blur-md">
+              <span className="text-sm sm:text-lg">{config.icon}</span>
               <span>{subject} • Class {classNumber} • RBSE</span>
             </div>
 
             {/* Heading */}
-            <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-[52px]">
+            <h1 className="max-w-3xl text-2xl font-black leading-tight sm:text-5xl lg:text-[52px]">
               {config.title}
             </h1>
 
             {/* Description */}
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-blue-100 sm:text-base">
+            <p className="mt-2.5 sm:mt-5 max-w-2xl text-xs sm:text-base leading-relaxed text-blue-100/90">
               {description}
             </p>
 
+            {/* Stats - 3 columns compact on mobile */}
+            <div className="mt-4 sm:mt-7 grid grid-cols-3 gap-2 sm:gap-3">
+              {/* Resources */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1 sm:gap-3 rounded-xl border border-white/15 bg-white/[0.08] p-2 sm:p-3 shadow-sm backdrop-blur-md transition hover:bg-white/[0.12]">
+                <span className="flex h-7 w-7 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.08] text-sm sm:text-lg">
+                  📚
+                </span>
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-[10px] sm:text-xs font-medium text-blue-100/70">
+                    Resources
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-white truncate">
+                    {chaptersCount} Ch.
+                  </span>
+                </div>
+              </div>
 
+              {/* PYQs */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1 sm:gap-3 rounded-xl border border-white/15 bg-white/[0.08] p-2 sm:p-3 shadow-sm backdrop-blur-md transition hover:bg-white/[0.12]">
+                <span className="flex h-7 w-7 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.08] text-sm sm:text-lg">
+                  🗓️
+                </span>
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-[10px] sm:text-xs font-medium text-blue-100/70">
+                    PYQs
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-white truncate">
+                    13+ Years
+                  </span>
+                </div>
+              </div>
 
-{/* Stats */}
-<div className="mt-7 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-3">
-  {/* Resources */}
-  <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.08] px-3 py-3 shadow-sm backdrop-blur-md transition hover:bg-white/[0.12]">
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.08] text-lg">
-      📚
-    </span>
-
-    <div className="flex min-w-0 flex-col gap-1">
-      <span className="text-xs font-medium text-blue-100/70">
-        Resources
-      </span>
-      <span className="text-sm font-bold text-white">
-        {chaptersCount} Chapters
-      </span>
-    </div>
-  </div>
-
-  {/* PYQs */}
-  <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.08] px-3 py-3 shadow-sm backdrop-blur-md transition hover:bg-white/[0.12]">
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.08] text-lg">
-      🗓️
-    </span>
-
-    <div className="flex min-w-0 flex-col gap-1">
-      <span className="text-xs font-medium text-blue-100/70">
-        PYQs
-      </span>
-      <span className="text-sm font-bold text-white">
-        Available Years
-      </span>
-    </div>
-  </div>
-
-  {/* Format */}
-  <div className="flex items-center gap-3 rounded-xl border border-white/15 bg-white/[0.08] px-3 py-3 shadow-sm backdrop-blur-md transition hover:bg-white/[0.12]">
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.08] text-lg">
-      📄
-    </span>
-
-    <div className="flex min-w-0 flex-col gap-1">
-      <span className="text-xs font-medium text-blue-100/70">
-        Format
-      </span>
-      <span className="text-sm font-bold text-white">
-        Chapter-wise PDF
-      </span>
-    </div>
-  </div>
-</div>
-
+              {/* Format */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-center text-center sm:text-left gap-1 sm:gap-3 rounded-xl border border-white/15 bg-white/[0.08] p-2 sm:p-3 shadow-sm backdrop-blur-md transition hover:bg-white/[0.12]">
+                <span className="flex h-7 w-7 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.08] text-sm sm:text-lg">
+                  📄
+                </span>
+                <div className="flex min-w-0 flex-col">
+                  <span className="text-[10px] sm:text-xs font-medium text-blue-100/70">
+                    Format
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-white truncate">
+                    PDF Solved
+                  </span>
+                </div>
+              </div>
+            </div>
 
             {/* CTA */}
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-4 sm:mt-7 flex flex-wrap gap-2.5 sm:gap-3">
               <a
                 href="#chapters"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-slate-900 shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:bg-blue-50"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-white px-4 py-2.5 text-xs sm:text-sm sm:px-5 sm:py-3 font-bold text-slate-900 shadow-md transition hover:-translate-y-0.5 hover:bg-blue-50"
               >
                 Explore Chapters
                 <span>↓</span>
@@ -228,7 +230,7 @@ export default function SubjectHero({
 
               <Link
                 href="/pyqs"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/15"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-xs sm:text-sm sm:px-5 sm:py-3 font-bold text-white backdrop-blur-sm transition hover:bg-white/15"
               >
                 All Subjects
                 <span>→</span>
