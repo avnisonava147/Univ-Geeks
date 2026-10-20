@@ -27,6 +27,13 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    public static final List<String> GUARANTEED_ORIGINS = List.of(
+            "https://univsvh.in",
+            "https://www.univsvh.in",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000"
+    );
+
     @Value("${cors.allowed-origins:https://univsvh.in,https://www.univsvh.in,http://localhost:3000,http://127.0.0.1:3000}")
     private String allowedOrigins;
 
@@ -101,13 +108,23 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        List<String> origins = Arrays.stream(allowedOrigins.split(","))
-                .map(String::trim)
-                .map(s -> s.endsWith("/") ? s.substring(0, s.length() - 1) : s)
-                .filter(s -> !s.isEmpty())
-                .toList();
+        java.util.Set<String> originSet = new java.util.LinkedHashSet<>(GUARANTEED_ORIGINS);
 
-        configuration.setAllowedOrigins(origins);
+        if (allowedOrigins != null && !allowedOrigins.isBlank()) {
+            Arrays.stream(allowedOrigins.split(","))
+                    .map(String::trim)
+                    .map(s -> s.endsWith("/") ? s.substring(0, s.length() - 1) : s)
+                    .filter(s -> !s.isEmpty())
+                    .forEach(originSet::add);
+        }
+
+        configuration.setAllowedOrigins(new java.util.ArrayList<>(originSet));
+        configuration.setAllowedOriginPatterns(List.of(
+                "https://univsvh.in",
+                "https://*.univsvh.in",
+                "http://localhost:*",
+                "http://127.0.0.1:*"
+        ));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization", "Set-Cookie"));

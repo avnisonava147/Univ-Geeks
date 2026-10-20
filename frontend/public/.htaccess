@@ -6,17 +6,21 @@
   # Pass Authorization Header for JWT Tokens
   RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-  # If direct file or directory exists, serve it
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
+  # If direct file exists, serve it
+  RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
 
-  # Check if requested URL + .html exists (e.g., /about -> /about.html, /notes -> /notes.html)
+  # If directory has index.html, serve it
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^(.*)/?$ $1/index.html [L]
+
+  # Check if requested URL + .html exists (e.g. /about -> /about.html)
   RewriteCond %{DOCUMENT_ROOT}/$1.html -f
   RewriteRule ^(.*)/?$ $1.html [L]
 
   # Fallback to 404 page
   RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^.*$ /404.html [L]
 </IfModule>
 
