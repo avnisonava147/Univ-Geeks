@@ -188,10 +188,15 @@ export default function Navbar() {
         <button
           type="button"
           aria-label="Toggle menu"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 md:hidden hover:bg-slate-100"
+          aria-expanded={isOpen}
+          className="relative z-20 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-700 md:hidden hover:bg-slate-100 active:scale-95 touch-manipulation cursor-pointer select-none"
           onClick={() => setIsOpen((prev) => !prev)}
         >
-          {isOpen ? <X size={18} /> : <Menu size={18} />}
+          {isOpen ? (
+            <X size={20} className="pointer-events-none" />
+          ) : (
+            <Menu size={20} className="pointer-events-none" />
+          )}
         </button>
       </div>
 
