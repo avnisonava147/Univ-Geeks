@@ -103,6 +103,10 @@ const subjectData: Record<
   },
 };
 
+export function generateStaticParams() {
+  return Object.keys(subjectData).map((subject) => ({ subject }));
+}
+
 export default async function SubjectPage({
   params,
 }: PageProps) {

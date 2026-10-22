@@ -1,4 +1,11 @@
 # Hostinger Apache / LiteSpeed Configuration for Univ-Geeks Static Website
+
+# Explicitly declare index.html so LiteSpeed serves it for any directory
+DirectoryIndex index.html index.php
+
+# Disable directory browsing for security, allow following symlinks
+Options -Indexes +FollowSymLinks -MultiViews
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -6,22 +13,30 @@
   # Pass Authorization Header for JWT Tokens
   RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-  # If direct file exists, serve it
+  # 1. If direct file exists (JS, CSS, PDF, images, icons, etc.), serve it directly
   RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
 
-  # If directory has index.html, serve it
+  # 2. If a directory is requested without trailing slash, redirect with 301 to add trailing slash
+  # This preserves query parameters like ?chapter=Real%20Numbers and triggers DirectoryIndex
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_URI} !/$
+  RewriteRule ^(.*)$ /$1/ [R=301,QSA,L]
+
+  # 3. If directory has index.html, serve it directly and preserve query string
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_FILENAME}index.html -f [OR]
   RewriteCond %{REQUEST_FILENAME}/index.html -f
-  RewriteRule ^(.*)/?$ $1/index.html [L]
+  RewriteRule ^ - [L]
 
-  # Check if requested URL + .html exists (e.g. /about -> /about.html)
+  # 4. If direct .html exists for clean URL (e.g. /about -> /about.html), serve it
   RewriteCond %{DOCUMENT_ROOT}/$1.html -f
-  RewriteRule ^(.*)/?$ $1.html [L]
+  RewriteRule ^(.*?)/?$ /$1.html [QSA,L]
 
-  # Fallback to 404 page
+  # 5. Fallback for non-existent routes -> Next.js 404 page
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^.*$ /404.html [L]
+  RewriteRule ^ /404.html [L]
 </IfModule>
 
 # Caching for fast load times

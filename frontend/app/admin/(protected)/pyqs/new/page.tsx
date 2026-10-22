@@ -5,7 +5,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { UploadCloud, X, AlertCircle } from "lucide-react";
 import { apiRequest } from "../../_lib/api";
-import { getClass10Chapters } from "../../../../notes/data/notesData";
+import { getClass10Chapters, getClass12Chapters } from "../../../../notes/data/notesData";
 
 const CLASS_10_SUBJECTS = [
   "Mathematics",
@@ -15,6 +15,22 @@ const CLASS_10_SUBJECTS = [
   "Hindi",
   "Sanskrit",
   "Computer Applications",
+];
+
+const CLASS_12_SUBJECTS = [
+  "Physics",
+  "Chemistry",
+  "Mathematics",
+  "Biology",
+  "Computer Science",
+  "Accountancy",
+  "Business Studies",
+  "Economics",
+  "History",
+  "Political Science",
+  "Geography",
+  "English",
+  "Hindi",
 ];
 
 const OTHER_CLASS_SUBJECTS = [
@@ -41,21 +57,29 @@ export default function NewPyqPage() {
   const [isCustomChapter, setIsCustomChapter] = useState(false);
 
   const isClass10 = classLevel === "Class 10";
+  const isClass12 = classLevel === "Class 12";
 
   const availableSubjects = useMemo(() => {
-    return isClass10 ? CLASS_10_SUBJECTS : OTHER_CLASS_SUBJECTS;
-  }, [isClass10]);
+    if (isClass10) return CLASS_10_SUBJECTS;
+    if (isClass12) return CLASS_12_SUBJECTS;
+    return OTHER_CLASS_SUBJECTS;
+  }, [isClass10, isClass12]);
 
-  const class10Chapters = useMemo(() => {
-    if (!isClass10) return [];
-    return getClass10Chapters(subject);
-  }, [isClass10, subject]);
+  const syllabusChapters = useMemo(() => {
+    if (isClass10) return getClass10Chapters(subject);
+    if (isClass12) return getClass12Chapters(subject);
+    return [];
+  }, [isClass10, isClass12, subject]);
 
   function handleClassChange(newClass: string) {
     setClassLevel(newClass);
     if (newClass === "Class 10") {
       if (!CLASS_10_SUBJECTS.includes(subject)) {
         setSubject("Mathematics");
+      }
+    } else if (newClass === "Class 12") {
+      if (!CLASS_12_SUBJECTS.includes(subject)) {
+        setSubject("Physics");
       }
     } else {
       if (!OTHER_CLASS_SUBJECTS.includes(subject)) {
@@ -120,7 +144,7 @@ export default function NewPyqPage() {
       const exam = formObj.get("exam") as string;
       const year = formObj.get("year") as string;
       
-      const resolvedChapter = isClass10
+      const resolvedChapter = (isClass10 || isClass12)
         ? (isCustomChapter ? customChapter.trim() : chapter.trim())
         : ((formObj.get("chapter") as string)?.trim() || "");
 
@@ -254,12 +278,12 @@ export default function NewPyqPage() {
           </div>
         </div>
 
-        {/* Chapter (Optional / Class 10 Dropdown) */}
+        {/* Chapter (Optional / Syllabus Dropdown) */}
         <div>
           <label className="block text-sm font-medium text-[#1C2B3A] mb-1.5">
-            Chapter {isClass10 ? "(Select from Syllabus)" : "(Optional)"}
+            Chapter {(isClass10 || isClass12) && syllabusChapters.length > 0 ? "(Select from Syllabus)" : "(Optional)"}
           </label>
-          {isClass10 ? (
+          {(isClass10 || isClass12) && syllabusChapters.length > 0 ? (
             <div className="space-y-2">
               <select
                 value={isCustomChapter ? "__custom__" : chapter}
@@ -267,7 +291,7 @@ export default function NewPyqPage() {
                 className="w-full border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
               >
                 <option value="">-- Full Paper / General Question Paper --</option>
-                {class10Chapters.map((ch, idx) => (
+                {syllabusChapters.map((ch, idx) => (
                   <option key={ch.id || idx} value={ch.name}>
                     Chapter {idx + 1}: {ch.name}
                   </option>

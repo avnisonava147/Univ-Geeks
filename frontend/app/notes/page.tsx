@@ -7,19 +7,10 @@ import SubjectSelector from "./components/SubjectSelector";
 import ChapterSelector from "./components/ChapterSelector";
 import SubscribePopup from "./components/SubscribePopup";
 import Class11Popup from "./components/Class11Popup";
-import { getApiBaseUrl } from "@/app/_lib/apiConfig";
+import { getApiBaseUrl, resolvePdfUrl } from "@/app/_lib/apiConfig";
 
 function normalizePdfUrl(url?: string | null): string {
-  if (!url) return "#";
-  const trimmed = url.trim();
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    return trimmed;
-  }
-  const backendUrl = getApiBaseUrl();
-  if (trimmed.startsWith("/")) {
-    return backendUrl ? `${backendUrl}${trimmed}` : trimmed;
-  }
-  return `${backendUrl}/api/files/${encodeURIComponent(trimmed)}`;
+  return resolvePdfUrl(url);
 }
 
 function normalizeText(s?: string | null): string {
@@ -954,7 +945,7 @@ onClick={() => {
             setPendingPdfAction(null);
           }}
           onContinue={() => {
-            const pdfUrl = selectedChapterData?.pdf;
+            const pdfUrl = normalizePdfUrl(selectedChapterData?.pdf);
             const action = pendingPdfAction;
 
             setShowSubscribePopup(false);

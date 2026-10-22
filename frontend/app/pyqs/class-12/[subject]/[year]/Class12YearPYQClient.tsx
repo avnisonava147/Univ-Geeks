@@ -1,20 +1,94 @@
 "use client";
 
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import PaperActions from "../../../../../components/PaperActions";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FileText } from "lucide-react";
+import { getClass12Chapters } from "@/app/notes/data/notesData";
+import { getApiBaseUrl } from "@/app/_lib/apiConfig";
 
 const subjectNames: Record<string, string> = {
   physics: "Physics",
   chemistry: "Chemistry",
   mathematics: "Mathematics",
+  maths: "Mathematics",
   biology: "Biology",
   hindi: "Hindi",
   english: "English",
 };
+
+function normalizeText(s?: string | null): string {
+  return (s || "")
+    .normalize("NFC")
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{M}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractChapterNumber(s?: string | null): number | null {
+  if (!s) return null;
+  const str = s.trim().toLowerCase();
+  const prefixMatch = str.match(/(?:chapter|ch|adhyaay|adhyaya|paath|path)\s*[-:.]?\s*(\d+)/i);
+  if (prefixMatch) {
+    return parseInt(prefixMatch[1], 10);
+  }
+  if (/^\d+$/.test(str)) {
+    return parseInt(str, 10);
+  }
+  const leadingMatch = str.match(/^(\d+)\s*[-:.]\s*\S/);
+  if (leadingMatch) {
+    return parseInt(leadingMatch[1], 10);
+  }
+  return null;
+}
+
+function matchesClass12Chapter(
+  pyqChapter: string | null | undefined,
+  targetChapterName: string,
+  allSubjectChapters: { name: string }[]
+): boolean {
+  if (!pyqChapter || !pyqChapter.trim()) return false;
+  const normPyq = normalizeText(pyqChapter);
+  const normTarget = normalizeText(targetChapterName);
+
+  if (normPyq === normTarget) return true;
+
+  const targetIdx = allSubjectChapters.findIndex(
+    (c) => normalizeText(c.name) === normTarget
+  );
+  const targetChapterNo = targetIdx >= 0 ? targetIdx + 1 : null;
+
+  const pyqNum = extractChapterNumber(pyqChapter);
+  if (pyqNum !== null && targetChapterNo !== null) {
+    if (pyqNum === targetChapterNo) return true;
+    return false;
+  }
+
+  if (normTarget.length >= 4 && normPyq.includes(normTarget)) {
+    return true;
+  }
+
+  if (normPyq.length >= 4 && normTarget.includes(normPyq)) {
+    const isMoreSpecificMatch = allSubjectChapters.some((c) => {
+      const otherNorm = normalizeText(c.name);
+      return (
+        otherNorm !== normTarget &&
+        otherNorm.includes(normPyq) &&
+        otherNorm.length < normTarget.length
+      );
+    });
+    if (!isMoreSpecificMatch) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 export default function Class12YearPYQClient({
   subject,
@@ -24,38 +98,214 @@ export default function Class12YearPYQClient({
   year: string;
 }) {
   const searchParams = useSearchParams();
-  const rawChapter = searchParams.get("chapter");
+  const rawChapterParam = searchParams.get("chapter");
 
   const subjectKey = subject.toLowerCase();
   const formattedSubject =
     subjectNames[subjectKey] ??
     subjectKey.charAt(0).toUpperCase() + subjectKey.slice(1);
 
-  const formattedChapter = rawChapter?.trim() || null;
+  let formattedChapter = rawChapterParam?.trim() || null;
+  if (formattedChapter && formattedChapter.includes("%")) {
+    try {
+      formattedChapter = decodeURIComponent(formattedChapter).trim();
+    } catch {}
+  }
 
-  // Placeholder cards for English and Hindi medium question papers.
-  const papers = [
-    {
-      title: formattedChapter
-        ? `${formattedChapter} Question Paper`
-        : `${formattedSubject} Question Paper`,
-      subtitle: formattedChapter
-        ? `RBSE Class 12 ${formattedSubject} • ${formattedChapter} • ${year} • English Medium`
-        : `RBSE Class 12 ${formattedSubject} • ${year} • English Medium`,
-      type: "English Medium",
-      icon: "📄",
-    },
-    {
-      title: formattedChapter
-        ? `${formattedChapter} Question Paper`
-        : `${formattedSubject} Question Paper`,
-      subtitle: formattedChapter
-        ? `RBSE Class 12 ${formattedSubject} • ${formattedChapter} • ${year} • Hindi Medium`
-        : `RBSE Class 12 ${formattedSubject} • ${year} • Hindi Medium`,
-      type: "Hindi Medium",
-      icon: "📄",
-    },
-  ];
+  const [uploadedPyqs, setUploadedPyqs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const backendUrl = getApiBaseUrl();
+    const primaryUrl = `${backendUrl}/api/pyqs?classLevel=Class%2012&subject=${encodeURIComponent(
+      formattedSubject
+    )}`;
+
+    fetch(primaryUrl)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setUploadedPyqs(data);
+        } else {
+          return fetch(
+            `${backendUrl}/api/pyqs?subject=${encodeURIComponent(formattedSubject)}`
+          )
+            .then((res) => (res.ok ? res.json() : []))
+            .then((data2) => {
+              if (Array.isArray(data2)) setUploadedPyqs(data2);
+            });
+        }
+      })
+      .catch(() => {
+        // Fallback to live Render backend if local server is unreachable
+        if (backendUrl !== "https://univ-geeks.onrender.com") {
+          fetch(
+            `https://univ-geeks.onrender.com/api/pyqs?classLevel=Class%2012&subject=${encodeURIComponent(
+              formattedSubject
+            )}`
+          )
+            .then((res) => (res.ok ? res.json() : []))
+            .then((data) => {
+              if (Array.isArray(data)) setUploadedPyqs(data);
+            })
+            .catch(() => {});
+        }
+      });
+  }, [formattedSubject]);
+
+  const class12Chapters = useMemo(
+    () => getClass12Chapters(formattedSubject),
+    [formattedSubject]
+  );
+
+  const matchingUploadedPapers = useMemo(() => {
+    return uploadedPyqs.filter((p: any) => {
+      if (!p.fileUrl || !p.fileUrl.trim()) return false;
+
+      // Validate Class 12
+      const classNum = (p.classLevel || "").replace(/[^0-9]/g, "");
+      const classStr = (p.classLevel || "").trim().toLowerCase();
+      if (classNum !== "12" && !classStr.includes("12")) {
+        return false;
+      }
+
+      // Validate Subject
+      const subMatch =
+        normalizeText(p.subject) === normalizeText(formattedSubject) ||
+        (normalizeText(p.subject) === "maths" && normalizeText(formattedSubject) === "mathematics") ||
+        (normalizeText(p.subject) === "mathematics" && normalizeText(formattedSubject) === "maths");
+      if (!subMatch) return false;
+
+      // Validate Year
+      const yrMatch =
+        !year || !p.year || p.year.toString().trim() === year.toString().trim();
+      if (!yrMatch) return false;
+
+      // Validate Chapter
+      if (formattedChapter) {
+        return matchesClass12Chapter(
+          p.chapter,
+          formattedChapter,
+          class12Chapters
+        );
+      }
+      return true;
+    });
+  }, [uploadedPyqs, formattedSubject, year, formattedChapter, class12Chapters]);
+
+  // Separate uploaded papers into English Medium and Hindi Medium
+  const englishUploadedPapers = useMemo(() => {
+    return matchingUploadedPapers.filter((p: any) => {
+      const med = (p.medium || "").toLowerCase();
+      if (med.includes("english")) return true;
+      if (med.includes("hindi")) return false;
+      const text = `${p.title || ""} ${p.fileName || ""}`.toLowerCase();
+      if (
+        text.includes("english medium") ||
+        text.includes("english-medium") ||
+        text.includes("(english)")
+      )
+        return true;
+      if (
+        text.includes("hindi medium") ||
+        text.includes("hindi-medium") ||
+        text.includes("(hindi)")
+      )
+        return false;
+      return true; // default unassigned to English
+    });
+  }, [matchingUploadedPapers]);
+
+  const hindiUploadedPapers = useMemo(() => {
+    return matchingUploadedPapers.filter((p: any) => {
+      const med = (p.medium || "").toLowerCase();
+      if (med.includes("hindi")) return true;
+      if (med.includes("english")) return false;
+      const text = `${p.title || ""} ${p.fileName || ""}`.toLowerCase();
+      return (
+        text.includes("hindi medium") ||
+        text.includes("hindi-medium") ||
+        text.includes("(hindi)")
+      );
+    });
+  }, [matchingUploadedPapers]);
+
+  const papers: any[] = useMemo(() => {
+    const list: any[] = [];
+
+    // English Medium Card(s)
+    if (englishUploadedPapers.length > 0) {
+      englishUploadedPapers.forEach((p: any) => {
+        list.push({
+          id: p.id,
+          title:
+            p.title ||
+            (formattedChapter
+              ? `${formattedChapter} Question Paper`
+              : `${formattedSubject} PYQ ${p.year}`),
+          subtitle: `RBSE Class 12 ${p.subject} • ${
+            p.chapter || formattedChapter || "Full Paper"
+          } • ${p.year} • English Medium`,
+          type: "English Medium",
+          icon: "📄",
+          pdfUrl: p.fileUrl,
+        });
+      });
+    } else {
+      list.push({
+        id: "placeholder-english",
+        title: formattedChapter
+          ? `${formattedChapter} Question Paper`
+          : `${formattedSubject} Question Paper`,
+        subtitle: formattedChapter
+          ? `RBSE Class 12 ${formattedSubject} • ${formattedChapter} • ${year} • English Medium`
+          : `RBSE Class 12 ${formattedSubject} • ${year} • English Medium`,
+        type: "English Medium",
+        icon: "📄",
+        pdfUrl: "",
+      });
+    }
+
+    // Hindi Medium Card(s)
+    if (hindiUploadedPapers.length > 0) {
+      hindiUploadedPapers.forEach((p: any) => {
+        list.push({
+          id: p.id,
+          title:
+            p.title ||
+            (formattedChapter
+              ? `${formattedChapter} Question Paper`
+              : `${formattedSubject} PYQ ${p.year}`),
+          subtitle: `RBSE Class 12 ${p.subject} • ${
+            p.chapter || formattedChapter || "Full Paper"
+          } • ${p.year} • Hindi Medium`,
+          type: "Hindi Medium",
+          icon: "📄",
+          pdfUrl: p.fileUrl,
+        });
+      });
+    } else {
+      list.push({
+        id: "placeholder-hindi",
+        title: formattedChapter
+          ? `${formattedChapter} Question Paper`
+          : `${formattedSubject} Question Paper`,
+        subtitle: formattedChapter
+          ? `RBSE Class 12 ${formattedSubject} • ${formattedChapter} • ${year} • Hindi Medium`
+          : `RBSE Class 12 ${formattedSubject} • ${year} • Hindi Medium`,
+        type: "Hindi Medium",
+        icon: "📄",
+        pdfUrl: "",
+      });
+    }
+
+    return list;
+  }, [
+    englishUploadedPapers,
+    hindiUploadedPapers,
+    formattedChapter,
+    formattedSubject,
+    year,
+  ]);
 
   return (
     <main className="min-h-screen bg-slate-50">
@@ -162,9 +412,11 @@ export default function Class12YearPYQClient({
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
-            {papers.map((paper) => (
+            {papers.map((paper, idx) => (
               <article
-                key={paper.type}
+                key={paper.id || `${paper.title}-${idx}`}
+                data-medium={paper.type}
+                data-pdf-url={paper.pdfUrl}
                 className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg"
               >
                 <div className="flex items-start gap-4">
@@ -197,7 +449,7 @@ export default function Class12YearPYQClient({
                 </div>
 
                 <div className="mt-5">
-                  <PaperActions title={paper.title} pdfUrl="" />
+                  <PaperActions title={paper.title} pdfUrl={paper.pdfUrl} />
                 </div>
               </article>
             ))}

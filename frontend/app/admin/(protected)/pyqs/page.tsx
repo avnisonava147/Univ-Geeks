@@ -17,6 +17,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { apiRequest } from "../_lib/api";
+import { resolvePdfUrl } from "@/app/_lib/apiConfig";
 
 type Pyq = {
   id: string;
@@ -439,14 +440,14 @@ export default function PyqsPage() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <a href={previewPyq.fileUrl} download className="text-[#6B7280] hover:text-[#1C2B3A]"><Download size={16} /></a>
+                <a href={resolvePdfUrl(previewPyq.fileUrl)} download className="text-[#6B7280] hover:text-[#1C2B3A]"><Download size={16} /></a>
                 <button onClick={() => setPreviewPyq(null)} className="text-[#6B7280] hover:text-[#1C2B3A]"><X size={16} /></button>
               </div>
             </div>
             <div className="flex-1 w-full bg-[#FAF7F2] overflow-hidden">
               {previewPyq.fileUrl ? (
                 <iframe
-                  src={previewPyq.fileUrl}
+                  src={resolvePdfUrl(previewPyq.fileUrl)}
                   title={previewPyq.title}
                   className="w-full h-full border-0"
                 />
