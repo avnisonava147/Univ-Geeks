@@ -9,6 +9,7 @@ import com.univgeeks.security.SecurityConfig;
 import com.univgeeks.service.BannerService;
 import com.univgeeks.service.FileStorageService;
 import com.univgeeks.service.NoteService;
+import com.univgeeks.service.NotificationService;
 import com.univgeeks.service.PyqService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class PublicResourceControllerTest {
 
     @MockBean
     private BannerService bannerService;
+
+    @MockBean
+    private NotificationService notificationService;
 
     @MockBean
     private FileStorageService fileStorageService;

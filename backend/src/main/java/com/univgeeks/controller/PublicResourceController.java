@@ -2,10 +2,12 @@ package com.univgeeks.controller;
 
 import com.univgeeks.model.Banner;
 import com.univgeeks.model.Note;
+import com.univgeeks.model.Notification;
 import com.univgeeks.model.Pyq;
 import com.univgeeks.service.BannerService;
 import com.univgeeks.service.FileStorageService;
 import com.univgeeks.service.NoteService;
+import com.univgeeks.service.NotificationService;
 import com.univgeeks.service.PyqService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -23,15 +25,18 @@ public class PublicResourceController {
     private final PyqService pyqService;
     private final NoteService noteService;
     private final BannerService bannerService;
+    private final NotificationService notificationService;
     private final FileStorageService fileStorageService;
 
     public PublicResourceController(PyqService pyqService,
                                     NoteService noteService,
                                     BannerService bannerService,
+                                    NotificationService notificationService,
                                     FileStorageService fileStorageService) {
         this.pyqService = pyqService;
         this.noteService = noteService;
         this.bannerService = bannerService;
+        this.notificationService = notificationService;
         this.fileStorageService = fileStorageService;
     }
 
@@ -80,6 +85,15 @@ public class PublicResourceController {
     public ResponseEntity<List<Banner>> getActiveBanners() {
         List<Banner> banners = bannerService.getActiveBanners();
         return ResponseEntity.ok(banners);
+    }
+
+    // ==========================================
+    // Notifications Public Endpoints
+    // ==========================================
+    @GetMapping("/notifications")
+    public ResponseEntity<List<Notification>> getActiveNotifications() {
+        List<Notification> notifications = notificationService.getActiveNotifications();
+        return ResponseEntity.ok(notifications);
     }
 
     // ==========================================

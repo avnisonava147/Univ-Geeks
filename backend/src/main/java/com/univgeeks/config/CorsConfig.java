@@ -11,7 +11,7 @@ import java.util.Arrays;
 @Configuration
 public class CorsConfig {
 
-    @Value("${cors.allowed-origins:https://univsvh.in,https://www.univsvh.in,http://localhost:3000,http://127.0.0.1:3000}")
+    @Value("${cors.allowed-origins:https://univsvh.in,https://www.univsvh.in,https://univgeeks.in,https://www.univgeeks.in,https://univgeeks.com,https://www.univgeeks.com,http://localhost:3000,http://127.0.0.1:3000}")
     private String allowedOrigins;
 
     @Bean
@@ -30,7 +30,16 @@ public class CorsConfig {
 
                 registry.addMapping("/**")
                         .allowedOrigins(originSet.toArray(String[]::new))
-                        .allowedOriginPatterns("https://univsvh.in", "https://*.univsvh.in", "http://localhost:*", "http://127.0.0.1:*")
+                        .allowedOriginPatterns(
+                                "https://univsvh.in",
+                                "https://*.univsvh.in",
+                                "https://univgeeks.in",
+                                "https://*.univgeeks.in",
+                                "https://univgeeks.com",
+                                "https://*.univgeeks.com",
+                                "http://localhost:*",
+                                "http://127.0.0.1:*"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true)

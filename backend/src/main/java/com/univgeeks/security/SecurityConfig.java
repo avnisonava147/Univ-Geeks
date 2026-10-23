@@ -30,11 +30,15 @@ public class SecurityConfig {
     public static final List<String> GUARANTEED_ORIGINS = List.of(
             "https://univsvh.in",
             "https://www.univsvh.in",
+            "https://univgeeks.in",
+            "https://www.univgeeks.in",
+            "https://univgeeks.com",
+            "https://www.univgeeks.com",
             "http://localhost:3000",
             "http://127.0.0.1:3000"
     );
 
-    @Value("${cors.allowed-origins:https://univsvh.in,https://www.univsvh.in,http://localhost:3000,http://127.0.0.1:3000}")
+    @Value("${cors.allowed-origins:https://univsvh.in,https://www.univsvh.in,https://univgeeks.in,https://www.univgeeks.in,https://univgeeks.com,https://www.univgeeks.com,http://localhost:3000,http://127.0.0.1:3000}")
     private String allowedOrigins;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
@@ -80,6 +84,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/pyqs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/notes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/banners/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/notifications/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
                         .requestMatchers(HttpMethod.HEAD, "/api/files/**").permitAll()
 
@@ -122,6 +127,10 @@ public class SecurityConfig {
         configuration.setAllowedOriginPatterns(List.of(
                 "https://univsvh.in",
                 "https://*.univsvh.in",
+                "https://univgeeks.in",
+                "https://*.univgeeks.in",
+                "https://univgeeks.com",
+                "https://*.univgeeks.com",
                 "http://localhost:*",
                 "http://127.0.0.1:*"
         ));

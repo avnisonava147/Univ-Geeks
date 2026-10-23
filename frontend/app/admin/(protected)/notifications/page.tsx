@@ -1,7 +1,7 @@
 // app/admin/(protected)/notifications/page.tsx
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Bell,
   Send,
@@ -9,7 +9,12 @@ import {
   Clock,
   CheckCircle2,
   Trash2,
+  RefreshCw,
+  Loader2,
+  ExternalLink,
+  AlertCircle,
 } from "lucide-react";
+import { apiRequest } from "../_lib/api";
 
 type Audience = "all" | "students" | "premium";
 type DeliveryStatus = "sent" | "scheduled" | "draft";
@@ -20,9 +25,11 @@ interface NotificationItem {
   body: string;
   audience: Audience;
   status: DeliveryStatus;
+  linkUrl?: string | null;
   sentAt?: string | null;
   scheduledFor?: string | null;
   createdAt: string;
+  updatedAt?: string;
 }
 
 const AUDIENCE_CONFIG: Record<Audience, { label: string; color: string }> = {
@@ -31,111 +38,142 @@ const AUDIENCE_CONFIG: Record<Audience, { label: string; color: string }> = {
   premium: { label: "Premium", color: "#E8A33D" },
 };
 
-const INITIAL_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: "n-1",
-    title: "New PYQ Papers Released for 2025-26",
-    body: "Class 10 and 12 board preparation past papers are now available for Physics and Chemistry.",
-    audience: "all",
-    status: "sent",
-    sentAt: "Today, 11:30 AM",
-    createdAt: "2026-09-12",
-  },
-  {
-    id: "n-2",
-    title: "Weekly Live Doubt Session this Saturday",
-    body: "Join our master faculty at 5:00 PM IST for complete mechanics revision & mock solutions.",
-    audience: "students",
-    status: "scheduled",
-    scheduledFor: "2026-09-15 17:00",
-    createdAt: "2026-09-11",
-  },
-  {
-    id: "n-3",
-    title: "Exclusive Formula Sheet & Quick Revision Handbook",
-    body: "Premium tier members can now download the high-yield formula PDF directly from the notes tab.",
-    audience: "premium",
-    status: "sent",
-    sentAt: "Yesterday, 3:15 PM",
-    createdAt: "2026-09-11",
-  },
-  {
-    id: "n-4",
-    title: "Platform Maintenance Announcement",
-    body: "Scheduled database backup and speed upgrades will take place Sunday 2:00 AM - 4:00 AM IST.",
-    audience: "all",
-    status: "scheduled",
-    scheduledFor: "2026-09-20 02:00",
-    createdAt: "2026-09-10",
-  },
-  {
-    id: "n-5",
-    title: "Rajasthan Board Exam Date Sheet Published",
-    body: "Check the updated datesheet and timetable in the notices section.",
-    audience: "students",
-    status: "sent",
-    sentAt: "Sep 08, 10:00 AM",
-    createdAt: "2026-09-08",
-  },
-];
-
 export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
   const [filterTab, setFilterTab] = useState<"all" | "sent" | "scheduled">("all");
 
   // Compose state
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
   const [audience, setAudience] = useState<Audience>("all");
   const [mode, setMode] = useState<"now" | "schedule">("now");
   const [scheduleTime, setScheduleTime] = useState("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const loadNotifications = useCallback(async (isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
+      setLoading(true);
+    }
+    setError(null);
+
+    try {
+      const data = await apiRequest<NotificationItem[]>("/api/admin/notifications");
+      if (Array.isArray(data)) {
+        setNotifications(data);
+      } else {
+        setNotifications([]);
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to load notifications from backend");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
 
   const filtered = useMemo(() => {
     if (filterTab === "all") return notifications;
     return notifications.filter((n) => n.status === filterTab);
   }, [notifications, filterTab]);
 
-  function handleSend(e: React.FormEvent) {
+  async function handleSend(e: React.FormEvent) {
     e.preventDefault();
-    if (!title.trim() || !body.trim()) return;
+    if (!title.trim() || !body.trim() || submitting) return;
 
-    const newNotification: NotificationItem = {
-      id: `n-${Date.now()}`,
+    setSubmitting(true);
+    setError(null);
+
+    const payload = {
       title: title.trim(),
       body: body.trim(),
       audience,
       status: mode === "now" ? "sent" : "scheduled",
+      linkUrl: linkUrl.trim() || null,
       sentAt: mode === "now" ? "Just now" : undefined,
       scheduledFor: mode === "schedule" ? scheduleTime || "Upcoming" : undefined,
-      createdAt: new Date().toISOString().split("T")[0],
     };
 
-    setNotifications((prev) => [newNotification, ...prev]);
-    setTitle("");
-    setBody("");
-    setScheduleTime("");
-    setToastMessage(
-      mode === "now" ? "Notification broadcast sent successfully!" : "Notification scheduled!"
-    );
+    try {
+      const created = await apiRequest<NotificationItem>("/api/admin/notifications", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
 
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4000);
+      setNotifications((prev) => [created, ...prev.filter((n) => n.id !== created.id)]);
+      setTitle("");
+      setBody("");
+      setLinkUrl("");
+      setScheduleTime("");
+      setToastMessage(
+        mode === "now"
+          ? "Notification broadcast sent successfully and published to live website!"
+          : "Notification scheduled successfully!"
+      );
+
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 4000);
+    } catch (err: any) {
+      setError(err.message || "Failed to publish notification. Please verify backend connection.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
-  function handleDelete(id: string) {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  async function handleDelete(id: string) {
+    if (deletingId) return;
+    setDeletingId(id);
+    setError(null);
+
+    try {
+      await apiRequest(`/api/admin/notifications/${id}`, {
+        method: "DELETE",
+      });
+
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+      setToastMessage("Notification deleted successfully.");
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 3000);
+    } catch (err: any) {
+      setError(err.message || "Failed to delete notification.");
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div>
-        <h1 className="text-2xl font-semibold text-[#1C2B3A]">Notifications</h1>
-        <p className="text-sm text-[#6B7280] mt-1">
-          Compose targeted announcements and schedule automated alerts.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold text-[#1C2B3A]">Notifications</h1>
+          <p className="text-sm text-[#6B7280] mt-1">
+            Compose targeted announcements and broadcast live alerts to the public website.
+          </p>
+        </div>
+
+        <button
+          onClick={() => loadNotifications(true)}
+          disabled={refreshing || loading}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#1C2B3A] bg-white border border-[#E5E0D5] rounded-md hover:bg-[#FAF7F2] transition disabled:opacity-50"
+        >
+          <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
+          <span>Refresh</span>
+        </button>
       </div>
 
       {toastMessage && (
@@ -147,6 +185,21 @@ export default function NotificationsPage() {
           <button
             onClick={() => setToastMessage(null)}
             className="text-[#6B8F71] hover:text-[#1C2B3A] text-xs font-semibold"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {error && (
+        <div className="bg-[#B0533E]/10 text-[#B0533E] border border-[#B0533E]/20 px-4 py-3 rounded-md text-sm flex items-center justify-between animate-in fade-in duration-200">
+          <div className="flex items-center gap-2">
+            <AlertCircle size={16} />
+            <span>{error}</span>
+          </div>
+          <button
+            onClick={() => setError(null)}
+            className="text-[#B0533E] hover:text-[#1C2B3A] text-xs font-semibold"
           >
             Dismiss
           </button>
@@ -170,10 +223,11 @@ export default function NotificationsPage() {
               <input
                 type="text"
                 required
-                placeholder="e.g. Physics Formula Sheet Updated"
+                disabled={submitting}
+                placeholder="e.g. 📚 New Notes Added or 📝 PYQs Updated"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full"
+                className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full disabled:opacity-60"
               />
             </div>
 
@@ -184,10 +238,25 @@ export default function NotificationsPage() {
               <textarea
                 required
                 rows={4}
+                disabled={submitting}
                 placeholder="Write message details clearly..."
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
-                className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full resize-none"
+                className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full resize-none disabled:opacity-60"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#1C2B3A] mb-1.5">
+                Action / Link URL <span className="text-xs text-[#9CA3AF] font-normal">(Optional)</span>
+              </label>
+              <input
+                type="text"
+                disabled={submitting}
+                placeholder="e.g. /notes or /pyqs/class-12/physics/2025"
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+                className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full disabled:opacity-60"
               />
             </div>
 
@@ -197,8 +266,9 @@ export default function NotificationsPage() {
               </label>
               <select
                 value={audience}
+                disabled={submitting}
                 onChange={(e) => setAudience(e.target.value as Audience)}
-                className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full"
+                className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full disabled:opacity-60"
               >
                 <option value="all">All Registered Users</option>
                 <option value="students">Students Only</option>
@@ -213,6 +283,7 @@ export default function NotificationsPage() {
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
+                  disabled={submitting}
                   onClick={() => setMode("now")}
                   className={`py-2 px-3 text-xs font-medium rounded-md border transition-colors flex items-center justify-center gap-1.5 ${
                     mode === "now"
@@ -225,6 +296,7 @@ export default function NotificationsPage() {
                 </button>
                 <button
                   type="button"
+                  disabled={submitting}
                   onClick={() => setMode("schedule")}
                   className={`py-2 px-3 text-xs font-medium rounded-md border transition-colors flex items-center justify-center gap-1.5 ${
                     mode === "schedule"
@@ -246,9 +318,10 @@ export default function NotificationsPage() {
                 <input
                   type="datetime-local"
                   required
+                  disabled={submitting}
                   value={scheduleTime}
                   onChange={(e) => setScheduleTime(e.target.value)}
-                  className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full"
+                  className="border border-[#E5E0D5] rounded-md px-3 py-2 text-sm text-[#374151] bg-white focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40 focus:border-[#E8A33D] w-full disabled:opacity-60"
                 />
               </div>
             )}
@@ -256,9 +329,15 @@ export default function NotificationsPage() {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full bg-[#1C2B3A] text-white text-sm px-4 py-2.5 rounded-md hover:bg-[#28394D] transition-colors font-medium flex items-center justify-center gap-2"
+                disabled={submitting}
+                className="w-full bg-[#1C2B3A] text-white text-sm px-4 py-2.5 rounded-md hover:bg-[#28394D] transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {mode === "now" ? (
+                {submitting ? (
+                  <>
+                    <Loader2 size={15} className="animate-spin" />
+                    <span>Publishing...</span>
+                  </>
+                ) : mode === "now" ? (
                   <>
                     <Send size={15} /> Broadcast Notification
                   </>
@@ -302,14 +381,20 @@ export default function NotificationsPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto divide-y divide-[#F0EDE5] max-h-[620px]">
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="p-12 text-center text-[#9CA3AF]">
+                <Loader2 size={28} className="animate-spin mx-auto mb-2 text-[#E8A33D]" />
+                <p className="text-sm text-[#6B7280]">Loading notifications from database...</p>
+              </div>
+            ) : filtered.length === 0 ? (
               <div className="p-12 text-center">
                 <Bell size={32} className="text-[#9CA3AF] mx-auto mb-2" />
                 <p className="text-sm text-[#6B7280]">No notifications in this view.</p>
               </div>
             ) : (
               filtered.map((item) => {
-                const aud = AUDIENCE_CONFIG[item.audience];
+                const aud = AUDIENCE_CONFIG[item.audience] || AUDIENCE_CONFIG.all;
+                const isDeleting = deletingId === item.id;
                 return (
                   <div key={item.id} className="p-5 hover:bg-[#FAF7F2]/50 transition-colors">
                     <div className="flex items-start justify-between gap-3">
@@ -329,6 +414,12 @@ export default function NotificationsPage() {
                               <Clock size={11} /> Scheduled
                             </span>
                           )}
+
+                          {item.linkUrl && (
+                            <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 text-blue-600 flex items-center gap-0.5">
+                              <ExternalLink size={10} /> Link
+                            </span>
+                          )}
                         </div>
 
                         <p className="text-sm text-[#4B5563] leading-relaxed pt-0.5">
@@ -338,10 +429,11 @@ export default function NotificationsPage() {
 
                       <button
                         onClick={() => handleDelete(item.id)}
-                        className="text-[#9CA3AF] hover:text-[#B0533E] p-1 transition-colors"
+                        disabled={isDeleting}
+                        className="text-[#9CA3AF] hover:text-[#B0533E] p-1 transition-colors disabled:opacity-40"
                         title="Delete notification"
                       >
-                        <Trash2 size={15} />
+                        {isDeleting ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
                       </button>
                     </div>
 

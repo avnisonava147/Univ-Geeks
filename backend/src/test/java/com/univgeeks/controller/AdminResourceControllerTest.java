@@ -51,6 +51,9 @@ public class AdminResourceControllerTest {
     private BannerService bannerService;
 
     @MockBean
+    private NotificationService notificationService;
+
+    @MockBean
     private DashboardService dashboardService;
 
     @MockBean

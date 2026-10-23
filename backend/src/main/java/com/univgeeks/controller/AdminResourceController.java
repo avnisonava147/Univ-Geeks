@@ -3,12 +3,14 @@ package com.univgeeks.controller;
 import com.univgeeks.dto.*;
 import com.univgeeks.model.Banner;
 import com.univgeeks.model.Note;
+import com.univgeeks.model.Notification;
 import com.univgeeks.model.Pyq;
 import com.univgeeks.service.BannerService;
 import com.univgeeks.service.DashboardService;
 import com.univgeeks.service.FileStorageService;
 import com.univgeeks.service.ImageKitService;
 import com.univgeeks.service.NoteService;
+import com.univgeeks.service.NotificationService;
 import com.univgeeks.service.PyqService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ public class AdminResourceController {
     private final PyqService pyqService;
     private final NoteService noteService;
     private final BannerService bannerService;
+    private final NotificationService notificationService;
     private final DashboardService dashboardService;
     private final FileStorageService fileStorageService;
     private final ImageKitService imageKitService;
@@ -38,12 +41,14 @@ public class AdminResourceController {
     public AdminResourceController(PyqService pyqService,
                                    NoteService noteService,
                                    BannerService bannerService,
+                                   NotificationService notificationService,
                                    DashboardService dashboardService,
                                    FileStorageService fileStorageService,
                                    ImageKitService imageKitService) {
         this.pyqService = pyqService;
         this.noteService = noteService;
         this.bannerService = bannerService;
+        this.notificationService = notificationService;
         this.dashboardService = dashboardService;
         this.fileStorageService = fileStorageService;
         this.imageKitService = imageKitService;
@@ -446,6 +451,41 @@ public class AdminResourceController {
     @PatchMapping("/admin/banners/{id}/status")
     public ResponseEntity<Banner> toggleBannerStatus(@PathVariable String id) {
         Banner updated = bannerService.toggleStatus(id);
+        return ResponseEntity.ok(updated);
+    }
+
+    // ==========================================
+    // Admin Notification Management
+    // ==========================================
+    @GetMapping("/admin/notifications")
+    public ResponseEntity<List<Notification>> getAllNotifications() {
+        return ResponseEntity.ok(notificationService.getAllNotifications());
+    }
+
+    @PostMapping(value = "/admin/notifications", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Notification> createNotification(@Valid @RequestBody NotificationRequest request) {
+        Notification created = notificationService.createNotification(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PutMapping(value = "/admin/notifications/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Notification> updateNotification(@PathVariable String id, @Valid @RequestBody NotificationRequest request) {
+        Notification updated = notificationService.updateNotification(id, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/admin/notifications/{id}")
+    public ResponseEntity<Map<String, String>> deleteNotification(@PathVariable String id) {
+        boolean deleted = notificationService.deleteNotification(id);
+        if (deleted) {
+            return ResponseEntity.ok(Map.of("message", "Notification deleted successfully"));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/admin/notifications/{id}/status")
+    public ResponseEntity<Notification> toggleNotificationStatus(@PathVariable String id) {
+        Notification updated = notificationService.toggleStatus(id);
         return ResponseEntity.ok(updated);
     }
 }
