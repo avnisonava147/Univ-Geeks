@@ -58,6 +58,7 @@ const class10SubjectBanners: Record<string, string> = {
   "Social Science": "/class-10-socialstudies.png",
   English: "/class-10-englishs.png",
   Hindi: "/class-10-hindis.png",
+  Sanskrit: "/class-10-sanskrit.jpeg",
   "Class 10 Syllabus": "/class-10-syllabus.png",
 };
 

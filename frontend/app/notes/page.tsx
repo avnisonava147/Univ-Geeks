@@ -78,6 +78,9 @@ export default function NotesPage() {
   }, []);
 
 const [showClass11Popup, setShowClass11Popup] = useState(false);
+const [showSubscribePopup, setShowSubscribePopup] = useState(false);
+const [pendingPdfAction, setPendingPdfAction] =
+  useState<"view" | "download" | null>(null);
 
 const classSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -773,15 +776,18 @@ onClick={() => {
               </p>
             </div>
 
-            {/* Buttons */}
             
+            
+
 {/* Buttons */}
 <div className="flex flex-col gap-3 sm:flex-row">
   {/* View PDF */}
-  <a
-    href={normalizePdfUrl(selectedChapterData.pdf)}
-    target="_blank"
-    rel="noopener noreferrer"
+  <button
+    type="button"
+    onClick={() => {
+      setPendingPdfAction("view");
+      setShowSubscribePopup(true);
+    }}
     className="group/button inline-flex items-center justify-center gap-2 rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2F5FDE] hover:shadow-lg"
   >
     <span className="text-base">👁</span>
@@ -789,18 +795,22 @@ onClick={() => {
     <span className="transition-transform duration-300 group-hover/button:translate-x-1">
       →
     </span>
-  </a>
+  </button>
 
   {/* Download PDF */}
-  <a
-    href={normalizePdfUrl(selectedChapterData.pdf)}
-    download
+  <button
+    type="button"
+    onClick={() => {
+      setPendingPdfAction("download");
+      setShowSubscribePopup(true);
+    }}
     className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-[#16213E] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-[#2F5FDE]"
   >
     <span className="text-base">↓</span>
     Download PDF
-  </a>
+  </button>
 </div>
+
 
 
           </div>
