@@ -7,6 +7,17 @@ import SubjectSelector from "./components/SubjectSelector";
 import ChapterSelector from "./components/ChapterSelector";
 import SubscribePopup from "./components/SubscribePopup";
 import Class11Popup from "./components/Class11Popup";
+
+
+import {
+  getSubjects,
+  streams,
+  type ClassName,
+  type Stream,
+} from "./data/notesData";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
 function normalizePdfUrl(url?: string | null): string {
   if (!url) return "#";
   const trimmed = url.trim();
@@ -19,33 +30,22 @@ function normalizePdfUrl(url?: string | null): string {
   return `/api/files/${encodeURIComponent(trimmed)}`;
 }
 
-import {
-  getSubjects,
-  streams,
-  type ClassName,
-  type Stream,
-} from "./data/notesData";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-
- const bannerSlides = [
+const heroBanners = [
   {
-    title: "Study Smarter",
-    subtitle: "Learn · Practice · Grow",
-    description: "Simple notes designed to make your preparation easier.",
-    className: "from-[#F7A83B] to-[#F07A45]",
+    src: "/mathematics-notes-banner.png",
+    alt: "Mathematics chapter-wise study notes",
   },
   {
-    title: "Prepare Better",
-    subtitle: "Notes · Chapters · PDFs",
-    description: "Everything you need for focused exam preparation.",
-    className: "from-[#5B6FE8] to-[#7B5CE8]",
+    src: "/physics-notes-banner.png",
+    alt: "Physics chapter-wise study notes",
   },
   {
-    title: "Grow With Knowledge",
-    subtitle: "Understand · Revise · Succeed",
-    description: "Build strong concepts with chapter-wise study material.",
-    className: "from-[#2FA36B] to-[#249B91]",
+    src: "/biology-notes-banner.png",
+    alt: "Biology chapter-wise study notes",
+  },
+  {
+    src: "/chemistry-notes-banner.png",
+    alt: "Chemistry chapter-wise study notes",
   },
 ];
 
@@ -82,6 +82,12 @@ const [showSubscribePopup, setShowSubscribePopup] = useState(false);
 const [pendingPdfAction, setPendingPdfAction] =
   useState<"view" | "download" | null>(null);
 
+  const [selectedMedium, setSelectedMedium] =
+  useState<"english" | "hindi">("english");
+
+const [showHindiUnavailable, setShowHindiUnavailable] =
+  useState(false);
+
 const classSectionRef = useRef<HTMLDivElement | null>(null);
 
 
@@ -93,24 +99,6 @@ const classSectionRef = useRef<HTMLDivElement | null>(null);
   // Hero banner carousel
 const [activeHeroBanner, setActiveHeroBanner] = useState(0);
 
-const heroBanners = [
-  {
-    src: "/mathematics-notes-banner.png",
-    alt: "Mathematics chapter-wise study notes",
-  },
-  {
-    src: "/physics-notes-banner.png",
-    alt: "Physics chapter-wise study notes",
-  },
-  {
-    src: "/biology-notes-banner.png",
-    alt: "Biology chapter-wise study notes",
-  },
-  {
-    src: "/chemistry-notes-banner.png",
-    alt: "Chemistry chapter-wise study notes",
-  },
-];
   
 
   const streamSectionRef =
@@ -229,25 +217,6 @@ if (classMatch) {
     const streamMatch = streams.find(
       (stream) => stream.toLowerCase() === term
     );
-
-    if (classMatch) {
-  const className = classMatch[1] as ClassName;
-
-  setSelectedClass(className);
-  setSelectedSubject(null);
-  setSelectedChapter(null);
-
-  setSearchMessage(`Showing Class ${className}`);
-
-  // Automatically scroll to the correct section
-  if (className === "10") {
-    scrollToSection(subjectSectionRef);
-  } else {
-    scrollToSection(streamSectionRef);
-  }
-
-  return;
-}
 
     // Search through subjects and chapters
     const allClasses: ClassName[] = ["10", "11", "12"];
@@ -771,8 +740,7 @@ onClick={() => {
                 <span className="font-semibold text-[#16213E]">
                   {selectedChapterData.name}
                 </span>{" "}
-                are ready. You can open the PDF in a new tab or download it
-                for offline study.
+                 in both English and Hindi medium.
               </p>
             </div>
 
@@ -780,35 +748,30 @@ onClick={() => {
             
 
 {/* Buttons */}
-<div className="flex flex-col gap-3 sm:flex-row">
-  {/* View PDF */}
+<div className="flex flex-wrap gap-4">
   <button
-    type="button"
     onClick={() => {
+      setSelectedMedium("english");
       setPendingPdfAction("view");
       setShowSubscribePopup(true);
     }}
-    className="group/button inline-flex items-center justify-center gap-2 rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2F5FDE] hover:shadow-lg"
+    className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
   >
-    <span className="text-base">👁</span>
-    View PDF
-    <span className="transition-transform duration-300 group-hover/button:translate-x-1">
-      →
-    </span>
+    English Medium
   </button>
 
-  {/* Download PDF */}
   <button
-    type="button"
     onClick={() => {
-      setPendingPdfAction("download");
+      setSelectedMedium("hindi");
+      setPendingPdfAction("view");
       setShowSubscribePopup(true);
     }}
-    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-[#16213E] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-[#2F5FDE]"
+    className="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600"
   >
-    <span className="text-base">↓</span>
-    Download PDF
+    Hindi Medium
   </button>
+
+  
 </div>
 
 
@@ -830,35 +793,65 @@ onClick={() => {
             setPendingPdfAction(null);
           }}
           onContinue={() => {
-            const pdfUrl = selectedChapterData?.pdf;
-            const action = pendingPdfAction;
+  const pdfUrl =
+    selectedMedium === "english"
+      ? selectedChapterData?.pdf
+      : selectedChapterData?.hindiPdf;
 
-            setShowSubscribePopup(false);
-            setPendingPdfAction(null);
+  setShowSubscribePopup(false);
+  setPendingPdfAction(null);
 
-            if (!pdfUrl || !action) return;
+  if (selectedMedium === "hindi" && !pdfUrl) {
+    setShowHindiUnavailable(true);
+    return;
+  }
 
-            if (action === "view") {
-              window.open(
-                pdfUrl,
-                "_blank",
-                "noopener,noreferrer"
-              );
-            } else if (action === "download") {
-              const link = document.createElement("a");
-              link.href = pdfUrl;
-              link.download = "";
-              document.body.appendChild(link);
-              link.click();
-              link.remove();
-            }
-          }}
+  if (!pdfUrl || pdfUrl === "#") {
+    return;
+  }
+
+  window.open(pdfUrl, "_blank", "noopener,noreferrer");
+}}
           
                 youtubeUrl="https://www.youtube.com/@Himanshubhaiya8"
                 instagramUrl="https://www.instagram.com/univ_geeks?igsh=MmRxYTN5ZTE2N2J2"
 
         />
       )}
+
+
+      {showHindiUnavailable && (
+  <div
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="hindi-unavailable-title"
+    className="fixed inset-0 z-[110] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm"
+  >
+    <div className="w-full max-w-md rounded-2xl border border-orange-200 bg-white p-6 text-center shadow-2xl">
+      <div className="text-4xl">📚</div>
+
+      <h3
+        id="hindi-unavailable-title"
+        className="mt-3 text-xl font-bold text-[#16213E]"
+      >
+        Hindi Medium Notes Coming Soon
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-slate-600">
+        Hindi Medium notes for this chapter have not been uploaded yet.
+        Please check back soon.
+      </p>
+
+      <button
+        type="button"
+        onClick={() => setShowHindiUnavailable(false)}
+        className="mt-5 rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
 
 
 
