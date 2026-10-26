@@ -19,7 +19,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getApiBaseUrl, resolvePdfUrl } from "@/app/_lib/apiConfig";
 
-function normalizePdfUrl(url?: string | null): string {
+function normalizePdfUrl(url?: string | null, note?: any): string {
+  if (note?.fileName && (note?.imageKitFileId || (url && url.includes("/api/files/")))) {
+    const cleanFileName = note.fileName.replace(/^\/?(api\/files\/)?/, "");
+    return `https://ik.imagekit.io/eguapakpx/univ-geeks/notes/${cleanFileName}`;
+  }
   return resolvePdfUrl(url);
 }
 
@@ -31,6 +35,45 @@ function normalizeText(s?: string | null): string {
     .replace(/[^\p{L}\p{M}\p{N}\s]/gu, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function isHindiNote(note: any): boolean {
+  if (!note) return false;
+  const m = (note.medium || "").trim().toUpperCase();
+  return m === "HINDI" || m.includes("HINDI") || m.includes("हिंदी") || m.includes("HIN");
+}
+
+function isEnglishNote(note: any): boolean {
+  if (!note) return false;
+  if (isHindiNote(note)) return false;
+  const m = (note.medium || "").trim().toUpperCase();
+  if (m === "ENGLISH" || m.includes("ENGLISH") || m.includes("ENG") || m.includes("अंग्रेजी")) {
+    return true;
+  }
+  // Legacy notes uploaded before the medium field existed default to English
+  if (!note.medium || typeof note.medium !== "string" || note.medium.trim() === "") {
+    return true;
+  }
+  return false;
+}
+
+function normalizeMedium(medium?: string | null, note?: any): "ENGLISH" | "HINDI" | null {
+  if (note) {
+    if (isHindiNote(note)) return "HINDI";
+    if (isEnglishNote(note)) return "ENGLISH";
+    return null;
+  }
+  if (medium) {
+    const m = medium.trim().toUpperCase();
+    if (m === "HINDI" || m.includes("HINDI") || m.includes("हिंदी") || m.includes("HIN")) {
+      return "HINDI";
+    }
+    if (m === "ENGLISH" || m.includes("ENGLISH") || m.includes("अंग्रेजी") || m.includes("ENG")) {
+      return "ENGLISH";
+    }
+  }
+
+  return null;
 }
 
 function extractChapterNumber(s?: string | null): number | null {
@@ -51,6 +94,24 @@ function extractChapterNumber(s?: string | null): number | null {
 }
 
 const heroBanners = [
+  {
+    src: "/mathematics-notes-banner.png",
+    alt: "Mathematics chapter-wise study notes",
+  },
+  {
+    src: "/physics-notes-banner.png",
+    alt: "Physics chapter-wise study notes",
+  },
+  {
+    src: "/biology-notes-banner.png",
+    alt: "Biology chapter-wise study notes",
+  },
+  {
+    src: "/chemistry-notes-banner.png",
+    alt: "Chemistry chapter-wise study notes",
+  },
+];
+
 function matchesNoteChapter(
   note: any,
   targetChapterName: string,
@@ -94,35 +155,6 @@ function matchesNoteChapter(
   return false;
 }
 
-
-import {
-  getSubjects,
-  streams,
-  type ClassName,
-  type Stream,
-} from "./data/notesData";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-
- const bannerSlides = [
-  {
-    src: "/mathematics-notes-banner.png",
-    alt: "Mathematics chapter-wise study notes",
-  },
-  {
-    src: "/physics-notes-banner.png",
-    alt: "Physics chapter-wise study notes",
-  },
-  {
-    src: "/biology-notes-banner.png",
-    alt: "Biology chapter-wise study notes",
-  },
-  {
-    src: "/chemistry-notes-banner.png",
-    alt: "Chemistry chapter-wise study notes",
-  },
-];
-
 export default function NotesPage() {
   const [selectedClass, setSelectedClass] =
     useState<ClassName>("10");
@@ -162,9 +194,6 @@ const [pendingPdfAction, setPendingPdfAction] =
 
 const [showHindiUnavailable, setShowHindiUnavailable] =
   useState(false);
-  const [showSubscribePopup, setShowSubscribePopup] = useState(false);
-  const [pendingPdfAction, setPendingPdfAction] = useState<"view" | "download" | null>(null);
-  const [showClass11Popup, setShowClass11Popup] = useState(false);
 
 const classSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -369,7 +398,7 @@ if (
 
     return chaptersList.map((ch, idx) => {
       const chNumber = idx + 1;
-      const matchingNote = uploadedNotes.find((n) => {
+      const publishedNotesForChapter = uploadedNotes.filter((n) => {
         const isPublished = !n.status || n.status.toLowerCase() === "published";
         if (!isPublished) return false;
 
@@ -381,7 +410,7 @@ if (
 
         // Stream matching for classes 11 & 12
         if (selectedClass !== "10" && n.stream && selectedStream) {
-          if (n.stream.toLowerCase() !== selectedStream.toLowerCase()) return false;
+          if (n.stream.toLowerCase() !== selectedStream.toLowerCase() && n.stream.toLowerCase() !== "common") return false;
         }
 
         // Subject matching
@@ -394,27 +423,53 @@ if (
         return matchesNoteChapter(n, ch.name, chNumber, chaptersList);
       });
 
-      if (matchingNote && matchingNote.pdfUrl) {
-        return {
-          ...ch,
-          pdf: normalizePdfUrl(matchingNote.pdfUrl),
-          isAvailable: true,
-        };
-      }
+      const englishNotes = publishedNotesForChapter.filter(isEnglishNote);
+      const englishNote =
+        englishNotes.find((n) => (n.medium || "").toUpperCase().includes("ENGLISH")) ||
+        englishNotes[0];
+
+      const hindiNotes = publishedNotesForChapter.filter(isHindiNote);
+      const hindiNote =
+        hindiNotes.find((n) => (n.medium || "").toUpperCase().includes("HINDI")) ||
+        hindiNotes[0];
 
       // Check if real static PDF exists in public/pdfs (Mathematics 1 & 2)
-      const hasStaticPdf =
+      const hasStaticEnglishPdf =
         selectedClass === "10" &&
         selectedSubject?.toLowerCase() === "mathematics" &&
         (chNumber === 1 || chNumber === 2);
 
+      const englishPdfUrl = englishNote?.pdfUrl
+        ? normalizePdfUrl(englishNote.pdfUrl, englishNote)
+        : hasStaticEnglishPdf && ch.pdf
+        ? normalizePdfUrl(ch.pdf)
+        : "";
+
+      const hindiPdfUrl = hindiNote?.pdfUrl
+        ? normalizePdfUrl(hindiNote.pdfUrl, hindiNote)
+        : ch.hindiPdf
+        ? normalizePdfUrl(ch.hindiPdf)
+        : "";
+
+      const englishAvailable = Boolean(englishPdfUrl);
+      const hindiAvailable = Boolean(hindiPdfUrl);
+
+      const currentPdf = selectedMedium === "english" ? englishPdfUrl : hindiPdfUrl;
+      const isAvailable = selectedMedium === "english" ? englishAvailable : hindiAvailable;
+
       return {
         ...ch,
-        pdf: hasStaticPdf ? normalizePdfUrl(ch.pdf) : "",
-        isAvailable: hasStaticPdf,
+        englishPdf: englishPdfUrl,
+        hindiPdf: hindiPdfUrl,
+        englishAvailable,
+        hindiAvailable,
+        englishNote,
+        hindiNote,
+        pdf: currentPdf,
+        isAvailable,
       };
     });
-  }, [selectedSubjectData, selectedClass, selectedStream, selectedSubject, uploadedNotes]);
+  }, [selectedSubjectData, selectedClass, selectedStream, selectedSubject, uploadedNotes, selectedMedium]);
 
   const selectedChapterData = activeChapters.find(
     (chapter) => chapter.id === selectedChapter
@@ -775,7 +830,7 @@ onClick={() => {
       </div>
 
       {/* PDF Card */}
-      <div className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-8">
+      <div className="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:shadow-xl sm:p-8">
 
         {/* Background glow */}
         <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-blue-100/60 blur-3xl transition-all duration-500 group-hover:bg-blue-200/60" />
@@ -820,12 +875,22 @@ onClick={() => {
                     PDF Notes
                   </span>
 
+                  {/* Active Medium Badge */}
+                  <span
+                    className={`rounded-full px-3 py-1 font-semibold text-xs transition-colors ${
+                      selectedMedium === "english"
+                        ? "bg-blue-100 text-blue-800 border border-blue-300"
+                        : "bg-amber-100 text-amber-800 border border-amber-300"
+                    }`}
+                  >
+                    {selectedMedium === "english" ? "English Medium" : "Hindi Medium"}
+                  </span>
                 </div>
               </div>
 
             </div>
 
-            {/* Status */}
+            {/* Status for selected medium */}
             {selectedChapterData.isAvailable ? (
               <div className="flex items-center gap-2 self-start rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 lg:self-auto">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
@@ -840,113 +905,134 @@ onClick={() => {
 
           </div>
 
+          {/* Medium Switcher Bar */}
+          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-slate-200 bg-[#F8FAFF] p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#64748B]">
+                Choose Medium:
+              </p>
+              <p className="text-xs text-[#94A3B8]">
+                Switch between English and Hindi notes without leaving this chapter
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                id="notes-english-medium-btn"
+                onClick={() => setSelectedMedium("english")}
+                className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
+                  selectedMedium === "english"
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-500/25 ring-2 ring-blue-600 ring-offset-2"
+                    : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                <span>🇬🇧</span>
+                English Medium
+                {selectedChapterData.englishAvailable && (
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" title="Notes available" />
+                )}
+              </button>
+
+              <button
+                type="button"
+                id="notes-hindi-medium-btn"
+                onClick={() => setSelectedMedium("hindi")}
+                className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all ${
+                  selectedMedium === "hindi"
+                    ? "bg-amber-600 text-white shadow-md shadow-amber-500/25 ring-2 ring-amber-600 ring-offset-2"
+                    : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                <span>🇮🇳</span>
+                Hindi Medium
+                {selectedChapterData.hindiAvailable && (
+                  <span className="h-2 w-2 rounded-full bg-emerald-400" title="Notes available" />
+                )}
+              </button>
+            </div>
+          </div>
+
           {/* Divider */}
           <div className="my-7 h-px bg-slate-100" />
 
-          {/* Description */}
+          {/* Description & Action Buttons */}
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
             <div>
               <p className="text-sm leading-6 text-[#64748B]">
-                Your notes for{" "}
-                <span className="font-semibold text-[#16213E]">
-                  {selectedChapterData.name}
-                </span>{" "}
-                 in both English and Hindi medium.
-              </p>
-            </div>
-
-            
-            
-
-{/* Buttons */}
-<div className="flex flex-wrap gap-4">
-  <button
-    onClick={() => {
-      setSelectedMedium("english");
-      setPendingPdfAction("view");
-      setShowSubscribePopup(true);
-    }}
-    className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
-  >
-    English Medium
-  </button>
-
-  <button
-    onClick={() => {
-      setSelectedMedium("hindi");
-      setPendingPdfAction("view");
-      setShowSubscribePopup(true);
-    }}
-    className="rounded-xl bg-orange-500 px-6 py-3 font-semibold text-white transition hover:bg-orange-600"
-  >
-    Hindi Medium
-  </button>
-
-  
-</div>
                 {selectedChapterData.isAvailable ? (
                   <>
-                    Your notes for{" "}
+                    Your{" "}
+                    <span className="font-semibold text-[#16213E]">
+                      {selectedMedium === "english" ? "English Medium" : "Hindi Medium"}
+                    </span>{" "}
+                    notes for{" "}
                     <span className="font-semibold text-[#16213E]">
                       {selectedChapterData.name}
                     </span>{" "}
-                    are ready. You can open the PDF in a new tab or download it
-                    for offline study.
+                    are ready to view and download.
                   </>
                 ) : (
                   <>
-                    Notes for{" "}
+                    <span className="font-semibold text-amber-700">
+                      Notes for this medium are not available yet.
+                    </span>{" "}
+                    The {selectedMedium === "english" ? "English" : "Hindi"} Medium notes for{" "}
                     <span className="font-semibold text-[#16213E]">
                       {selectedChapterData.name}
                     </span>{" "}
-                    are currently being prepared and will be available soon. Please check back later.
+                    have not been uploaded yet. Please check back soon or try the other medium if available.
                   </>
                 )}
               </p>
             </div>
 
-            {/* Buttons */}
-            <div className="flex flex-col gap-3 sm:flex-row">
-              {selectedChapterData.isAvailable && selectedChapterData.pdf ? (
-                <>
-                  {/* View PDF */}
-                  <a
-                    href={normalizePdfUrl(selectedChapterData.pdf)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group/button inline-flex items-center justify-center gap-2 rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2F5FDE] hover:shadow-lg"
-                  >
-                    <span className="text-base">👁</span>
-                    View PDF
-                    <span className="transition-transform duration-300 group-hover/button:translate-x-1">
-                      →
-                    </span>
-                  </a>
-
-                  {/* Download PDF */}
-                  <a
-                    href={normalizePdfUrl(selectedChapterData.pdf)}
-                    download
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-[#16213E] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-[#2F5FDE]"
-                  >
-                    <span className="text-base">↓</span>
-                    Download PDF
-                  </a>
-                </>
-              ) : (
+            {/* Action buttons strictly for current medium */}
+            {selectedChapterData.isAvailable ? (
+              <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
-                  onClick={() => alert(`Notes for ${selectedChapterData.name} will be available soon.`)}
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-500 transition hover:bg-slate-200"
+                  id="view-notes-btn"
+                  onClick={() => {
+                    setPendingPdfAction("view");
+                    setShowSubscribePopup(true);
+                  }}
+                  className={`flex items-center gap-2 rounded-xl px-6 py-3 font-semibold text-white shadow-md transition ${
+                    selectedMedium === "english"
+                      ? "bg-blue-600 hover:bg-blue-700 shadow-blue-500/20"
+                      : "bg-amber-600 hover:bg-amber-700 shadow-amber-500/20"
+                  }`}
+                >
+                  <span>👁️</span>
+                  View {selectedMedium === "english" ? "English" : "Hindi"} PDF
+                </button>
+
+                <button
+                  type="button"
+                  id="download-notes-btn"
+                  onClick={() => {
+                    setPendingPdfAction("download");
+                    setShowSubscribePopup(true);
+                  }}
+                  className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:text-slate-900"
+                >
+                  <span>⬇️</span>
+                  Download
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  disabled
+                  className="inline-flex cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-400"
                 >
                   <span>⏳</span>
-                  Notes Available Soon
+                  Notes Not Available Yet
                 </button>
-              )}
-            </div>
-
-
+              </div>
+            )}
 
           </div>
 
@@ -965,31 +1051,39 @@ onClick={() => {
             setPendingPdfAction(null);
           }}
           onContinue={() => {
-  const pdfUrl =
-    selectedMedium === "english"
-      ? selectedChapterData?.pdf
-      : selectedChapterData?.hindiPdf;
-            const pdfUrl = normalizePdfUrl(selectedChapterData?.pdf);
-            const action = pendingPdfAction;
+            const rawPdf =
+              selectedMedium === "english"
+                ? selectedChapterData?.englishPdf
+                : selectedChapterData?.hindiPdf;
 
-  setShowSubscribePopup(false);
-  setPendingPdfAction(null);
+            setShowSubscribePopup(false);
 
-  if (selectedMedium === "hindi" && !pdfUrl) {
-    setShowHindiUnavailable(true);
-    return;
-  }
+            if (!rawPdf) {
+              setPendingPdfAction(null);
+              return;
+            }
 
-  if (!pdfUrl || pdfUrl === "#") {
-    return;
-  }
+            const pdfUrl = normalizePdfUrl(rawPdf);
+            if (!pdfUrl || pdfUrl === "#") {
+              setPendingPdfAction(null);
+              return;
+            }
 
-  window.open(pdfUrl, "_blank", "noopener,noreferrer");
-}}
-          
-                youtubeUrl="https://www.youtube.com/@Himanshubhaiya8"
-                instagramUrl="https://www.instagram.com/univ_geeks?igsh=MmRxYTN5ZTE2N2J2"
-
+            if (pendingPdfAction === "download") {
+              const a = document.createElement("a");
+              a.href = pdfUrl;
+              a.download = `${selectedChapterData?.name || "notes"}-${selectedMedium}.pdf`;
+              a.target = "_blank";
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            } else {
+              window.open(pdfUrl, "_blank", "noopener,noreferrer");
+            }
+            setPendingPdfAction(null);
+          }}
+          youtubeUrl="https://www.youtube.com/@Himanshubhaiya8"
+          instagramUrl="https://www.instagram.com/univ_geeks?igsh=MmRxYTN5ZTE2N2J2"
         />
       )}
 

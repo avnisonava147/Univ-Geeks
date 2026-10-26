@@ -324,6 +324,9 @@ export default function Navbar() {
                     notifications.map((n) => {
                       const isUnread = !readIds.has(n.id);
                       const relativeTime = formatNotificationTime(n.sentAt, n.createdAt);
+                      const validUrl = typeof n.linkUrl === "string" ? n.linkUrl.trim() : "";
+                      const hasValidUrl = validUrl.length > 0;
+                      const isExternal = hasValidUrl && (validUrl.startsWith("http://") || validUrl.startsWith("https://"));
 
                       const CardContent = (
                         <div
@@ -349,7 +352,7 @@ export default function Navbar() {
 
                             <div className="mt-1 flex items-center justify-between text-[10px] text-slate-400">
                               <span>{relativeTime}</span>
-                              {n.linkUrl && (
+                              {hasValidUrl && (
                                 <span className="inline-flex items-center gap-0.5 text-blue-600 font-medium hover:underline">
                                   <span>View</span>
                                   <ExternalLink size={10} />
@@ -360,11 +363,13 @@ export default function Navbar() {
                         </div>
                       );
 
-                      if (n.linkUrl) {
+                      if (hasValidUrl) {
                         return (
                           <Link
                             key={n.id}
-                            href={n.linkUrl}
+                            href={validUrl}
+                            target={isExternal ? "_blank" : undefined}
+                            rel={isExternal ? "noopener noreferrer" : undefined}
                             onClick={() => {
                               markAsRead(n.id);
                               setNotificationOpen(false);

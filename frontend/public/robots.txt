@@ -1,0 +1,10 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Explicitly ensure Googlebot and Googlebot-Image have full crawl access to favicon & assets
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /

@@ -35,6 +35,22 @@ public class AdminService {
     @Value("${admin.email:admin@univgeeks.in}")
     private String initialAdminEmail;
 
+    private volatile boolean mongoAvailable = true;
+    private volatile long lastMongoFailure = 0;
+
+    private boolean shouldAttemptMongo() {
+        if (!mongoAvailable && (System.currentTimeMillis() - lastMongoFailure < 30000)) {
+            return false;
+        }
+        return true;
+    }
+
+    private void recordMongoFailure(Exception ex, String operation) {
+        mongoAvailable = false;
+        lastMongoFailure = System.currentTimeMillis();
+        log.warn("MongoDB unavailable in {}, using environment fallback: {}", operation, ex.getMessage());
+    }
+
     public AdminService(AdminRepository adminRepository,
                         PasswordEncoder passwordEncoder,
                         JwtTokenProvider tokenProvider) {
@@ -110,36 +126,38 @@ public class AdminService {
 
         // 1. Look up admin in database (case-insensitive by username or email)
         Optional<Admin> adminOpt = Optional.empty();
-        boolean dbAvailable = true;
-        try {
-            adminOpt = adminRepository.findByUsernameIgnoreCaseOrEmailIgnoreCase(identifier, identifier);
+        boolean dbAvailable = shouldAttemptMongo();
+        if (dbAvailable) {
+            try {
+                adminOpt = adminRepository.findByUsernameIgnoreCaseOrEmailIgnoreCase(identifier, identifier);
 
-            // If not found directly, check standard admin aliases
-            if (adminOpt.isEmpty()) {
-                boolean isStandardAdmin = identifier.equalsIgnoreCase("admin") ||
-                        identifier.equalsIgnoreCase("admin@univgeeks.in") ||
-                        identifier.equalsIgnoreCase("admin@univgeeks.com") ||
-                        (initialAdminUsername != null && identifier.equalsIgnoreCase(initialAdminUsername)) ||
-                        (initialAdminEmail != null && identifier.equalsIgnoreCase(initialAdminEmail));
+                // If not found directly, check standard admin aliases
+                if (adminOpt.isEmpty()) {
+                    boolean isStandardAdmin = identifier.equalsIgnoreCase("admin") ||
+                            identifier.equalsIgnoreCase("admin@univgeeks.in") ||
+                            identifier.equalsIgnoreCase("admin@univgeeks.com") ||
+                            (initialAdminUsername != null && identifier.equalsIgnoreCase(initialAdminUsername)) ||
+                            (initialAdminEmail != null && identifier.equalsIgnoreCase(initialAdminEmail));
 
-                if (isStandardAdmin) {
-                    if (initialAdminUsername != null) {
-                        adminOpt = adminRepository.findByUsernameIgnoreCase(initialAdminUsername);
-                    }
-                    if (adminOpt.isEmpty() && initialAdminEmail != null) {
-                        adminOpt = adminRepository.findByEmailIgnoreCase(initialAdminEmail);
-                    }
-                    if (adminOpt.isEmpty()) {
-                        List<Admin> all = adminRepository.findAll();
-                        if (!all.isEmpty()) {
-                            adminOpt = Optional.of(all.get(0));
+                    if (isStandardAdmin) {
+                        if (initialAdminUsername != null) {
+                            adminOpt = adminRepository.findByUsernameIgnoreCase(initialAdminUsername);
+                        }
+                        if (adminOpt.isEmpty() && initialAdminEmail != null) {
+                            adminOpt = adminRepository.findByEmailIgnoreCase(initialAdminEmail);
+                        }
+                        if (adminOpt.isEmpty()) {
+                            List<Admin> all = adminRepository.findAll();
+                            if (!all.isEmpty()) {
+                                adminOpt = Optional.of(all.get(0));
+                            }
                         }
                     }
                 }
+            } catch (Exception e) {
+                dbAvailable = false;
+                recordMongoFailure(e, "admin lookup");
             }
-        } catch (Exception e) {
-            dbAvailable = false;
-            log.error("Database error looking up admin: {}", e.getMessage());
         }
 
         // 2. If no admin record exists in DB, fallback to environment credentials
@@ -204,14 +222,16 @@ public class AdminService {
     }
 
     public AdminUserDto getAdminProfile(String username) {
-        try {
-            Optional<Admin> adminOpt = adminRepository.findByUsernameIgnoreCase(username);
-            if (adminOpt.isPresent()) {
-                Admin admin = adminOpt.get();
-                return new AdminUserDto(admin.getUsername(), admin.getEmail(), admin.getRole());
+        if (shouldAttemptMongo()) {
+            try {
+                Optional<Admin> adminOpt = adminRepository.findByUsernameIgnoreCase(username);
+                if (adminOpt.isPresent()) {
+                    Admin admin = adminOpt.get();
+                    return new AdminUserDto(admin.getUsername(), admin.getEmail(), admin.getRole());
+                }
+            } catch (Exception e) {
+                recordMongoFailure(e, "admin profile lookup");
             }
-        } catch (Exception e) {
-            log.warn("Database lookup failed for admin profile: {}", e.getMessage());
         }
 
         return new AdminUserDto("admin", "admin@univgeeks.in", "ROLE_ADMIN");

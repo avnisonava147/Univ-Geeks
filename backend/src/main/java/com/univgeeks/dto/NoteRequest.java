@@ -26,6 +26,7 @@ public class NoteRequest {
     private String pdfUrl;
     private String fileName;
     private String imageKitFileId;
+    private String medium; // "ENGLISH", "HINDI"
 
     public NoteRequest() {
     }
@@ -124,5 +125,13 @@ public class NoteRequest {
 
     public void setImageKitFileId(String imageKitFileId) {
         this.imageKitFileId = imageKitFileId;
+    }
+
+    public String getMedium() {
+        return medium;
+    }
+
+    public void setMedium(String medium) {
+        this.medium = medium;
     }
 }

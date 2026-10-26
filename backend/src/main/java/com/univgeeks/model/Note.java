@@ -24,6 +24,7 @@ public class Note {
     private String pdfUrl;
     private String fileName;
     private String imageKitFileId;
+    private String medium;       // "ENGLISH", "HINDI"
     private Instant createdAt = Instant.now();
     private Instant updatedAt = Instant.now();
 
@@ -140,6 +141,14 @@ public class Note {
 
     public void setImageKitFileId(String imageKitFileId) {
         this.imageKitFileId = imageKitFileId;
+    }
+
+    public String getMedium() {
+        return medium;
+    }
+
+    public void setMedium(String medium) {
+        this.medium = medium;
     }
 
     public Instant getCreatedAt() {

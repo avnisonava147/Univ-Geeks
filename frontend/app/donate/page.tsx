@@ -55,11 +55,9 @@ function YoutubeIcon({ size = 20 }: { size?: number }) {
 
 // =====================================================
 //  SUPPORT / DONATE PAGE
-//  NOTE: Amounts & the usage breakdown below are editable
-//  placeholders — replace them with your real running costs
-//  and hook the "Continue" button to your payment gateway
-//  (Razorpay / UPI / BuyMeACoffee) when it is live.
 // =====================================================
+
+export const RAZORPAY_DONATION_URL = "https://rzp.io/rzp/Supportgeeks";
 
 const tiers = [
   {
@@ -106,7 +104,7 @@ const faqs = [
   },
   {
     q: "Donation ka process kaisa hai?",
-    a: "Payment gateway jaldi live ho raha hai. Us tak aap neeche wale form se apni salahakat bhej sakte ho — hum aapko UPI / payment link seedha bhej denge.",
+    a: "Aap seedha secure Razorpay gateway ke zariye UPI (Google Pay, PhonePe, Paytm), Net Banking, Cards ya Wallets se safely contribute kar sakte hain.",
   },
 ];
 
@@ -162,7 +160,9 @@ export default function DonatePage() {
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <a
-                  href="#donate"
+                  href={RAZORPAY_DONATION_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 px-7 py-4 text-sm font-bold text-white shadow-[0_12px_30px_rgba(244,63,94,0.35)] transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_38px_rgba(251,146,60,0.45)]"
                 >
                   <Heart size={16} className="fill-white text-white" />
@@ -542,15 +542,27 @@ export default function DonatePage() {
                     </p>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setSubmitted(true)}
-                    disabled={selectedAmount <= 0}
-                    className="group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 px-7 py-3.5 text-sm font-black text-white shadow-lg shadow-rose-500/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-rose-500/35 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto"
+                  <a
+                    href={selectedAmount > 0 ? RAZORPAY_DONATION_URL : undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      if (selectedAmount <= 0) {
+                        e.preventDefault();
+                        return;
+                      }
+                      setSubmitted(true);
+                    }}
+                    aria-disabled={selectedAmount <= 0}
+                    className={`group inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 px-7 py-3.5 text-sm font-black text-white shadow-lg shadow-rose-500/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-rose-500/35 sm:w-auto ${
+                      selectedAmount <= 0
+                        ? "cursor-not-allowed opacity-40 pointer-events-none"
+                        : ""
+                    }`}
                   >
                     <span>Donate karo</span>
                     <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-                  </button>
+                  </a>
                 </div>
 
                 {/* Honest next-step panel */}
@@ -566,11 +578,19 @@ export default function DonatePage() {
                           {cycle === "monthly" ? "har mahine" : "ka contribution"}
                         </p>
                         <p className="mt-1 text-xs leading-relaxed text-emerald-800">
-                          Payment gateway abhi live nahi hai. Tab tak Instagram par DM kar do
-                          ya contact form bhar do — hum aapko UPI / payment link turant bhej denge.
+                          Razorpay payment gateway open ho chuka hai. Agar redirect nahi hua, toh aap direct Razorpay link se complete kar sakte hain.
                         </p>
 
                         <div className="mt-3 flex flex-wrap gap-2">
+                          <a
+                            href={RAZORPAY_DONATION_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:brightness-105"
+                          >
+                            <span>Open Razorpay</span>
+                            <ArrowRight size={13} />
+                          </a>
                           <a
                             href="https://www.instagram.com/univ_geeks"
                             target="_blank"
@@ -752,7 +772,9 @@ export default function DonatePage() {
 
                 <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
                   <a
-                    href="#donate"
+                    href={RAZORPAY_DONATION_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="rounded-2xl bg-white px-8 py-4 font-black text-rose-600 shadow-lg transition hover:-translate-y-0.5 hover:bg-slate-100"
                   >
                     Donate karo ❤️

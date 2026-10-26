@@ -70,14 +70,34 @@ public class PublicResourceControllerTest {
         n.setId("note-1");
         n.setTitle("Real Numbers");
         n.setSubject("Mathematics");
+        n.setMedium("ENGLISH");
         n.setStatus("published");
 
-        when(noteService.getPublishedNotes(null, null, null)).thenReturn(List.of(n));
+        when(noteService.getPublishedNotes(null, null, null, null)).thenReturn(List.of(n));
 
         mockMvc.perform(get("/api/notes"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value("note-1"))
+                .andExpect(jsonPath("$[0].medium").value("ENGLISH"))
                 .andExpect(jsonPath("$[0].title").value("Real Numbers"));
+    }
+
+    @Test
+    public void testPublicVisitors_CanFilterNotesByMedium() throws Exception {
+        Note n = new Note();
+        n.setId("note-2");
+        n.setTitle("वास्तविक संख्याएँ");
+        n.setSubject("Mathematics");
+        n.setMedium("HINDI");
+        n.setStatus("published");
+
+        when(noteService.getPublishedNotes("10", null, "Mathematics", "HINDI")).thenReturn(List.of(n));
+
+        mockMvc.perform(get("/api/notes?classLevel=10&subject=Mathematics&medium=HINDI"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("note-2"))
+                .andExpect(jsonPath("$[0].medium").value("HINDI"))
+                .andExpect(jsonPath("$[0].title").value("वास्तविक संख्याएँ"));
     }
 
     @Test
