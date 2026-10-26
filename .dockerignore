@@ -1,0 +1,9 @@
+.git/
+.gitignore
+frontend/
+HOSTINGER_DEPLOYMENT/
+scratch/
+backend/target/
+backend/.env
+backend/.env.local
+backend/uploads/

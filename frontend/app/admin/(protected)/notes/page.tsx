@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { apiRequest } from "../_lib/api";
+import { resolvePdfUrl } from "@/app/_lib/apiConfig";
 import {
   ArrowUpDown,
   CheckCircle2,
@@ -19,9 +20,9 @@ import {
   UploadCloud,
   X,
 } from "lucide-react";
-import { class10Subjects, getClass10Chapters } from "../../../notes/data/notesData";
+import { class10Subjects, getClass10Chapters, getClass12Chapters, type Chapter } from "../../../notes/data/notesData";
 
-export { getClass10Chapters };
+export { getClass10Chapters, getClass12Chapters };
 
 type ClassLevel = "10" | "11" | "12";
 type StreamName = "Common" | "Science" | "Commerce" | "Arts";
@@ -48,6 +49,7 @@ const SUBJECT_COLORS: Record<string, string> = {
   Physics: "#5B7A99",
   Chemistry: "#6B8F71",
   Mathematics: "#E8A33D",
+  Maths: "#E8A33D",
   Biology: "#B0533E",
   Science: "#8D6FA3",
   "Social Science": "#8C7B6E",
@@ -73,7 +75,7 @@ const CLASS_META: Record<ClassLevel, { label: string; color: string }> = {
 const SUBJECT_OPTIONS = Object.keys(SUBJECT_COLORS);
 
 export const STREAM_SUBJECTS: Record<StreamName, string[]> = {
-  Science: ["Physics", "Chemistry", "Mathematics", "Biology"],
+  Science: ["Physics", "Chemistry", "Mathematics", "Biology", "English", "Hindi"],
   Commerce: ["Accountancy", "Business Studies", "Economics"],
   Arts: ["History", "Political Science", "Geography", "Sociology"],
   Common: [
@@ -90,10 +92,21 @@ export const STREAM_SUBJECTS: Record<StreamName, string[]> = {
 export function deriveStream(subject: string, classLevel: ClassLevel, savedStream?: StreamName): StreamName {
   if (classLevel === "10") return "Common";
   const s = (subject || "").trim().toLowerCase();
-  if (["physics", "chemistry", "mathematics", "biology"].includes(s)) return "Science";
+  if (["physics", "chemistry", "mathematics", "maths", "biology"].includes(s)) return "Science";
   if (["accountancy", "business studies", "economics"].includes(s)) return "Commerce";
   if (["history", "political science", "geography", "sociology"].includes(s)) return "Arts";
   return savedStream && savedStream !== "Common" ? savedStream : "Science";
+}
+
+export function getFormChapters(classLevel: ClassLevel, subject: string, stream: StreamName): Chapter[] {
+  if (classLevel === "10") {
+    return getClass10Chapters(subject);
+  }
+  if (classLevel === "12") {
+    const st = stream === "Common" ? "Science" : stream;
+    return getClass12Chapters(subject, st as any);
+  }
+  return [];
 }
 
 // API data is fetched on mount; start with empty array
@@ -296,7 +309,7 @@ export default function NotesPage() {
     setEditingId(null);
     setSelectedPdfFile(null);
     const initialSubject = STREAM_SUBJECTS.Common[0]; // "Mathematics"
-    const chList = getClass10Chapters(initialSubject);
+    const chList = getFormChapters("10", initialSubject, "Common");
     setForm({
       ...EMPTY_FORM,
       classLevel: "10",
@@ -336,9 +349,9 @@ export default function NotesPage() {
         : form.stream;
     const allowed = STREAM_SUBJECTS[nextStream] || [];
     const nextSubject = allowed.includes(form.subject) ? form.subject : (allowed[0] || "");
-    const chList = classLevel === "10" ? getClass10Chapters(nextSubject) : [];
-    const nextChapterNo = classLevel === "10" && chList.length > 0 ? 1 : form.chapterNo;
-    const nextTitle = classLevel === "10" && chList.length > 0 ? chList[0].name : form.title;
+    const chList = getFormChapters(classLevel, nextSubject, nextStream);
+    const nextChapterNo = chList.length > 0 ? 1 : form.chapterNo;
+    const nextTitle = chList.length > 0 ? chList[0].name : form.title;
     setForm((prev) => ({
       ...prev,
       classLevel,
@@ -352,20 +365,23 @@ export default function NotesPage() {
   function setFormStream(stream: StreamName) {
     const allowed = STREAM_SUBJECTS[stream] || [];
     const nextSubject = allowed.includes(form.subject) ? form.subject : (allowed[0] || "");
+    const chList = getFormChapters(form.classLevel, nextSubject, stream);
     setForm((prev) => ({
       ...prev,
       stream,
       subject: nextSubject,
+      chapterNo: chList.length > 0 ? 1 : prev.chapterNo,
+      title: chList.length > 0 ? chList[0].name : prev.title,
     }));
   }
 
   function handleFormSubjectChange(newSubject: string) {
-    const chList = form.classLevel === "10" ? getClass10Chapters(newSubject) : [];
+    const chList = getFormChapters(form.classLevel, newSubject, form.stream);
     setForm((prev) => ({
       ...prev,
       subject: newSubject,
-      chapterNo: form.classLevel === "10" && chList.length > 0 ? 1 : prev.chapterNo,
-      title: form.classLevel === "10" && chList.length > 0 ? chList[0].name : prev.title,
+      chapterNo: chList.length > 0 ? 1 : prev.chapterNo,
+      title: chList.length > 0 ? chList[0].name : prev.title,
     }));
   }
 
@@ -994,23 +1010,31 @@ export default function NotesPage() {
                 </select>
               </div>
 
-              {/* Chapter Selection: Class 10 Dropdown vs General Title Input */}
+              {/* Chapter Selection: Class 10 & 12 Dropdown vs General Title Input */}
               {(() => {
-                const currentClass10Chapters = form.classLevel === "10" ? getClass10Chapters(form.subject) : [];
-                const isClass10WithChapters = form.classLevel === "10" && currentClass10Chapters.length > 0;
+                const currentChapters = getFormChapters(form.classLevel, form.subject, form.stream);
+                const hasPredefinedChapters = currentChapters.length > 0;
+
+                let selectedIdx = currentChapters.findIndex((c, idx) => idx + 1 === form.chapterNo);
+                if (selectedIdx === -1 && form.title) {
+                  selectedIdx = currentChapters.findIndex(
+                    (c) => c.name.toLowerCase() === form.title.trim().toLowerCase()
+                  );
+                }
+                const selectedChapterNo = selectedIdx >= 0 ? selectedIdx + 1 : (form.chapterNo || 1);
 
                 return (
                   <>
-                    {isClass10WithChapters ? (
+                    {hasPredefinedChapters ? (
                       <div>
                         <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">
-                          Chapter <span className="text-[#B0533E]">*</span>
+                          Chapter Title <span className="text-[#B0533E]">*</span>
                         </label>
                         <select
-                          value={form.chapterNo}
+                          value={selectedChapterNo}
                           onChange={(e) => {
                             const chNo = Number(e.target.value);
-                            const ch = currentClass10Chapters[chNo - 1];
+                            const ch = currentChapters[chNo - 1];
                             setForm((prev) => ({
                               ...prev,
                               chapterNo: chNo,
@@ -1019,8 +1043,8 @@ export default function NotesPage() {
                           }}
                           className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
                         >
-                          {currentClass10Chapters.map((ch, idx) => (
-                            <option key={ch.id} value={idx + 1}>
+                          {currentChapters.map((ch, idx) => (
+                            <option key={ch.id || `${form.subject}-${idx + 1}`} value={idx + 1}>
                               Chapter {idx + 1}: {ch.name}
                             </option>
                           ))}
@@ -1042,8 +1066,8 @@ export default function NotesPage() {
                     )}
 
                     {/* Chapter / pages / size */}
-                    <div className={isClass10WithChapters ? "grid grid-cols-2 gap-3" : "grid grid-cols-3 gap-3"}>
-                      {!isClass10WithChapters && (
+                    <div className={hasPredefinedChapters ? "grid grid-cols-2 gap-3" : "grid grid-cols-3 gap-3"}>
+                      {!hasPredefinedChapters && (
                         <div>
                           <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">Chapter #</label>
                           <input
@@ -1145,7 +1169,7 @@ export default function NotesPage() {
               </div>
               <div className="flex items-center gap-3">
                 <a
-                  href={previewNote.pdfUrl}
+                  href={resolvePdfUrl(previewNote.pdfUrl)}
                   download
                   title="Download PDF"
                   className="text-[#6B7280] transition-colors hover:text-[#1C2B3A]"

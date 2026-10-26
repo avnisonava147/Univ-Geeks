@@ -54,9 +54,43 @@ public class PyqService {
                 log.info("Loaded {} PYQs from local persistent cache", localCache.size());
             }
 
-            // If cache is empty, seed with known existing uploaded papers in uploads directory
-            if (localCache.isEmpty()) {
-                seedInitialUploads();
+            // Bidirectional sync with MongoDB Atlas: load from DB first to preserve production truth
+            try {
+                List<Pyq> dbList = pyqRepository.findAllByOrderByUploadedAtDesc();
+                if (dbList != null && !dbList.isEmpty()) {
+                    for (Pyq p : dbList) {
+                        if (p.getId() != null) {
+                            localCache.put(p.getId(), p);
+                        }
+                    }
+                    log.info("Synchronized {} PYQs from MongoDB Atlas", dbList.size());
+                }
+
+                // If local cache contains PYQs not yet in Atlas (e.g. uploaded during offline window), persist them safely
+                if (!localCache.isEmpty()) {
+                    int syncedToDb = 0;
+                    for (Pyq p : localCache.values()) {
+                        if (p.getId() != null && !pyqRepository.existsById(p.getId())) {
+                            try {
+                                pyqRepository.save(p);
+                                syncedToDb++;
+                            } catch (Exception ex) {
+                                log.warn("Could not sync cached PYQ '{}' to MongoDB: {}", p.getTitle(), ex.getMessage());
+                            }
+                        }
+                    }
+                    if (syncedToDb > 0) {
+                        log.info("Persisted {} previously uncommitted PYQs from cache into MongoDB Atlas", syncedToDb);
+                    }
+                    persistCacheToFile();
+                } else {
+                    seedInitialUploads();
+                }
+            } catch (Exception ex) {
+                log.warn("Could not query MongoDB for PYQs on startup (using cache fallback): {}", ex.getMessage());
+                if (localCache.isEmpty()) {
+                    seedInitialUploads();
+                }
             }
         } catch (Exception ex) {
             log.warn("Could not initialize local PYQ cache: {}", ex.getMessage());
@@ -133,26 +167,46 @@ public class PyqService {
         }
     }
 
+    private boolean matchesClassLevel(String actual, String target) {
+        if (actual == null || target == null) return false;
+        if (actual.equalsIgnoreCase(target)) return true;
+        String a = actual.replaceAll("[^0-9]", "");
+        String t = target.replaceAll("[^0-9]", "");
+        return !a.isEmpty() && a.equals(t);
+    }
+
     public List<Pyq> getPublishedPyqs(String classLevel, String subject, String year) {
         try {
+            List<Pyq> results;
             if (classLevel != null && !classLevel.isEmpty() && subject != null && !subject.isEmpty()) {
                 if (year != null && !year.isEmpty()) {
-                    return pyqRepository.findByClassLevelAndSubjectIgnoreCaseAndYearAndPublishedTrue(classLevel, subject, year);
+                    results = pyqRepository.findByClassLevelAndSubjectIgnoreCaseAndYearAndPublishedTrue(classLevel, subject, year);
+                } else {
+                    results = pyqRepository.findByClassLevelAndSubjectIgnoreCaseAndPublishedTrue(classLevel, subject);
                 }
-                return pyqRepository.findByClassLevelAndSubjectIgnoreCaseAndPublishedTrue(classLevel, subject);
+            } else if (subject != null && !subject.isEmpty()) {
+                results = pyqRepository.findBySubjectIgnoreCaseAndPublishedTrue(subject);
+            } else if (classLevel != null && !classLevel.isEmpty()) {
+                results = pyqRepository.findByClassLevelAndPublishedTrue(classLevel);
+            } else {
+                results = pyqRepository.findByPublishedTrueOrderByUploadedAtDesc();
             }
-            if (subject != null && !subject.isEmpty()) {
-                return pyqRepository.findBySubjectIgnoreCaseAndPublishedTrue(subject);
+
+            if ((results == null || results.isEmpty()) && classLevel != null && !classLevel.isEmpty()) {
+                List<Pyq> all = pyqRepository.findByPublishedTrueOrderByUploadedAtDesc();
+                results = all.stream()
+                        .filter(p -> matchesClassLevel(p.getClassLevel(), classLevel))
+                        .filter(p -> subject == null || subject.isEmpty() || subject.equalsIgnoreCase(p.getSubject()))
+                        .filter(p -> year == null || year.isEmpty() || year.equalsIgnoreCase(p.getYear()))
+                        .collect(Collectors.toList());
             }
-            if (classLevel != null && !classLevel.isEmpty()) {
-                return pyqRepository.findByClassLevelAndPublishedTrue(classLevel);
-            }
-            return pyqRepository.findByPublishedTrueOrderByUploadedAtDesc();
+
+            return results != null ? results : Collections.emptyList();
         } catch (Exception ex) {
             log.warn("MongoDB unavailable in getPublishedPyqs, falling back to local store: {}", ex.getMessage());
             return localCache.values().stream()
                     .filter(Pyq::isPublished)
-                    .filter(p -> classLevel == null || classLevel.isEmpty() || classLevel.equalsIgnoreCase(p.getClassLevel()))
+                    .filter(p -> classLevel == null || classLevel.isEmpty() || matchesClassLevel(p.getClassLevel(), classLevel))
                     .filter(p -> subject == null || subject.isEmpty() || subject.equalsIgnoreCase(p.getSubject()))
                     .filter(p -> year == null || year.isEmpty() || year.equalsIgnoreCase(p.getYear()))
                     .sorted((a, b) -> (b.getUploadedAt() != null && a.getUploadedAt() != null)
@@ -209,6 +263,7 @@ public class PyqService {
         pyq.setExam(request.getExam().trim());
         pyq.setYear(request.getYear().trim());
         pyq.setChapter(request.getChapter() != null ? request.getChapter().trim() : null);
+        pyq.setMedium(request.getMedium() != null && !request.getMedium().trim().isEmpty() ? request.getMedium().trim() : null);
         pyq.setFileUrl(request.getFileUrl() != null ? request.getFileUrl().trim() : null);
         pyq.setFileName(request.getFileName() != null ? request.getFileName().trim() : null);
         pyq.setImageKitFileId(request.getImageKitFileId() != null ? request.getImageKitFileId().trim() : null);
@@ -259,6 +314,9 @@ public class PyqService {
         pyq.setExam(request.getExam().trim());
         pyq.setYear(request.getYear().trim());
         pyq.setChapter(request.getChapter() != null ? request.getChapter().trim() : null);
+        if (request.getMedium() != null) {
+            pyq.setMedium(request.getMedium().trim().isEmpty() ? null : request.getMedium().trim());
+        }
         if (request.getFileUrl() != null && !request.getFileUrl().isEmpty()) {
             pyq.setFileUrl(request.getFileUrl().trim());
         }

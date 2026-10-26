@@ -38,6 +38,8 @@ public class DotenvEnvironmentPostProcessor implements EnvironmentPostProcessor 
 
                     if (props.containsKey("MONGODB_URI")) {
                         props.put("spring.data.mongodb.uri", props.get("MONGODB_URI"));
+                    } else if (props.containsKey("MONGO_URI")) {
+                        props.put("spring.data.mongodb.uri", props.get("MONGO_URI"));
                     }
                     if (props.containsKey("PORT")) {
                         props.put("server.port", props.get("PORT"));

@@ -3,14 +3,18 @@ package com.univgeeks.controller;
 import com.univgeeks.dto.*;
 import com.univgeeks.model.Banner;
 import com.univgeeks.model.Note;
+import com.univgeeks.model.Notification;
 import com.univgeeks.model.Pyq;
 import com.univgeeks.service.BannerService;
 import com.univgeeks.service.DashboardService;
 import com.univgeeks.service.FileStorageService;
 import com.univgeeks.service.ImageKitService;
 import com.univgeeks.service.NoteService;
+import com.univgeeks.service.NotificationService;
 import com.univgeeks.service.PyqService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +28,12 @@ import java.util.Map;
 @RequestMapping("/api")
 public class AdminResourceController {
 
+    private static final Logger log = LoggerFactory.getLogger(AdminResourceController.class);
+
     private final PyqService pyqService;
     private final NoteService noteService;
     private final BannerService bannerService;
+    private final NotificationService notificationService;
     private final DashboardService dashboardService;
     private final FileStorageService fileStorageService;
     private final ImageKitService imageKitService;
@@ -34,12 +41,14 @@ public class AdminResourceController {
     public AdminResourceController(PyqService pyqService,
                                    NoteService noteService,
                                    BannerService bannerService,
+                                   NotificationService notificationService,
                                    DashboardService dashboardService,
                                    FileStorageService fileStorageService,
                                    ImageKitService imageKitService) {
         this.pyqService = pyqService;
         this.noteService = noteService;
         this.bannerService = bannerService;
+        this.notificationService = notificationService;
         this.dashboardService = dashboardService;
         this.fileStorageService = fileStorageService;
         this.imageKitService = imageKitService;
@@ -92,6 +101,8 @@ public class AdminResourceController {
             @RequestParam("exam") String exam,
             @RequestParam("year") String year,
             @RequestParam(value = "chapter", required = false) String chapter,
+            @RequestParam(value = "medium", required = false) String medium,
+            @RequestParam(value = "fileUrl", required = false) String fileUrl,
             @RequestParam(value = "published", required = false, defaultValue = "true") boolean published,
             @RequestParam(value = "file", required = false) MultipartFile file
     ) {
@@ -117,22 +128,31 @@ public class AdminResourceController {
         request.setSubject(subject.trim());
         request.setExam(exam.trim());
         request.setYear(year.trim());
-        request.setChapter(chapter != null ? chapter.trim() : null);
+        request.setChapter(chapter != null && !chapter.trim().isEmpty() ? chapter.trim() : null);
+        request.setMedium(medium != null && !medium.trim().isEmpty() ? medium.trim() : null);
         request.setPublished(published);
 
         if (file != null && !file.isEmpty()) {
             FileUploadResponse fileResponse;
             if (imageKitService.isConfigured()) {
-                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/pyqs");
+                try {
+                    fileResponse = imageKitService.uploadFile(file, "/univ-geeks/pyqs");
+                } catch (Exception e) {
+                    log.warn("ImageKit upload failed for PYQ '{}': {}. Falling back to local storage.", file.getOriginalFilename(), e.getMessage());
+                    fileResponse = fileStorageService.storeFile(file);
+                }
             } else {
-                throw new IllegalStateException(
-                        "ImageKit cloud storage is not configured. Please set IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, and IMAGEKIT_URL_ENDPOINT in backend/.env to enable cloud uploads."
-                );
+                log.warn("ImageKit cloud storage is not configured! PYQ '{}' will be stored on the local filesystem.", file.getOriginalFilename());
+                fileResponse = fileStorageService.storeFile(file);
             }
             request.setFileUrl(fileResponse.getUrl());
             request.setFileName(fileResponse.getFileName());
             request.setFileSizeMb(fileResponse.getSizeMb());
             request.setImageKitFileId(fileResponse.getFileId());
+        } else if (fileUrl != null && !fileUrl.trim().isEmpty()) {
+            request.setFileUrl(fileUrl.trim());
+        } else {
+            throw new IllegalArgumentException("PDF file or fileUrl is required");
         }
 
         Pyq created = pyqService.createPyq(request);
@@ -212,8 +232,14 @@ public class AdminResourceController {
         if (file != null && !file.isEmpty()) {
             FileUploadResponse fileResponse;
             if (imageKitService.isConfigured()) {
-                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+                try {
+                    fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+                } catch (Exception e) {
+                    log.warn("ImageKit upload failed for note '{}': {}. Falling back to local storage.", file.getOriginalFilename(), e.getMessage());
+                    fileResponse = fileStorageService.storeFile(file);
+                }
             } else {
+                log.warn("ImageKit cloud storage is not configured! Note '{}' will be stored on the local filesystem.", file.getOriginalFilename());
                 fileResponse = fileStorageService.storeFile(file);
             }
             request.setPdfUrl(fileResponse.getUrl());
@@ -261,8 +287,14 @@ public class AdminResourceController {
         if (file != null && !file.isEmpty()) {
             FileUploadResponse fileResponse;
             if (imageKitService.isConfigured()) {
-                fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+                try {
+                    fileResponse = imageKitService.uploadFile(file, "/univ-geeks/notes");
+                } catch (Exception e) {
+                    log.warn("ImageKit upload failed for note '{}': {}. Falling back to local storage.", file.getOriginalFilename(), e.getMessage());
+                    fileResponse = fileStorageService.storeFile(file);
+                }
             } else {
+                log.warn("ImageKit cloud storage is not configured! Note '{}' will be stored on the local filesystem.", file.getOriginalFilename());
                 fileResponse = fileStorageService.storeFile(file);
             }
             request.setPdfUrl(fileResponse.getUrl());
@@ -419,6 +451,41 @@ public class AdminResourceController {
     @PatchMapping("/admin/banners/{id}/status")
     public ResponseEntity<Banner> toggleBannerStatus(@PathVariable String id) {
         Banner updated = bannerService.toggleStatus(id);
+        return ResponseEntity.ok(updated);
+    }
+
+    // ==========================================
+    // Admin Notification Management
+    // ==========================================
+    @GetMapping("/admin/notifications")
+    public ResponseEntity<List<Notification>> getAllNotifications() {
+        return ResponseEntity.ok(notificationService.getAllNotifications());
+    }
+
+    @PostMapping(value = "/admin/notifications", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Notification> createNotification(@Valid @RequestBody NotificationRequest request) {
+        Notification created = notificationService.createNotification(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PutMapping(value = "/admin/notifications/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Notification> updateNotification(@PathVariable String id, @Valid @RequestBody NotificationRequest request) {
+        Notification updated = notificationService.updateNotification(id, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/admin/notifications/{id}")
+    public ResponseEntity<Map<String, String>> deleteNotification(@PathVariable String id) {
+        boolean deleted = notificationService.deleteNotification(id);
+        if (deleted) {
+            return ResponseEntity.ok(Map.of("message", "Notification deleted successfully"));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PatchMapping("/admin/notifications/{id}/status")
+    public ResponseEntity<Notification> toggleNotificationStatus(@PathVariable String id) {
+        Notification updated = notificationService.toggleStatus(id);
         return ResponseEntity.ok(updated);
     }
 }

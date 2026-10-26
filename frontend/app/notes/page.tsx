@@ -17,20 +17,94 @@ import {
 } from "./data/notesData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { getApiBaseUrl, resolvePdfUrl } from "@/app/_lib/apiConfig";
 
 function normalizePdfUrl(url?: string | null): string {
-  if (!url) return "#";
-  const trimmed = url.trim();
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    return trimmed;
+  return resolvePdfUrl(url);
+}
+
+function normalizeText(s?: string | null): string {
+  return (s || "")
+    .normalize("NFC")
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{M}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractChapterNumber(s?: string | null): number | null {
+  if (!s) return null;
+  const str = s.trim().toLowerCase();
+  const prefixMatch = str.match(/(?:chapter|ch|adhyaay|adhyaya|paath|path)\s*[-:.]?\s*(\d+)/i);
+  if (prefixMatch) {
+    return parseInt(prefixMatch[1], 10);
   }
-  if (trimmed.startsWith("/")) {
-    return trimmed;
+  if (/^\d+$/.test(str)) {
+    return parseInt(str, 10);
   }
-  return `/api/files/${encodeURIComponent(trimmed)}`;
+  const leadingMatch = str.match(/^(\d+)\s*[-:.]\s*\S/);
+  if (leadingMatch) {
+    return parseInt(leadingMatch[1], 10);
+  }
+  return null;
 }
 
 const heroBanners = [
+function matchesNoteChapter(
+  note: any,
+  targetChapterName: string,
+  targetChapterNo: number,
+  allChapters: { name: string }[]
+): boolean {
+  // If the note has an explicit chapterNo > 0, match strictly on chapterNo
+  if (note.chapterNo != null && Number(note.chapterNo) > 0) {
+    return Number(note.chapterNo) === targetChapterNo;
+  }
+
+  const noteChapterStr = (note.chapter || note.title || "").trim();
+  if (!noteChapterStr) return false;
+
+  const normTarget = normalizeText(targetChapterName);
+  const normNote = normalizeText(noteChapterStr);
+
+  if (normTarget && normNote && normTarget === normNote) {
+    return true;
+  }
+
+  // Check chapter number from note title/chapter string
+  let noteNum = extractChapterNumber(noteChapterStr);
+  if (noteNum == null) {
+    const foundIdx = allChapters.findIndex((c) => normalizeText(c.name) === normNote);
+    if (foundIdx >= 0) {
+      noteNum = foundIdx + 1;
+    }
+  }
+
+  if (noteNum != null) {
+    return noteNum === targetChapterNo;
+  }
+
+  if (normTarget.length >= 4 && normNote.length >= 4) {
+    if (normNote.includes(normTarget) || normTarget.includes(normNote)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+
+import {
+  getSubjects,
+  streams,
+  type ClassName,
+  type Stream,
+} from "./data/notesData";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
+ const bannerSlides = [
   {
     src: "/mathematics-notes-banner.png",
     alt: "Mathematics chapter-wise study notes",
@@ -67,7 +141,8 @@ export default function NotesPage() {
   const [uploadedNotes, setUploadedNotes] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("/api/notes")
+    const backendUrl = getApiBaseUrl();
+    fetch(`${backendUrl}/api/notes`)
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
         if (Array.isArray(data)) {
@@ -87,6 +162,9 @@ const [pendingPdfAction, setPendingPdfAction] =
 
 const [showHindiUnavailable, setShowHindiUnavailable] =
   useState(false);
+  const [showSubscribePopup, setShowSubscribePopup] = useState(false);
+  const [pendingPdfAction, setPendingPdfAction] = useState<"view" | "download" | null>(null);
+  const [showClass11Popup, setShowClass11Popup] = useState(false);
 
 const classSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -287,26 +365,53 @@ if (
 
   const activeChapters = useMemo(() => {
     if (!selectedSubjectData) return [];
-    return selectedSubjectData.chapters.map((ch, idx) => {
+    const chaptersList = selectedSubjectData.chapters;
+
+    return chaptersList.map((ch, idx) => {
       const chNumber = idx + 1;
-      const matchingNote = uploadedNotes.find(
-        (n) =>
-          n.status === "published" &&
-          n.classLevel === selectedClass &&
-          (selectedClass === "10" || !n.stream || n.stream.toLowerCase() === selectedStream.toLowerCase()) &&
-          n.subject?.toLowerCase() === selectedSubject?.toLowerCase() &&
-          (n.chapterNo === chNumber || n.title?.toLowerCase() === ch.name.toLowerCase()) &&
-          n.pdfUrl
-      );
-      if (matchingNote) {
+      const matchingNote = uploadedNotes.find((n) => {
+        const isPublished = !n.status || n.status.toLowerCase() === "published";
+        if (!isPublished) return false;
+
+        // Class matching: accepts "10" or "Class 10"
+        const noteClass = (n.classLevel || "").replace(/[^0-9]/g, "");
+        if (noteClass !== selectedClass && n.classLevel?.toLowerCase() !== `class ${selectedClass}`.toLowerCase()) {
+          return false;
+        }
+
+        // Stream matching for classes 11 & 12
+        if (selectedClass !== "10" && n.stream && selectedStream) {
+          if (n.stream.toLowerCase() !== selectedStream.toLowerCase()) return false;
+        }
+
+        // Subject matching
+        if (normalizeText(n.subject) !== normalizeText(selectedSubject)) {
+          return false;
+        }
+
+        if (!n.pdfUrl || !n.pdfUrl.trim()) return false;
+
+        return matchesNoteChapter(n, ch.name, chNumber, chaptersList);
+      });
+
+      if (matchingNote && matchingNote.pdfUrl) {
         return {
           ...ch,
           pdf: normalizePdfUrl(matchingNote.pdfUrl),
+          isAvailable: true,
         };
       }
+
+      // Check if real static PDF exists in public/pdfs (Mathematics 1 & 2)
+      const hasStaticPdf =
+        selectedClass === "10" &&
+        selectedSubject?.toLowerCase() === "mathematics" &&
+        (chNumber === 1 || chNumber === 2);
+
       return {
         ...ch,
-        pdf: normalizePdfUrl(ch.pdf),
+        pdf: hasStaticPdf ? normalizePdfUrl(ch.pdf) : "",
+        isAvailable: hasStaticPdf,
       };
     });
   }, [selectedSubjectData, selectedClass, selectedStream, selectedSubject, uploadedNotes]);
@@ -721,10 +826,17 @@ onClick={() => {
             </div>
 
             {/* Status */}
-            <div className="flex items-center gap-2 self-start rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 lg:self-auto">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
-              Notes available
-            </div>
+            {selectedChapterData.isAvailable ? (
+              <div className="flex items-center gap-2 self-start rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-medium text-green-700 lg:self-auto">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-green-500" />
+                Notes available
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 self-start rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-700 lg:self-auto">
+                <span className="h-2 w-2 rounded-full bg-amber-500" />
+                Notes coming soon
+              </div>
+            )}
 
           </div>
 
@@ -773,6 +885,66 @@ onClick={() => {
 
   
 </div>
+                {selectedChapterData.isAvailable ? (
+                  <>
+                    Your notes for{" "}
+                    <span className="font-semibold text-[#16213E]">
+                      {selectedChapterData.name}
+                    </span>{" "}
+                    are ready. You can open the PDF in a new tab or download it
+                    for offline study.
+                  </>
+                ) : (
+                  <>
+                    Notes for{" "}
+                    <span className="font-semibold text-[#16213E]">
+                      {selectedChapterData.name}
+                    </span>{" "}
+                    are currently being prepared and will be available soon. Please check back later.
+                  </>
+                )}
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex flex-col gap-3 sm:flex-row">
+              {selectedChapterData.isAvailable && selectedChapterData.pdf ? (
+                <>
+                  {/* View PDF */}
+                  <a
+                    href={normalizePdfUrl(selectedChapterData.pdf)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group/button inline-flex items-center justify-center gap-2 rounded-full bg-[#16213E] px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#2F5FDE] hover:shadow-lg"
+                  >
+                    <span className="text-base">👁</span>
+                    View PDF
+                    <span className="transition-transform duration-300 group-hover/button:translate-x-1">
+                      →
+                    </span>
+                  </a>
+
+                  {/* Download PDF */}
+                  <a
+                    href={normalizePdfUrl(selectedChapterData.pdf)}
+                    download
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-[#16213E] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:bg-blue-50 hover:text-[#2F5FDE]"
+                  >
+                    <span className="text-base">↓</span>
+                    Download PDF
+                  </a>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => alert(`Notes for ${selectedChapterData.name} will be available soon.`)}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-500 transition hover:bg-slate-200"
+                >
+                  <span>⏳</span>
+                  Notes Available Soon
+                </button>
+              )}
+            </div>
 
 
 
@@ -797,6 +969,8 @@ onClick={() => {
     selectedMedium === "english"
       ? selectedChapterData?.pdf
       : selectedChapterData?.hindiPdf;
+            const pdfUrl = normalizePdfUrl(selectedChapterData?.pdf);
+            const action = pendingPdfAction;
 
   setShowSubscribePopup(false);
   setPendingPdfAction(null);

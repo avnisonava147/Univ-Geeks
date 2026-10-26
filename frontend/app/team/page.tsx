@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode, CSSProperties } from "react";
 import Link from "next/link";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 
 type Member = {
   name: string;
@@ -770,20 +772,7 @@ export default function TeamPage() {
         }
       `}</style>
 
-      <nav className="team-navbar">
-        <Link href="/" className="team-logo">
-          Univ<span>Geeks</span>
-        </Link>
-
-        <div className="team-nav-links">
-          <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
-          <Link href="/team" className="current">
-            Team
-          </Link>
-          <Link href="/contact">Contact</Link>
-        </div>
-      </nav>
+      <Navbar />
 
       <section className="team-hero">
         <div className="team-eyebrow">
@@ -945,19 +934,7 @@ export default function TeamPage() {
         </Reveal>
       </div>
 
-      <footer className="team-footer">
-        <Link href="/" className="team-logo">
-          Univ<span>Geeks</span>
-        </Link>
-
-        <span>Made with ♥ for students, by students.</span>
-
-        <div className="team-footer-links">
-          <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
-        </div>
-      </footer>
+      <Footer />
     </main>
   );
 }

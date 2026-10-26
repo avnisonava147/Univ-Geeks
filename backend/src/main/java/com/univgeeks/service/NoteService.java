@@ -53,10 +53,48 @@ public class NoteService {
                 log.info("Loaded {} notes from local persistent cache", localCache.size());
             }
 
-            if (localCache.isEmpty()) {
-                seedInitialNotes();
-            } else {
-                correctAllCachedStreams();
+            // Bidirectional sync with MongoDB Atlas: load from DB first to preserve production truth
+            try {
+                List<Note> dbList = noteRepository.findAllByOrderByUpdatedAtDesc();
+                if (dbList != null && !dbList.isEmpty()) {
+                    for (Note n : dbList) {
+                        if (n.getId() != null) {
+                            normalizeNote(n);
+                            localCache.put(n.getId(), n);
+                        }
+                    }
+                    log.info("Synchronized {} notes from MongoDB Atlas", dbList.size());
+                }
+
+                // If local cache contains notes not yet in Atlas (e.g. uploaded during offline window), persist them safely
+                if (!localCache.isEmpty()) {
+                    int syncedToDb = 0;
+                    for (Note n : localCache.values()) {
+                        if (n.getId() != null && !noteRepository.existsById(n.getId())) {
+                            try {
+                                normalizeNote(n);
+                                noteRepository.save(n);
+                                syncedToDb++;
+                            } catch (Exception ex) {
+                                log.warn("Could not sync cached note '{}' to MongoDB: {}", n.getTitle(), ex.getMessage());
+                            }
+                        }
+                    }
+                    if (syncedToDb > 0) {
+                        log.info("Persisted {} previously uncommitted notes from cache into MongoDB Atlas", syncedToDb);
+                    }
+                    correctAllCachedStreams();
+                    persistCacheToFile();
+                } else {
+                    seedInitialNotes();
+                }
+            } catch (Exception ex) {
+                log.warn("Could not query MongoDB for notes on startup (using cache fallback): {}", ex.getMessage());
+                if (localCache.isEmpty()) {
+                    seedInitialNotes();
+                } else {
+                    correctAllCachedStreams();
+                }
             }
         } catch (Exception ex) {
             log.warn("Could not initialize local Notes cache: {}", ex.getMessage());
