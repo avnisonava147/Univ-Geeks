@@ -18,6 +18,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+
 function normalizePdfUrl(url?: string | null): string {
   if (!url) return "#";
   const trimmed = url.trim();
