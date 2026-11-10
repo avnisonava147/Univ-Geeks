@@ -17,6 +17,7 @@ public class Pyq {
     private String exam;       // e.g. "RBSE", "CBSE", "JEE Mains", "NEET"
     private String year;       // e.g. "2025", "2024"
     private String chapter;    // optional chapter name
+    private String medium;     // "Hindi Medium", "English Medium"
     private String fileUrl;    // accessible PDF url or path
     private String fileName;   // uploaded original filename
     private String imageKitFileId; // ImageKit remote file ID
@@ -83,6 +84,14 @@ public class Pyq {
 
     public void setChapter(String chapter) {
         this.chapter = chapter;
+    }
+
+    public String getMedium() {
+        return medium;
+    }
+
+    public void setMedium(String medium) {
+        this.medium = medium;
     }
 
     public String getFileUrl() {

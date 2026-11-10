@@ -4,6 +4,7 @@ import com.univgeeks.dto.FileUploadResponse;
 import io.imagekit.client.ImageKitClient;
 import io.imagekit.client.okhttp.ImageKitOkHttpClient;
 import io.imagekit.models.files.FileUploadParams;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,22 @@ public class ImageKitServiceImpl implements ImageKitService {
         this.publicKey = publicKey;
         this.privateKey = privateKey;
         this.urlEndpoint = urlEndpoint;
+    }
+
+    @PostConstruct
+    public void initDiagnostic() {
+        if (isConfigured()) {
+            log.info("==================================================================");
+            log.info("[Storage Diagnostic] ImageKit cloud storage: CONFIGURED");
+            log.info("[Storage Diagnostic] Target Endpoint: {}", getUrlEndpoint());
+            log.info("==================================================================");
+        } else {
+            log.warn("==================================================================");
+            log.warn("[Storage Diagnostic] ImageKit cloud storage: NOT CONFIGURED!");
+            log.warn("[Storage Diagnostic] Required production variables: IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, IMAGEKIT_URL_ENDPOINT");
+            log.warn("[Storage Diagnostic] WARNING: Uploads will fall back to local disk and will be lost on container restart!");
+            log.warn("==================================================================");
+        }
     }
 
     @Override

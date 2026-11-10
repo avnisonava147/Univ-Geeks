@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class MongoConnectivityTest {
@@ -36,6 +37,15 @@ public class MongoConnectivityTest {
 
             String dbName = mongoTemplate.getDb().getName();
             assertNotNull(dbName);
+
+            long notesCount = mongoTemplate.getCollection("notes").countDocuments();
+            long pyqsCount = mongoTemplate.getCollection("pyqs").countDocuments();
+            long questionsCount = mongoTemplate.getCollection("questions").countDocuments();
+            long adminsCount = mongoTemplate.getCollection("admins").countDocuments();
+            assertTrue(notesCount >= 0, "notes collection should exist");
+            assertTrue(pyqsCount >= 0, "pyqs collection should exist");
+            assertTrue(questionsCount >= 0, "questions collection should exist");
+            assertTrue(adminsCount >= 0, "admins collection should exist");
         } catch (Exception ex) {
             System.err.println("MongoDB Atlas connectivity note: Remote server rejected connection or timed out ("
                     + ex.getMessage() + "). Please ensure your current IP address is added to the MongoDB Atlas Network Access IP Whitelist.");

@@ -9,6 +9,7 @@ export type Chapter = {
   pdf: string;
   hindiPdf?: string | null;
    isAvailable?: boolean;
+  isAvailable?: boolean;
 };
 
 export type Subject = {
@@ -355,7 +356,7 @@ const class11Subjects: Record<Stream, Subject[]> = {
    CLASS 12
 ========================================================= */
 
-const class12Subjects: Record<Stream, Subject[]> = {
+export const class12Subjects: Record<Stream, Subject[]> = {
   Science: [
     {
       name: "Physics",
@@ -386,7 +387,7 @@ const class12Subjects: Record<Stream, Subject[]> = {
         "Solutions",
         "Electrochemistry",
         "Chemical Kinetics",
-        "The d- and f-Block Elements",
+        "d- and f-Block Elements",
         "Coordination Compounds",
         "Haloalkanes and Haloarenes",
         "Alcohols, Phenols and Ethers",
@@ -405,9 +406,9 @@ const class12Subjects: Record<Stream, Subject[]> = {
         "Matrices",
         "Determinants",
         "Continuity and Differentiability",
-        "Application of Derivatives",
+        "Applications of Derivatives",
         "Integrals",
-        "Application of Integrals",
+        "Applications of Integrals",
         "Differential Equations",
         "Vector Algebra",
         "Three Dimensional Geometry",
@@ -429,7 +430,7 @@ const class12Subjects: Record<Stream, Subject[]> = {
         "Human Health and Disease",
         "Microbes in Human Welfare",
         "Biotechnology: Principles and Processes",
-        "Biotechnology and Its Applications",
+        "Biotechnology and its Applications",
         "Organisms and Populations",
         "Ecosystem",
         "Biodiversity and Conservation",
@@ -448,7 +449,7 @@ const class12Subjects: Record<Stream, Subject[]> = {
         "Poets and Pancakes",
         "The Interview",
         "Going Places",
-        "My Mother at Sixty-Six",
+        "My Mother at Sixty-six",
         "Keeping Quiet",
         "A Thing of Beauty",
         "A Roadside Stand",
@@ -675,3 +676,33 @@ export function getSubjects(
 
   return class12Subjects[selectedStream];
 }
+
+export function getClass12Chapters(
+  subject: string,
+  stream?: Stream
+): Chapter[] {
+  const norm = (subject || "").trim().toLowerCase();
+  const isMaths = norm === "maths" || norm === "mathematics";
+
+  if (stream && class12Subjects[stream]) {
+    const sub = class12Subjects[stream].find((s) => {
+      const sName = s.name.toLowerCase();
+      if (isMaths && (sName === "maths" || sName === "mathematics")) return true;
+      return sName === norm || sName.replace(/\s+/g, "") === norm.replace(/\s+/g, "");
+    });
+    if (sub?.chapters?.length) return sub.chapters;
+  }
+
+  const allStreams: Stream[] = ["Science", "Commerce", "Arts"];
+  for (const st of allStreams) {
+    const sub = class12Subjects[st]?.find((s) => {
+      const sName = s.name.toLowerCase();
+      if (isMaths && (sName === "maths" || sName === "mathematics")) return true;
+      return sName === norm || sName.replace(/\s+/g, "") === norm.replace(/\s+/g, "");
+    });
+    if (sub?.chapters?.length) return sub.chapters;
+  }
+
+  return [];
+}
+

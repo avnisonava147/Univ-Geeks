@@ -50,8 +50,43 @@ public class BannerService {
                 log.info("Loaded {} banners from local persistent cache", localCache.size());
             }
 
-            if (localCache.isEmpty()) {
-                seedInitialBanners();
+            // Bidirectional sync with MongoDB Atlas: load from DB first to preserve production truth
+            try {
+                List<Banner> dbList = bannerRepository.findAllByOrderByPriorityAsc();
+                if (dbList != null && !dbList.isEmpty()) {
+                    for (Banner b : dbList) {
+                        if (b.getId() != null) {
+                            localCache.put(b.getId(), b);
+                        }
+                    }
+                    log.info("Synchronized {} banners from MongoDB Atlas", dbList.size());
+                }
+
+                // If local cache contains banners not yet in Atlas, persist them safely
+                if (!localCache.isEmpty()) {
+                    int syncedToDb = 0;
+                    for (Banner b : localCache.values()) {
+                        if (b.getId() != null && !bannerRepository.existsById(b.getId())) {
+                            try {
+                                bannerRepository.save(b);
+                                syncedToDb++;
+                            } catch (Exception ex) {
+                                log.warn("Could not sync cached banner '{}' to MongoDB: {}", b.getTitle(), ex.getMessage());
+                            }
+                        }
+                    }
+                    if (syncedToDb > 0) {
+                        log.info("Persisted {} previously uncommitted banners from cache into MongoDB Atlas", syncedToDb);
+                    }
+                    persistCacheToFile();
+                } else {
+                    seedInitialBanners();
+                }
+            } catch (Exception ex) {
+                log.warn("Could not query MongoDB for banners on startup (using cache fallback): {}", ex.getMessage());
+                if (localCache.isEmpty()) {
+                    seedInitialBanners();
+                }
             }
         } catch (Exception ex) {
             log.warn("Could not initialize local Banners cache: {}", ex.getMessage());

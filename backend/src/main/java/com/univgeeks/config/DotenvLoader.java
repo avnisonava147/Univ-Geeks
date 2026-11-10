@@ -28,7 +28,7 @@ public final class DotenvLoader {
                             if (System.getProperty(key) == null && System.getenv(key) == null) {
                                 System.setProperty(key, value);
                             }
-                            if ("MONGODB_URI".equals(key)) {
+                            if ("MONGODB_URI".equals(key) || "MONGO_URI".equals(key)) {
                                 if (System.getProperty("spring.data.mongodb.uri") == null && System.getenv("SPRING_DATA_MONGODB_URI") == null) {
                                     System.setProperty("spring.data.mongodb.uri", value);
                                 }

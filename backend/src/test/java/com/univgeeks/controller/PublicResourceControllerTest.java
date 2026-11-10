@@ -9,6 +9,7 @@ import com.univgeeks.security.SecurityConfig;
 import com.univgeeks.service.BannerService;
 import com.univgeeks.service.FileStorageService;
 import com.univgeeks.service.NoteService;
+import com.univgeeks.service.NotificationService;
 import com.univgeeks.service.PyqService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,9 @@ public class PublicResourceControllerTest {
 
     @MockBean
     private BannerService bannerService;
+
+    @MockBean
+    private NotificationService notificationService;
 
     @MockBean
     private FileStorageService fileStorageService;
@@ -124,6 +128,23 @@ public class PublicResourceControllerTest {
         mockMvc.perform(get("/api/files/cloud_paper.pdf"))
                 .andExpect(status().isFound())
                 .andExpect(header().string("Location", "https://ik.imagekit.io/eguapakpx/univ-geeks/pyqs/cloud_paper.pdf"));
+    }
+
+    @Test
+    public void testPublicVisitors_RedirectsToImageKit_WhenHexPrefixedFileRequested() throws Exception {
+        when(fileStorageService.fileExists("bfa2a9db_TCS-NQT-Paper-4.pdf")).thenReturn(false);
+
+        Pyq pyq = new Pyq();
+        pyq.setId("pyq-4436a43d");
+        pyq.setFileName("TCS-NQT-Paper-4_Ww2ob21PR.pdf");
+        pyq.setFileUrl("https://ik.imagekit.io/eguapakpx/univ-geeks/pyqs/TCS-NQT-Paper-4_Ww2ob21PR.pdf");
+
+        when(pyqService.findByFileName("bfa2a9db_TCS-NQT-Paper-4.pdf")).thenReturn(java.util.Optional.empty());
+        when(pyqService.getAllPyqs()).thenReturn(List.of(pyq));
+
+        mockMvc.perform(get("/api/files/bfa2a9db_TCS-NQT-Paper-4.pdf"))
+                .andExpect(status().isFound())
+                .andExpect(header().string("Location", "https://ik.imagekit.io/eguapakpx/univ-geeks/pyqs/TCS-NQT-Paper-4_Ww2ob21PR.pdf"));
     }
 
     @Test

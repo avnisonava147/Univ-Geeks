@@ -20,6 +20,7 @@ public class PyqRequest {
     private String year;
 
     private String chapter;
+    private String medium;
     private String fileUrl;
     private String fileName;
     private String imageKitFileId;
@@ -75,6 +76,14 @@ public class PyqRequest {
 
     public void setChapter(String chapter) {
         this.chapter = chapter;
+    }
+
+    public String getMedium() {
+        return medium;
+    }
+
+    public void setMedium(String medium) {
+        this.medium = medium;
     }
 
     public String getFileUrl() {

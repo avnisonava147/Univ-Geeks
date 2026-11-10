@@ -27,16 +27,18 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request,
+                                               jakarta.servlet.http.HttpServletRequest httpRequest,
                                                HttpServletResponse response) {
         LoginResponse loginResponse = adminService.authenticate(request.getUsername(), request.getPassword());
 
         // Set HttpOnly cookie for secure session retention
+        boolean isHttps = httpRequest.isSecure() || "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
         ResponseCookie cookie = ResponseCookie.from("admin_token", loginResponse.getToken())
                 .httpOnly(true)
-                .secure(false) // will be true in HTTPS/production
+                .secure(isHttps)
                 .path("/")
                 .maxAge(86400) // 24 hours
-                .sameSite("Lax")
+                .sameSite(isHttps ? "None" : "Lax")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -45,14 +47,16 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> logout(jakarta.servlet.http.HttpServletRequest httpRequest,
+                                                      HttpServletResponse response) {
         // Clear cookie
+        boolean isHttps = httpRequest.isSecure() || "https".equalsIgnoreCase(httpRequest.getHeader("X-Forwarded-Proto"));
         ResponseCookie cookie = ResponseCookie.from("admin_token", "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(isHttps)
                 .path("/")
                 .maxAge(0)
-                .sameSite("Lax")
+                .sameSite(isHttps ? "None" : "Lax")
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());

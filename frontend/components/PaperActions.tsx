@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Eye, Download } from "lucide-react";
 import SubjectsPopup from "./SubscribePopup";
+import { resolvePdfUrl } from "@/app/_lib/apiConfig";
 
 type PaperActionsProps = {
   title: string;
@@ -23,7 +24,8 @@ export default function PaperActions({
   const [hasSeenPopup, setHasSeenPopup] = useState(false);
   const [isPreferenceLoaded, setIsPreferenceLoaded] = useState(false);
 
-  const hasFile = Boolean(pdfUrl?.trim());
+  const resolvedUrl = resolvePdfUrl(pdfUrl);
+  const hasFile = Boolean(resolvedUrl);
 
   useEffect(() => {
     const seen =
@@ -34,7 +36,7 @@ export default function PaperActions({
   }, []);
 
   const performPdfAction = (action: PdfAction) => {
-    const fileUrl = pdfUrl?.trim();
+    const fileUrl = resolvePdfUrl(pdfUrl);
 
     if (!fileUrl) {
       window.alert(`${title} PDF will be available soon.`);

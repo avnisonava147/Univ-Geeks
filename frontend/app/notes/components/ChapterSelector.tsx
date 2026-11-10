@@ -212,7 +212,9 @@ export default function ChapterSelector({
               </div>
 
               <div className="rounded-full bg-[#F7F8FC] px-4 py-2 text-sm text-[#64748B]">
-                Notes available
+                {chapters.find((chapter) => chapter.id === selectedChapter)?.isAvailable
+                  ? "Notes available"
+                  : "Coming soon"}
               </div>
 
             </div>

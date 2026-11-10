@@ -3,6 +3,8 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Loader2 } from "lucide-react";
+import { getApiBaseUrl } from "@/app/_lib/apiConfig";
 
 // =====================================================
 // REVEAL ANIMATION
@@ -89,19 +91,38 @@ export default function ContactPage() {
     setLoading(true);
     setErrorMessage(null);
 
+    const backendUrl = getApiBaseUrl();
+    const payload = {
+      name: trimmedName,
+      email: trimmedEmail,
+      subject: trimmedSubject,
+      message: trimmedMessage,
+    };
+
     try {
-      const response = await fetch("/api/questions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: trimmedName,
-          email: trimmedEmail,
-          subject: trimmedSubject,
-          message: trimmedMessage,
-        }),
-      });
+      let response: Response;
+      try {
+        response = await fetch(`${backendUrl}/api/questions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+      } catch (networkErr: any) {
+        // Fallback to production Render backend if localhost is unreachable
+        if (backendUrl !== "https://univ-geeks.onrender.com") {
+          response = await fetch("https://univ-geeks.onrender.com/api/questions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+        } else {
+          throw new Error("Unable to connect to server. Please check your internet connection or try again.");
+        }
+      }
 
       if (!response.ok) {
         let msg = `Submission failed (${response.status})`;
@@ -515,12 +536,19 @@ export default function ContactPage() {
                     disabled={loading}
                     className="group inline-flex items-center gap-2 rounded-full bg-[#061A40] px-7 py-3 text-sm font-semibold text-white shadow-md transition duration-300 hover:-translate-y-1 hover:bg-blue-700 hover:shadow-lg disabled:opacity-60 disabled:hover:translate-y-0 disabled:hover:bg-[#061A40] disabled:cursor-not-allowed"
                   >
-                    {loading ? "Sending..." : "Send Message"}
-
-                    <span className="transition-transform duration-300 group-hover:translate-x-1">
-                      →
-                    </span>
-
+                    {loading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Send Message</span>
+                        <span className="transition-transform duration-300 group-hover:translate-x-1">
+                          →
+                        </span>
+                      </>
+                    )}
                   </button>
 
                 </div>

@@ -2,17 +2,13 @@ import type { NextConfig } from "next";
 import path from "node:path";
 
 const nextConfig: NextConfig = {
+  output: "export",
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
   turbopack: {
     root: path.resolve(__dirname),
-  },
-  async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${backendUrl}/api/:path*`,
-      },
-    ];
   },
 };
 

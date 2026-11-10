@@ -40,7 +40,12 @@ function LoginPageInner() {
       saveAdminSession(res.email || res.username || res.user?.email || trimmedEmail, res.token);
       router.push("/admin/dashboard");
     } catch (err: any) {
-      setError(err.message || "Invalid credentials. Please verify your admin username and password.");
+      const msg = err?.message || "";
+      if (msg.toLowerCase().includes("failed to fetch") || msg.toLowerCase().includes("networkerror")) {
+        setError("Unable to reach the backend server. The server may still be spinning up (Render free tier sleeps after inactivity) or network is interrupted. Please retry in a few seconds.");
+      } else {
+        setError(msg || "Invalid credentials. Please verify your admin username and password.");
+      }
       setSigningIn(false);
     }
   };

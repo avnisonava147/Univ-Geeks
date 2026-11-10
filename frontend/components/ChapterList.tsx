@@ -27,14 +27,14 @@ export default function ChapterList({
   return (
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
       {/* HEADER */}
-      <div className="border-b border-slate-200 p-5 sm:p-6">
+      <div className="border-b border-slate-200 p-3.5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-extrabold text-[#092653] sm:text-2xl">
+            <h2 className="flex items-center gap-2 text-base sm:text-2xl font-extrabold text-[#092653]">
               📘 Chapter-wise {subject} PYQs
             </h2>
 
-            <p className="mt-1 text-sm text-slate-500">
+            <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-slate-500">
               Select a chapter to view previous year question papers
             </p>
           </div>
@@ -42,37 +42,40 @@ export default function ChapterList({
       </div>
 
       {/* CHAPTER LIST */}
-      <div className="space-y-3 p-4 sm:p-5">
+      <div className="space-y-2 sm:space-y-3 p-3 sm:p-5">
         {visibleChapters.map((chapter, index) => (
           <div
             key={chapter}
-            className="group flex flex-col gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-blue-200 hover:shadow-sm sm:flex-row sm:items-center"
+            className="group flex flex-row items-center gap-2.5 sm:gap-4 rounded-xl border border-slate-200 p-2.5 sm:p-4 transition hover:border-blue-200 hover:shadow-sm"
           >
             {/* NUMBER */}
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 font-bold text-blue-600">
+            <div className="flex h-7 w-7 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs sm:text-sm font-bold text-blue-600">
               {index + 1}
             </div>
 
             {/* CHAPTER */}
-            <div className="flex-1">
-              <h3 className="font-bold text-slate-900">{chapter}</h3>
+            <div className="min-w-0 flex-1">
+              <h3 className="text-xs sm:text-base font-bold text-slate-900 truncate sm:whitespace-normal">
+                {chapter}
+              </h3>
 
-              <p className="mt-1 text-xs text-slate-500">
-                Previous year papers from 2013 – 2026
+              <p className="mt-0.5 text-[10px] sm:text-xs text-slate-500">
+                2013 – 2026 Papers
               </p>
             </div>
 
             {/* YEARS */}
-            <div className="rounded-lg bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">
+            <div className="hidden sm:inline-block rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 shrink-0">
               13 Years
             </div>
 
             {/* VIEW PAPERS */}
             <Link
               href={`/pyqs/${classLevel}/${subjectSlug}/2025?chapter=${encodeURIComponent(chapter)}`}
-              className="flex items-center justify-center gap-2 rounded-lg border border-blue-200 px-4 py-2 text-sm font-bold text-blue-600 transition hover:bg-blue-600 hover:text-white"
+              className="flex shrink-0 items-center justify-center gap-1 rounded-lg border border-blue-200 px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold text-blue-600 transition hover:bg-blue-600 hover:text-white"
             >
-              View Papers →
+              <span>Papers</span>
+              <span>→</span>
             </Link>
           </div>
         ))}
