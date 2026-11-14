@@ -66,8 +66,9 @@ public class PublicResourceController {
     public ResponseEntity<List<Note>> getPublishedNotes(
             @RequestParam(required = false) String classLevel,
             @RequestParam(required = false) String stream,
-            @RequestParam(required = false) String subject) {
-        List<Note> notes = noteService.getPublishedNotes(classLevel, stream, subject);
+            @RequestParam(required = false) String subject,
+            @RequestParam(required = false) String medium) {
+        List<Note> notes = noteService.getPublishedNotes(classLevel, stream, subject, medium);
         return ResponseEntity.ok(notes);
     }
 

@@ -8,7 +8,6 @@ export type Chapter = {
   name: string;
   pdf: string;
   hindiPdf?: string | null;
-   isAvailable?: boolean;
   isAvailable?: boolean;
 };
 

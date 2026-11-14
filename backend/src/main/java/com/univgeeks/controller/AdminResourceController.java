@@ -184,8 +184,8 @@ public class AdminResourceController {
     // Admin Note Management
     // ==========================================
     @GetMapping("/admin/notes")
-    public ResponseEntity<List<Note>> getAllNotes() {
-        return ResponseEntity.ok(noteService.getAllNotes());
+    public ResponseEntity<List<Note>> getAllNotes(@RequestParam(required = false) String medium) {
+        return ResponseEntity.ok(noteService.getAllNotes(medium));
     }
 
     @PostMapping(value = "/admin/notes", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -201,6 +201,7 @@ public class AdminResourceController {
             @RequestParam("subject") String subject,
             @RequestParam(value = "stream", required = false) String stream,
             @RequestParam(value = "chapterNo", required = false, defaultValue = "1") int chapterNo,
+            @RequestParam(value = "medium", required = false) String medium,
             @RequestParam(value = "pages", required = false, defaultValue = "1") int pages,
             @RequestParam(value = "sizeMb", required = false, defaultValue = "1.0") double sizeMb,
             @RequestParam(value = "status", required = false, defaultValue = "published") String status,
@@ -224,6 +225,7 @@ public class AdminResourceController {
         request.setSubject(subject.trim());
         request.setStream(stream != null ? stream.trim() : null);
         request.setChapterNo(chapterNo);
+        request.setMedium(medium != null && !medium.trim().isEmpty() ? medium.trim() : null);
         request.setPages(pages);
         request.setSizeMb(sizeMb);
         request.setStatus(status != null ? status.trim() : "published");
@@ -268,6 +270,7 @@ public class AdminResourceController {
             @RequestParam("subject") String subject,
             @RequestParam(value = "stream", required = false) String stream,
             @RequestParam(value = "chapterNo", required = false, defaultValue = "1") int chapterNo,
+            @RequestParam(value = "medium", required = false) String medium,
             @RequestParam(value = "pages", required = false, defaultValue = "1") int pages,
             @RequestParam(value = "sizeMb", required = false, defaultValue = "1.0") double sizeMb,
             @RequestParam(value = "status", required = false, defaultValue = "published") String status,
@@ -280,6 +283,7 @@ public class AdminResourceController {
         request.setSubject(subject.trim());
         request.setStream(stream != null ? stream.trim() : null);
         request.setChapterNo(chapterNo);
+        request.setMedium(medium != null && !medium.trim().isEmpty() ? medium.trim() : null);
         request.setPages(pages);
         request.setSizeMb(sizeMb);
         request.setStatus(status != null ? status.trim() : "published");

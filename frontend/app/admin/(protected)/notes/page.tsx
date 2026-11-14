@@ -43,6 +43,7 @@ interface NoteDoc {
   updatedAt: string;
   uploadedBy: string;
   pdfUrl: string;
+  medium?: string;
 }
 
 const SUBJECT_COLORS: Record<string, string> = {
@@ -117,6 +118,7 @@ const EMPTY_FORM = {
   classLevel: "10" as ClassLevel,
   stream: "Common" as StreamName,
   chapterNo: 1,
+  medium: "ENGLISH" as "ENGLISH" | "HINDI",
   pages: 20,
   sizeMb: 1.5,
   status: "draft" as NoteStatus,
@@ -157,6 +159,7 @@ export default function NotesPage() {
   const [classFilter, setClassFilter] = useState<"" | ClassLevel>("");
   const [subjectFilter, setSubjectFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<"" | NoteStatus>("");
+  const [mediumFilter, setMediumFilter] = useState<string>("");
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
   const [sortKey, setSortKey] = useState<SortKey>("updatedAt");
   const [sortAsc, setSortAsc] = useState(false);
@@ -183,6 +186,8 @@ export default function NotesPage() {
         const classLevel = (n.classLevel ?? "10") as ClassLevel;
         const subject = n.subject ?? "";
         const stream = deriveStream(subject, classLevel, (n.stream ?? "Common") as StreamName);
+        const rawMedium = (n.medium || "").trim().toUpperCase();
+        const medium = rawMedium.includes("HINDI") ? "HINDI" : "ENGLISH";
         return {
           id: n.id,
           title: n.title ?? "",
@@ -197,6 +202,7 @@ export default function NotesPage() {
           updatedAt: n.updatedAt ? n.updatedAt.split("T")[0] : "",
           uploadedBy: n.uploadedBy ?? "Admin",
           pdfUrl: n.pdfUrl ?? "",
+          medium,
         };
       });
       setNotes(mapped);
@@ -237,12 +243,19 @@ export default function NotesPage() {
       .filter((n) => (classFilter ? n.classLevel === classFilter : true))
       .filter((n) => (subjectFilter ? n.subject === subjectFilter : true))
       .filter((n) => (statusFilter ? n.status === statusFilter : true))
+      .filter((n) => {
+        if (!mediumFilter) return true;
+        if (mediumFilter === "UNCLASSIFIED") {
+          return !n.medium || n.medium.trim() === "";
+        }
+        return (n.medium || "").toUpperCase().includes(mediumFilter);
+      })
       .sort((a, b) => {
         const dir = sortAsc ? 1 : -1;
         if (sortKey === "downloads") return (a.downloads - b.downloads) * dir;
         return a[sortKey].localeCompare(b[sortKey]) * dir;
       });
-  }, [notes, search, classFilter, subjectFilter, statusFilter, sortKey, sortAsc]);
+  }, [notes, search, classFilter, subjectFilter, statusFilter, mediumFilter, sortKey, sortAsc]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) setSortAsc((prev) => !prev);
@@ -316,6 +329,7 @@ export default function NotesPage() {
       stream: "Common",
       subject: initialSubject,
       chapterNo: 1,
+      medium: "ENGLISH",
       title: chList[0]?.name || "Real Numbers",
     });
     setShowModal(true);
@@ -331,6 +345,7 @@ export default function NotesPage() {
       classLevel: note.classLevel,
       stream,
       chapterNo: note.chapterNo,
+      medium: (note.medium?.toUpperCase().includes("HINDI") ? "HINDI" : "ENGLISH") as "ENGLISH" | "HINDI",
       pages: note.pages,
       sizeMb: note.sizeMb,
       status: note.status,
@@ -403,6 +418,7 @@ export default function NotesPage() {
         formData.append("classLevel", form.classLevel);
         formData.append("stream", stream);
         formData.append("chapterNo", String(form.chapterNo));
+        formData.append("medium", form.medium);
         formData.append("pages", String(form.pages));
         formData.append("sizeMb", String(form.sizeMb));
         formData.append("status", form.status);
@@ -423,6 +439,7 @@ export default function NotesPage() {
           classLevel: form.classLevel,
           stream,
           chapterNo: form.chapterNo,
+          medium: form.medium,
           pages: form.pages,
           sizeMb: form.sizeMb,
           status: form.status,
@@ -467,6 +484,7 @@ export default function NotesPage() {
     setClassFilter("");
     setSubjectFilter("");
     setStatusFilter("");
+    setMediumFilter("");
   }
 
   const statusPill = (status: NoteStatus, onClick?: () => void) =>
@@ -597,6 +615,17 @@ export default function NotesPage() {
           <option value="draft">Draft</option>
         </select>
 
+        <select
+          value={mediumFilter}
+          onChange={(e) => setMediumFilter(e.target.value)}
+          className="rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+        >
+          <option value="">All Mediums</option>
+          <option value="ENGLISH">English Medium</option>
+          <option value="HINDI">Hindi Medium</option>
+          <option value="UNCLASSIFIED">Unclassified</option>
+        </select>
+
         <div className="flex items-center rounded-md border border-[#E5E0D5] bg-white p-0.5">
           <button
             type="button"
@@ -678,12 +707,29 @@ export default function NotesPage() {
                 style={{ animationDelay: `${Math.min(i, 8) * 45}ms` }}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span
-                    className="rounded-lg px-2 py-1 text-[11px] font-bold"
-                    style={{ backgroundColor: `${color}1A`, color }}
-                  >
-                    Ch {note.chapterNo}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span
+                      className="rounded-lg px-2 py-1 text-[11px] font-bold"
+                      style={{ backgroundColor: `${color}1A`, color }}
+                    >
+                      Ch {note.chapterNo}
+                    </span>
+                    {note.medium === "ENGLISH" && (
+                      <span className="rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold text-blue-700">
+                        English
+                      </span>
+                    )}
+                    {note.medium === "HINDI" && (
+                      <span className="rounded-md border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                        Hindi
+                      </span>
+                    )}
+                    {!note.medium && (
+                      <span className="rounded-md border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500">
+                        Unclassified
+                      </span>
+                    )}
+                  </div>
                   <span onClick={(e) => e.stopPropagation()}>
                     {statusPill(note.status, () => quickToggleStatus(note))}
                   </span>
@@ -779,6 +825,7 @@ export default function NotesPage() {
                 </th>
                 <th className="px-2 py-3 font-medium">Class / Stream</th>
                 <th className="px-2 py-3 font-medium">Subject</th>
+                <th className="px-2 py-3 font-medium">Medium</th>
                 <th className="px-2 py-3 font-medium">Status</th>
                 <th className="px-2 py-3 font-medium">
                   <button
@@ -856,6 +903,23 @@ export default function NotesPage() {
                       >
                         {note.subject}
                       </span>
+                    </td>
+                    <td className="px-2 py-3">
+                      {note.medium === "ENGLISH" && (
+                        <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+                          English
+                        </span>
+                      )}
+                      {note.medium === "HINDI" && (
+                        <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+                          Hindi
+                        </span>
+                      )}
+                      {!note.medium && (
+                        <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
+                          Unclassified
+                        </span>
+                      )}
                     </td>
                     <td className="px-2 py-3">{statusPill(note.status, () => quickToggleStatus(note))}</td>
                     <td className="px-2 py-3 text-[#6B7280]">{note.downloads.toLocaleString()}</td>
@@ -991,23 +1055,38 @@ export default function NotesPage() {
                 </div>
               </div>
 
-              {/* Subject */}
-              <div>
-                <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">
-                  Subject <span className="text-[#B0533E]">*</span>
-                </label>
-                <select
-                  value={form.subject}
-                  onChange={(e) => handleFormSubjectChange(e.target.value)}
-                  className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
-                >
-                  <option value="" disabled>Select a subject</option>
-                  {(STREAM_SUBJECTS[form.stream] || []).map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
+              {/* Subject + Medium */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">
+                    Subject <span className="text-[#B0533E]">*</span>
+                  </label>
+                  <select
+                    value={form.subject}
+                    onChange={(e) => handleFormSubjectChange(e.target.value)}
+                    className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+                  >
+                    <option value="" disabled>Select a subject</option>
+                    {(STREAM_SUBJECTS[form.stream] || []).map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-medium text-[#6B7280]">
+                    Medium <span className="text-[#B0533E]">*</span>
+                  </label>
+                  <select
+                    value={form.medium}
+                    onChange={(e) => setForm({ ...form, medium: e.target.value as "ENGLISH" | "HINDI" })}
+                    className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+                  >
+                    <option value="ENGLISH">English Medium</option>
+                    <option value="HINDI">Hindi Medium</option>
+                  </select>
+                </div>
               </div>
 
               {/* Chapter Selection: Class 10 & 12 Dropdown vs General Title Input */}
@@ -1164,7 +1243,15 @@ export default function NotesPage() {
                 <p className="mt-0.5 text-xs text-[#9CA3AF]">
                   {previewNote.subject} &middot; {CLASS_META[previewNote.classLevel].label}
                   {previewNote.stream !== "Common" ? ` · ${previewNote.stream}` : ""} &middot; Chapter{" "}
-                  {previewNote.chapterNo} &middot; {previewNote.downloads.toLocaleString()} downloads
+                  {previewNote.chapterNo} &middot;{" "}
+                  <span className="font-medium text-[#1C2B3A]">
+                    {previewNote.medium === "HINDI"
+                      ? "Hindi Medium"
+                      : previewNote.medium === "ENGLISH"
+                      ? "English Medium"
+                      : "Unclassified Medium"}
+                  </span>{" "}
+                  &middot; {previewNote.downloads.toLocaleString()} downloads
                 </p>
               </div>
               <div className="flex items-center gap-3">

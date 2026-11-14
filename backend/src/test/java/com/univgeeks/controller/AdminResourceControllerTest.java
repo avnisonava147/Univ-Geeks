@@ -197,6 +197,7 @@ public class AdminResourceControllerTest {
         request.setSubject("Physics");
         request.setStream("Science");
         request.setChapterNo(1);
+        request.setMedium("ENGLISH");
         request.setPdfUrl("/files/note1.pdf");
 
         Note saved = new Note();
@@ -206,6 +207,7 @@ public class AdminResourceControllerTest {
         saved.setSubject("Physics");
         saved.setStream("Science");
         saved.setChapterNo(1);
+        saved.setMedium("ENGLISH");
         saved.setStatus("published");
 
         when(noteService.createNote(any(NoteRequest.class))).thenReturn(saved);
@@ -216,6 +218,7 @@ public class AdminResourceControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value("note-201"))
+                .andExpect(jsonPath("$.medium").value("ENGLISH"))
                 .andExpect(jsonPath("$.title").value("Electric Charges and Fields"));
     }
 
