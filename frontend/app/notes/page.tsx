@@ -19,6 +19,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getApiBaseUrl, resolvePdfUrl } from "@/app/_lib/apiConfig";
 
+
+function normalizePdfUrl(url?: string | null): string {
 function normalizePdfUrl(url?: string | null, note?: any): string {
   if (note?.fileName && (note?.imageKitFileId || (url && url.includes("/api/files/")))) {
     const cleanFileName = note.fileName.replace(/^\/?(api\/files\/)?/, "");
