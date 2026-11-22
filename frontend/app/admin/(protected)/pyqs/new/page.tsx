@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { UploadCloud, X, AlertCircle } from "lucide-react";
 import { apiRequest } from "../../_lib/api";
 import { getClass10Chapters, getClass12Chapters } from "../../../../notes/data/notesData";
+import { subjectData as class12PyqSubjectData } from "@/app/pyqs/class-12/[subject]/page";
 
 const CLASS_10_SUBJECTS = [
   "Mathematics",
@@ -67,7 +68,19 @@ export default function NewPyqPage() {
 
   const syllabusChapters = useMemo(() => {
     if (isClass10) return getClass10Chapters(subject);
-    if (isClass12) return getClass12Chapters(subject);
+    if (isClass12) {
+      const subjectKey = subject.trim().toLowerCase();
+      if (subjectKey === "english" || subjectKey === "hindi") {
+        const frontendChapters = class12PyqSubjectData[subjectKey]?.chapters;
+        if (frontendChapters && frontendChapters.length > 0) {
+          return frontendChapters.map((name, idx) => ({
+            id: `class-12-${subjectKey}-${idx + 1}`,
+            name,
+          }));
+        }
+      }
+      return getClass12Chapters(subject);
+    }
     return [];
   }, [isClass10, isClass12, subject]);
 

@@ -15,7 +15,7 @@ export function generateStaticParams() {
   return Object.keys(subjectData).map((subject) => ({ subject }));
 }
 
-const subjectData: Record<
+export const subjectData: Record<
   string,
   {
     name: string;
