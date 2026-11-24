@@ -9,7 +9,9 @@ import { getApiBaseUrl } from "@/app/_lib/apiConfig";
 const navItems = [
   { label: "Home", href: "/" },
   { label: "PYQs", href: "/pyqs" },
+  
   { label: "Notes", href: "/notes" },
+  { label: "Important PDFs", href: "/important-pdfs" },
   { label: "Contact Us", href: "/contact" },
   { label: "About Us", href: "/about" },
 ];
