@@ -14,9 +14,10 @@ export interface ImportantPdfItem {
 }
 
 const ITEMS_PER_PAGE = 6;
+const PDF_CACHE_KEY = "univgeeks_important_pdfs_cache";
 
 export default function ImportantPDFs() {
-  const [items, setItems] = useState<ImportantPdfItem[]>(pdfData);
+  const [items, setItems] = useState<ImportantPdfItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
@@ -34,21 +35,53 @@ export default function ImportantPDFs() {
     }
   }, []);
 
-  // Fetch dynamic notices from backend API
+  // Fetch dynamic notices from backend API (hydrate from sessionStorage first to avoid flash on refresh)
   useEffect(() => {
     let isMounted = true;
+    let hasCached = false;
+
+    if (typeof window !== "undefined") {
+      try {
+        const cached = sessionStorage.getItem(PDF_CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setItems(parsed);
+            setLoading(false);
+            hasCached = true;
+          }
+        }
+      } catch {
+        // ignore storage parse error
+      }
+    }
+
     async function fetchImportantPdfs() {
       try {
         const backendUrl = getApiBaseUrl();
         const res = await fetch(`${backendUrl}/api/important-pdfs`);
         if (res.ok) {
           const data = await res.json();
-          if (isMounted && Array.isArray(data) && data.length > 0) {
+          if (isMounted && Array.isArray(data)) {
             setItems(data);
+            if (typeof window !== "undefined") {
+              try {
+                sessionStorage.setItem(PDF_CACHE_KEY, JSON.stringify(data));
+              } catch {
+                // ignore quota errors
+              }
+            }
+            return;
           }
+        }
+        if (isMounted && !hasCached) {
+          setItems(pdfData);
         }
       } catch (err) {
         console.warn("Could not fetch important PDFs from backend, using default items:", err);
+        if (isMounted && !hasCached) {
+          setItems(pdfData);
+        }
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -303,7 +336,19 @@ export default function ImportantPDFs() {
 
           {/* Notice Items */}
           <div className="divide-y divide-slate-100">
-            {currentItems.length === 0 ? (
+            {loading && items.length === 0 ? (
+              <div className="divide-y divide-slate-100">
+                {[1, 2, 3, 4].map((n) => (
+                  <div key={n} className="flex items-center gap-4 sm:gap-6 px-5 sm:px-8 py-4 sm:py-5 animate-pulse">
+                    <div className="h-12 w-12 rounded-lg bg-slate-100 shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-slate-100 rounded w-3/4" />
+                      <div className="h-3 bg-slate-100 rounded w-1/3" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : currentItems.length === 0 ? (
               <div className="py-12 text-center text-slate-500 text-sm">
                 No documents available at the moment.
               </div>

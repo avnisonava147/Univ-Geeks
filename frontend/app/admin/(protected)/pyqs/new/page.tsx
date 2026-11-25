@@ -47,6 +47,8 @@ const OTHER_CLASS_SUBJECTS = [
 export default function NewPyqPage() {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
+  const [useManualUrl, setUseManualUrl] = useState(false);
+  const [externalUrl, setExternalUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -142,7 +144,12 @@ export default function NewPyqPage() {
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!file) {
+    if (useManualUrl) {
+      if (!externalUrl.trim()) {
+        setErrorMessage("Please enter a valid external PDF URL.");
+        return;
+      }
+    } else if (!file) {
       setErrorMessage("Please select a PDF file before uploading.");
       return;
     }
@@ -178,7 +185,11 @@ export default function NewPyqPage() {
         multipartData.append("chapter", resolvedChapter);
       }
       multipartData.append("published", "true");
-      multipartData.append("file", file);
+      if (useManualUrl) {
+        multipartData.append("fileUrl", externalUrl.trim());
+      } else if (file) {
+        multipartData.append("file", file);
+      }
 
       await apiRequest("/api/admin/pyqs", {
         method: "POST",
@@ -347,10 +358,41 @@ export default function NewPyqPage() {
           </select>
         </div>
 
-        {/* File upload */}
+        {/* File upload / External URL */}
         <div>
-          <label className="block text-sm font-medium text-[#1C2B3A] mb-1.5">PDF File</label>
-          {!file ? (
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-sm font-medium text-[#1C2B3A]">PDF File</label>
+            <button
+              type="button"
+              onClick={() => {
+                const next = !useManualUrl;
+                setUseManualUrl(next);
+                setErrorMessage(null);
+                if (next) setFile(null);
+                else setExternalUrl("");
+              }}
+              className="text-xs font-medium text-blue-600 hover:text-blue-700"
+            >
+              {useManualUrl ? "← Upload file from computer" : "Use external PDF URL instead →"}
+            </button>
+          </div>
+          {useManualUrl ? (
+            <div>
+              <input
+                type="url"
+                value={externalUrl}
+                onChange={(e) => {
+                  setExternalUrl(e.target.value);
+                  if (errorMessage) setErrorMessage(null);
+                }}
+                placeholder="https://drive.google.com/... or https://example.com/pyq.pdf"
+                className="w-full rounded-md border border-[#E5E0D5] px-3 py-2 text-sm text-[#1C2B3A] focus:outline-none focus:border-[#E8A33D]"
+              />
+              <p className="mt-1 text-xs text-[#6B7280]">
+                Enter a direct link to an external PDF (e.g. Google Drive share link).
+              </p>
+            </div>
+          ) : !file ? (
             <label
               htmlFor="pdf-upload"
               className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-[#E5E0D5] rounded-md py-8 cursor-pointer hover:border-[#E8A33D] transition-colors"
@@ -388,7 +430,7 @@ export default function NewPyqPage() {
         <div className="flex items-center gap-3 pt-2">
           <button
             type="submit"
-            disabled={submitting || !file}
+            disabled={submitting || (useManualUrl ? !externalUrl.trim() : !file)}
             className="bg-[#1C2B3A] text-white text-sm px-5 py-2.5 rounded-md hover:bg-[#28394D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center gap-2"
           >
             {submitting ? (

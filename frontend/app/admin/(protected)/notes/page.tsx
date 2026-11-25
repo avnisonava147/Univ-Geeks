@@ -169,6 +169,7 @@ export default function NotesPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
+  const [useManualUrl, setUseManualUrl] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const [previewNote, setPreviewNote] = useState<NoteDoc | null>(null);
@@ -321,6 +322,7 @@ export default function NotesPage() {
   function openAdd() {
     setEditingId(null);
     setSelectedPdfFile(null);
+    setUseManualUrl(false);
     const initialSubject = STREAM_SUBJECTS.Common[0]; // "Mathematics"
     const chList = getFormChapters("10", initialSubject, "Common");
     setForm({
@@ -337,8 +339,12 @@ export default function NotesPage() {
 
   function openEdit(note: NoteDoc) {
     const stream = deriveStream(note.subject, note.classLevel, note.stream);
+    const isExternalUrl = Boolean(
+      note.pdfUrl && (note.pdfUrl.startsWith("http://") || note.pdfUrl.startsWith("https://"))
+    );
     setEditingId(note.id);
     setSelectedPdfFile(null);
+    setUseManualUrl(isExternalUrl);
     setForm({
       title: note.title,
       subject: note.subject,
@@ -350,7 +356,7 @@ export default function NotesPage() {
       sizeMb: note.sizeMb,
       status: note.status,
       uploadedBy: note.uploadedBy,
-      pdfFile: note.pdfUrl.split("/").pop() ?? "",
+      pdfFile: isExternalUrl ? note.pdfUrl : (note.pdfUrl.split("/").pop() ?? ""),
     });
     setShowModal(true);
   }
@@ -411,7 +417,7 @@ export default function NotesPage() {
     const stream = deriveStream(form.subject.trim(), form.classLevel, form.stream);
 
     try {
-      if (selectedPdfFile) {
+      if (!useManualUrl && selectedPdfFile) {
         const formData = new FormData();
         formData.append("title", form.title.trim());
         formData.append("subject", form.subject.trim());
@@ -991,34 +997,67 @@ export default function NotesPage() {
             </div>
 
             <div className="flex-1 space-y-4 overflow-y-auto p-5">
-              {/* PDF dropzone */}
-              <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-[#E5E0D5] py-6 text-center transition-colors hover:border-[#E8A33D]/60 hover:bg-[#FAF7F2]/60">
-                <UploadCloud size={22} className="text-[#9CA3AF]" />
-                {form.pdfFile ? (
-                  <p className="px-4 text-xs font-medium text-[#6B8F71]">{form.pdfFile}</p>
+              {/* PDF File / External URL */}
+              <div>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <label className="block text-xs font-medium text-[#6B7280]">PDF Document</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = !useManualUrl;
+                      setUseManualUrl(next);
+                      if (next) setSelectedPdfFile(null);
+                      setForm((prev) => ({ ...prev, pdfFile: "" }));
+                    }}
+                    className="text-xs font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    {useManualUrl ? "← Upload file from computer" : "Use external PDF URL instead →"}
+                  </button>
+                </div>
+
+                {useManualUrl ? (
+                  <div>
+                    <input
+                      type="url"
+                      value={form.pdfFile}
+                      onChange={(e) => setForm((prev) => ({ ...prev, pdfFile: e.target.value }))}
+                      placeholder="https://drive.google.com/... or https://example.com/notes.pdf"
+                      className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#374151] transition focus:border-[#E8A33D] focus:outline-none focus:ring-2 focus:ring-[#E8A33D]/40"
+                    />
+                    <p className="mt-1 text-[10px] text-[#9CA3AF]">
+                      Enter a direct link to an external PDF (e.g. Google Drive share link).
+                    </p>
+                  </div>
                 ) : (
-                  <>
-                    <p className="text-xs text-[#9CA3AF]">Click to choose the chapter PDF</p>
-                    <p className="text-[10px] text-[#C4BEB2]">A path is auto-generated if skipped</p>
-                  </>
+                  <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-[#E5E0D5] py-6 text-center transition-colors hover:border-[#E8A33D]/60 hover:bg-[#FAF7F2]/60">
+                    <UploadCloud size={22} className="text-[#9CA3AF]" />
+                    {form.pdfFile ? (
+                      <p className="px-4 text-xs font-medium text-[#6B8F71]">{form.pdfFile}</p>
+                    ) : (
+                      <>
+                        <p className="text-xs text-[#9CA3AF]">Click to choose the chapter PDF</p>
+                        <p className="text-[10px] text-[#C4BEB2]">A path is auto-generated if skipped</p>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setSelectedPdfFile(file);
+                          setForm((prev) => ({
+                            ...prev,
+                            pdfFile: file.name,
+                            sizeMb: Math.round((file.size / (1024 * 1024)) * 10) / 10 || 0.1,
+                          }));
+                        }
+                      }}
+                    />
+                  </label>
                 )}
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setSelectedPdfFile(file);
-                      setForm((prev) => ({
-                        ...prev,
-                        pdfFile: file.name,
-                        sizeMb: Math.round((file.size / (1024 * 1024)) * 10) / 10 || 0.1,
-                      }));
-                    }
-                  }}
-                />
-              </label>
+              </div>
 
               {/* Class + Stream */}
               <div className="grid grid-cols-2 gap-3">

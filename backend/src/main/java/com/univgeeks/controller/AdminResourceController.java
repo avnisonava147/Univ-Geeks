@@ -164,8 +164,72 @@ public class AdminResourceController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @PutMapping("/admin/pyqs/{id}")
+    @PutMapping(value = "/admin/pyqs/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Pyq> updatePyq(@PathVariable String id, @Valid @RequestBody PyqRequest request) {
+        Pyq updated = pyqService.updatePyq(id, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping(value = "/admin/pyqs/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Pyq> updatePyqMultipart(
+            @PathVariable String id,
+            @RequestParam("title") String title,
+            @RequestParam("classLevel") String classLevel,
+            @RequestParam("subject") String subject,
+            @RequestParam("exam") String exam,
+            @RequestParam("year") String year,
+            @RequestParam(value = "chapter", required = false) String chapter,
+            @RequestParam(value = "medium", required = false) String medium,
+            @RequestParam(value = "fileUrl", required = false) String fileUrl,
+            @RequestParam(value = "published", required = false, defaultValue = "true") boolean published,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
+        if (title == null || title.trim().isEmpty()) {
+            throw new IllegalArgumentException("Title is required");
+        }
+        if (classLevel == null || classLevel.trim().isEmpty()) {
+            throw new IllegalArgumentException("Class level is required");
+        }
+        if (subject == null || subject.trim().isEmpty()) {
+            throw new IllegalArgumentException("Subject is required");
+        }
+        if (exam == null || exam.trim().isEmpty()) {
+            throw new IllegalArgumentException("Exam is required");
+        }
+        if (year == null || year.trim().isEmpty()) {
+            throw new IllegalArgumentException("Year is required");
+        }
+
+        PyqRequest request = new PyqRequest();
+        request.setTitle(title.trim());
+        request.setClassLevel(classLevel.trim());
+        request.setSubject(subject.trim());
+        request.setExam(exam.trim());
+        request.setYear(year.trim());
+        request.setChapter(chapter != null && !chapter.trim().isEmpty() ? chapter.trim() : null);
+        request.setMedium(medium != null && !medium.trim().isEmpty() ? medium.trim() : null);
+        request.setPublished(published);
+
+        if (file != null && !file.isEmpty()) {
+            FileUploadResponse fileResponse;
+            if (imageKitService.isConfigured()) {
+                try {
+                    fileResponse = imageKitService.uploadFile(file, "/univ-geeks/pyqs");
+                } catch (Exception e) {
+                    log.warn("ImageKit upload failed for PYQ '{}': {}. Falling back to local storage.", file.getOriginalFilename(), e.getMessage());
+                    fileResponse = fileStorageService.storeFile(file);
+                }
+            } else {
+                fileResponse = fileStorageService.storeFile(file);
+            }
+            request.setFileUrl(fileResponse.getUrl());
+            request.setFileName(fileResponse.getFileName());
+            request.setFileSizeMb(fileResponse.getSizeMb());
+            request.setImageKitFileId(fileResponse.getFileId());
+        } else if (fileUrl != null && !fileUrl.trim().isEmpty()) {
+            request.setFileUrl(fileUrl.trim());
+        }
+
         Pyq updated = pyqService.updatePyq(id, request);
         return ResponseEntity.ok(updated);
     }

@@ -47,7 +47,7 @@ public class ImportantPdfService {
     }
 
     private boolean shouldAttemptMongo() {
-        if (!mongoAvailable && (System.currentTimeMillis() - lastMongoFailure < 30000)) {
+        if (!mongoAvailable && (System.currentTimeMillis() - lastMongoFailure < 300_000)) {
             return false;
         }
         return true;
@@ -136,6 +136,10 @@ public class ImportantPdfService {
         localCache.put(id, p);
     }
 
+    private void persistCacheAsync() {
+        java.util.concurrent.CompletableFuture.runAsync(this::persistCacheToFile);
+    }
+
     private synchronized void persistCacheToFile() {
         try {
             Files.createDirectories(cacheFilePath.getParent());
@@ -198,19 +202,19 @@ public class ImportantPdfService {
         pdf.setUpdatedAt(Instant.now());
 
         localCache.put(pdf.getId(), pdf);
-        persistCacheToFile();
 
         if (shouldAttemptMongo()) {
             try {
                 ImportantPdf saved = repository.save(pdf);
                 localCache.put(saved.getId(), saved);
-                persistCacheToFile();
+                persistCacheAsync();
                 return saved;
             } catch (Exception ex) {
                 recordMongoFailure(ex, "createPdf");
             }
         }
 
+        persistCacheAsync();
         return pdf;
     }
 
@@ -340,24 +344,33 @@ public class ImportantPdfService {
     }
 
     public boolean deletePdf(String id) {
-        ImportantPdf pdf = getPdfById(id).orElse(null);
-        if (pdf != null) {
-            cleanupFile(pdf);
+        ImportantPdf pdf = localCache.remove(id);
+        boolean removedFromCache = pdf != null;
+
+        if (pdf == null && shouldAttemptMongo()) {
+            try {
+                pdf = repository.findById(id).orElse(null);
+            } catch (Exception ex) {
+                recordMongoFailure(ex, "deletePdf.lookup");
+            }
         }
 
-        boolean removedFromCache = localCache.remove(id) != null;
-        persistCacheToFile();
-
         boolean deletedFromMongo = false;
-        if (shouldAttemptMongo()) {
+        if (pdf != null && shouldAttemptMongo()) {
             try {
-                if (repository.existsById(id)) {
-                    repository.deleteById(id);
-                    deletedFromMongo = true;
-                }
+                repository.deleteById(id);
+                deletedFromMongo = true;
             } catch (Exception ex) {
                 recordMongoFailure(ex, "deletePdf");
             }
+        }
+
+        if (pdf != null) {
+            final ImportantPdf toCleanup = pdf;
+            java.util.concurrent.CompletableFuture.runAsync(() -> cleanupFile(toCleanup));
+        }
+        if (removedFromCache) {
+            persistCacheAsync();
         }
 
         // Return true if removed from either cache or MongoDB

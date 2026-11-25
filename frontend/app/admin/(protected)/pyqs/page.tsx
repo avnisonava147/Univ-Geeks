@@ -5,6 +5,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   Plus,
+  Pencil,
   Trash2,
   X,
   Download,
@@ -15,6 +16,7 @@ import {
   List,
   Eye,
   CheckCircle2,
+  UploadCloud,
 } from "lucide-react";
 import { apiRequest } from "../_lib/api";
 import { resolvePdfUrl } from "@/app/_lib/apiConfig";
@@ -62,6 +64,22 @@ export default function PyqsPage() {
   const [sortAsc, setSortAsc] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [previewPyq, setPreviewPyq] = useState<Pyq | null>(null);
+  const [editingPyq, setEditingPyq] = useState<Pyq | null>(null);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    classLevel: "Class 10",
+    subject: "",
+    exam: "",
+    year: "",
+    chapter: "",
+    medium: "",
+    published: true,
+    fileUrl: "",
+  });
+  const [editFile, setEditFile] = useState<File | null>(null);
+  const [editUseManualUrl, setEditUseManualUrl] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   const fetchPyqs = useCallback(async () => {
@@ -128,6 +146,95 @@ export default function PyqsPage() {
       if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
+  }
+
+  function openEdit(pyq: Pyq) {
+    const isExternal = Boolean(
+      pyq.fileUrl &&
+      (pyq.fileUrl.startsWith("http://") || pyq.fileUrl.startsWith("https://")) &&
+      !pyq.fileUrl.includes("ik.imagekit.io")
+    );
+    setEditingPyq(pyq);
+    setEditForm({
+      title: pyq.title,
+      classLevel: pyq.classLevel || "Class 10",
+      subject: pyq.subject,
+      exam: pyq.exam,
+      year: pyq.year,
+      chapter: pyq.chapter ?? "",
+      medium: pyq.medium ?? "",
+      published: pyq.published,
+      fileUrl: isExternal ? pyq.fileUrl : "",
+    });
+    setEditFile(null);
+    setEditUseManualUrl(isExternal);
+    setEditError(null);
+  }
+
+  async function saveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingPyq || savingEdit) return;
+    setEditError(null);
+
+    if (!editForm.title.trim()) {
+      setEditError("Title is required.");
+      return;
+    }
+    if (!editForm.subject.trim() || !editForm.exam.trim() || !editForm.year.trim()) {
+      setEditError("Class, Subject, Exam, and Year are required.");
+      return;
+    }
+    if (editUseManualUrl && !editForm.fileUrl.trim()) {
+      setEditError("Please enter a valid external PDF URL.");
+      return;
+    }
+
+    setSavingEdit(true);
+    try {
+      if (!editUseManualUrl && editFile) {
+        const fd = new FormData();
+        fd.append("title", editForm.title.trim());
+        fd.append("classLevel", editForm.classLevel.trim());
+        fd.append("subject", editForm.subject.trim());
+        fd.append("exam", editForm.exam.trim());
+        fd.append("year", editForm.year.trim());
+        if (editForm.chapter.trim()) fd.append("chapter", editForm.chapter.trim());
+        if (editForm.medium.trim()) fd.append("medium", editForm.medium.trim());
+        fd.append("published", String(editForm.published));
+        fd.append("file", editFile);
+
+        await apiRequest(`/api/admin/pyqs/${editingPyq.id}`, {
+          method: "PUT",
+          body: fd,
+        });
+      } else {
+        const body = {
+          title: editForm.title.trim(),
+          classLevel: editForm.classLevel.trim(),
+          subject: editForm.subject.trim(),
+          exam: editForm.exam.trim(),
+          year: editForm.year.trim(),
+          chapter: editForm.chapter.trim() || null,
+          medium: editForm.medium.trim() || null,
+          published: editForm.published,
+          fileUrl: editUseManualUrl ? editForm.fileUrl.trim() : editingPyq.fileUrl,
+        };
+
+        await apiRequest(`/api/admin/pyqs/${editingPyq.id}`, {
+          method: "PUT",
+          body: JSON.stringify(body),
+        });
+      }
+
+      setToast(`"${editForm.title.trim()}" updated`);
+      setEditingPyq(null);
+      setEditFile(null);
+      await fetchPyqs();
+    } catch (err: any) {
+      setEditError(err.message ?? "Failed to update PYQ");
+    } finally {
+      setSavingEdit(false);
+    }
   }
 
   async function handleDelete(id: string) {
@@ -322,6 +429,9 @@ export default function PyqsPage() {
                     <button onClick={() => setPreviewPyq(pyq)} className="p-1 text-[#6B7280] hover:text-[#1C2B3A] transition-colors" title="Preview PDF">
                       <Eye size={15} />
                     </button>
+                    <button onClick={() => openEdit(pyq)} className="p-1 text-[#6B7280] hover:text-[#1C2B3A] transition-colors" title="Edit PYQ">
+                      <Pencil size={15} />
+                    </button>
                     <button onClick={() => handleDelete(pyq.id)} className="p-1 text-[#6B7280] hover:text-[#B0533E] transition-colors" title="Delete">
                       <Trash2 size={15} />
                     </button>
@@ -415,6 +525,9 @@ export default function PyqsPage() {
                       <button onClick={() => setPreviewPyq(pyq)} className="text-[#6B7280] hover:text-[#1C2B3A]" title="View PDF">
                         <Eye size={16} />
                       </button>
+                      <button onClick={() => openEdit(pyq)} className="text-[#6B7280] hover:text-[#1C2B3A]" title="Edit PYQ">
+                        <Pencil size={16} />
+                      </button>
                       <button onClick={() => handleDelete(pyq.id)} className="text-[#6B7280] hover:text-[#B0533E]" title="Delete">
                         <Trash2 size={16} />
                       </button>
@@ -424,6 +537,197 @@ export default function PyqsPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Edit PYQ modal */}
+      {editingPyq && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4" onClick={() => !savingEdit && setEditingPyq(null)}>
+          <div className="bg-white rounded-md border border-[#E5E0D5] w-full max-w-lg max-h-[90vh] flex flex-col shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-[#E5E0D5]">
+              <h2 className="text-sm font-semibold text-[#1C2B3A]">Edit PYQ</h2>
+              <button
+                type="button"
+                disabled={savingEdit}
+                onClick={() => setEditingPyq(null)}
+                className="text-[#6B7280] hover:text-[#1C2B3A]"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={saveEdit} className="flex-1 overflow-y-auto p-5 space-y-4">
+              {editError && (
+                <div className="rounded-md border border-[#B0533E]/30 bg-[#B0533E]/10 px-3 py-2 text-xs text-[#B0533E]">
+                  {editError}
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-medium text-[#6B7280] mb-1">Title</label>
+                <input
+                  type="text"
+                  value={editForm.title}
+                  onChange={(e) => setEditForm((p) => ({ ...p, title: e.target.value }))}
+                  className="w-full rounded-md border border-[#E5E0D5] px-3 py-2 text-sm text-[#1C2B3A] focus:outline-none focus:border-[#E8A33D]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Class</label>
+                  <input
+                    type="text"
+                    value={editForm.classLevel}
+                    onChange={(e) => setEditForm((p) => ({ ...p, classLevel: e.target.value }))}
+                    className="w-full rounded-md border border-[#E5E0D5] px-3 py-2 text-sm text-[#1C2B3A] focus:outline-none focus:border-[#E8A33D]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Subject</label>
+                  <input
+                    type="text"
+                    value={editForm.subject}
+                    onChange={(e) => setEditForm((p) => ({ ...p, subject: e.target.value }))}
+                    className="w-full rounded-md border border-[#E5E0D5] px-3 py-2 text-sm text-[#1C2B3A] focus:outline-none focus:border-[#E8A33D]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Exam</label>
+                  <input
+                    type="text"
+                    value={editForm.exam}
+                    onChange={(e) => setEditForm((p) => ({ ...p, exam: e.target.value }))}
+                    className="w-full rounded-md border border-[#E5E0D5] px-3 py-2 text-sm text-[#1C2B3A] focus:outline-none focus:border-[#E8A33D]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Year</label>
+                  <input
+                    type="text"
+                    value={editForm.year}
+                    onChange={(e) => setEditForm((p) => ({ ...p, year: e.target.value }))}
+                    className="w-full rounded-md border border-[#E5E0D5] px-3 py-2 text-sm text-[#1C2B3A] focus:outline-none focus:border-[#E8A33D]"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Medium</label>
+                  <select
+                    value={editForm.medium}
+                    onChange={(e) => setEditForm((p) => ({ ...p, medium: e.target.value }))}
+                    className="w-full rounded-md border border-[#E5E0D5] bg-white px-3 py-2 text-sm text-[#1C2B3A] focus:outline-none focus:border-[#E8A33D]"
+                  >
+                    <option value="">Default / Unspecified</option>
+                    <option value="Hindi Medium">Hindi Medium</option>
+                    <option value="English Medium">English Medium</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Chapter (optional)</label>
+                  <input
+                    type="text"
+                    value={editForm.chapter}
+                    onChange={(e) => setEditForm((p) => ({ ...p, chapter: e.target.value }))}
+                    className="w-full rounded-md border border-[#E5E0D5] px-3 py-2 text-sm text-[#1C2B3A] focus:outline-none focus:border-[#E8A33D]"
+                  />
+                </div>
+              </div>
+
+              {/* PDF File / External URL switch */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-medium text-[#6B7280]">PDF Document</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = !editUseManualUrl;
+                      setEditUseManualUrl(next);
+                      setEditError(null);
+                      if (next) setEditFile(null);
+                    }}
+                    className="text-xs font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    {editUseManualUrl ? "← Upload file from computer" : "Use external PDF URL instead →"}
+                  </button>
+                </div>
+
+                {editUseManualUrl ? (
+                  <div>
+                    <input
+                      type="url"
+                      value={editForm.fileUrl}
+                      onChange={(e) => setEditForm((p) => ({ ...p, fileUrl: e.target.value }))}
+                      placeholder="https://drive.google.com/... or https://example.com/pyq.pdf"
+                      className="w-full rounded-md border border-[#E5E0D5] px-3 py-2 text-sm text-[#1C2B3A] focus:outline-none focus:border-[#E8A33D]"
+                    />
+                    <p className="mt-1 text-[11px] text-[#9CA3AF]">
+                      Enter a direct link to an external PDF (e.g. Google Drive share link).
+                    </p>
+                  </div>
+                ) : (
+                  <label className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-md border-2 border-dashed border-[#E5E0D5] py-4 text-center hover:border-[#E8A33D] transition-colors">
+                    <UploadCloud size={18} className="text-[#9CA3AF]" />
+                    {editFile ? (
+                      <span className="text-xs font-medium text-[#6B8F71] px-3 truncate max-w-full">{editFile.name}</span>
+                    ) : (
+                      <>
+                        <span className="text-xs text-[#6B7280]">Click to replace PDF file (optional)</span>
+                        <span className="text-[10px] text-[#9CA3AF]">Leave empty to keep existing PDF</span>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0] ?? null;
+                        if (f && !f.name.toLowerCase().endsWith(".pdf") && f.type !== "application/pdf") {
+                          setEditError("Only PDF files (.pdf) are allowed.");
+                          return;
+                        }
+                        setEditError(null);
+                        setEditFile(f);
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+
+              <label className="flex items-center gap-2 text-xs font-medium text-[#1C2B3A] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={editForm.published}
+                  onChange={(e) => setEditForm((p) => ({ ...p, published: e.target.checked }))}
+                  className="accent-[#1C2B3A]"
+                />
+                Published on website
+              </label>
+
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E5E0D5]">
+                <button
+                  type="button"
+                  disabled={savingEdit}
+                  onClick={() => setEditingPyq(null)}
+                  className="rounded-md border border-[#E5E0D5] px-4 py-2 text-xs font-medium text-[#6B7280] hover:bg-[#FAF7F2]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingEdit}
+                  className="rounded-md bg-[#1C2B3A] px-4 py-2 text-xs font-medium text-white hover:bg-[#28394D] disabled:opacity-50"
+                >
+                  {savingEdit ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
