@@ -91,7 +91,6 @@ export default function Navbar() {
           throw networkErr;
         }
       }
-
       if (!res.ok) {
         throw new Error(`Server returned ${res.status}`);
       }
