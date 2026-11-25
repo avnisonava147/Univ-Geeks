@@ -85,6 +85,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/notes/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/banners/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/notifications/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/important-pdfs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
                         .requestMatchers(HttpMethod.HEAD, "/api/files/**").permitAll()
 
@@ -97,10 +98,10 @@ public class SecurityConfig {
                         // All admin operations require authentication
                         .requestMatchers("/api/admin/**").authenticated()
                         .requestMatchers("/api/upload", "/api/upload/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/pyqs/**", "/api/notes/**", "/api/banners/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/pyqs/**", "/api/notes/**", "/api/banners/**").authenticated()
-                        .requestMatchers(HttpMethod.PATCH, "/api/pyqs/**", "/api/notes/**", "/api/banners/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/pyqs/**", "/api/notes/**", "/api/banners/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/pyqs/**", "/api/notes/**", "/api/banners/**", "/api/important-pdfs/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/pyqs/**", "/api/notes/**", "/api/banners/**", "/api/important-pdfs/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/pyqs/**", "/api/notes/**", "/api/banners/**", "/api/important-pdfs/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/pyqs/**", "/api/notes/**", "/api/banners/**", "/api/important-pdfs/**").authenticated()
 
                         // Any other request must be authenticated
                         .anyRequest().authenticated()

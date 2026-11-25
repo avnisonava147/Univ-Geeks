@@ -1,11 +1,13 @@
 package com.univgeeks.controller;
 
 import com.univgeeks.model.Banner;
+import com.univgeeks.model.ImportantPdf;
 import com.univgeeks.model.Note;
 import com.univgeeks.model.Notification;
 import com.univgeeks.model.Pyq;
 import com.univgeeks.service.BannerService;
 import com.univgeeks.service.FileStorageService;
+import com.univgeeks.service.ImportantPdfService;
 import com.univgeeks.service.NoteService;
 import com.univgeeks.service.NotificationService;
 import com.univgeeks.service.PyqService;
@@ -26,17 +28,20 @@ public class PublicResourceController {
     private final NoteService noteService;
     private final BannerService bannerService;
     private final NotificationService notificationService;
+    private final ImportantPdfService importantPdfService;
     private final FileStorageService fileStorageService;
 
     public PublicResourceController(PyqService pyqService,
                                     NoteService noteService,
                                     BannerService bannerService,
                                     NotificationService notificationService,
+                                    ImportantPdfService importantPdfService,
                                     FileStorageService fileStorageService) {
         this.pyqService = pyqService;
         this.noteService = noteService;
         this.bannerService = bannerService;
         this.notificationService = notificationService;
+        this.importantPdfService = importantPdfService;
         this.fileStorageService = fileStorageService;
     }
 
@@ -95,6 +100,21 @@ public class PublicResourceController {
     public ResponseEntity<List<Notification>> getActiveNotifications() {
         List<Notification> notifications = notificationService.getActiveNotifications();
         return ResponseEntity.ok(notifications);
+    }
+
+    // ==========================================
+    // Important PDFs Public Endpoints
+    // ==========================================
+    @GetMapping("/important-pdfs")
+    public ResponseEntity<List<ImportantPdf>> getAllImportantPdfs() {
+        return ResponseEntity.ok(importantPdfService.getAllPdfs());
+    }
+
+    @GetMapping("/important-pdfs/{id}")
+    public ResponseEntity<ImportantPdf> getImportantPdfById(@PathVariable String id) {
+        return importantPdfService.getPdfById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     // ==========================================
@@ -168,6 +188,22 @@ public class PublicResourceController {
         if (note.isPresent() && note.get().getPdfUrl() != null && note.get().getPdfUrl().startsWith("http")) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
                     .header(HttpHeaders.LOCATION, note.get().getPdfUrl())
+                    .build();
+        }
+
+        // Also check if an ImportantPdf with this fileName exists and has an ImageKit cloud URL
+        final String searchDecoded = decoded;
+        final String searchStripped = stripped;
+        final String searchBase = stripped.replaceAll("(?i)\\.pdf$", "").toLowerCase();
+        Optional<ImportantPdf> importantPdf = importantPdfService.getAllPdfs().stream()
+                .filter(p -> p.getPdfUrl() != null && p.getPdfUrl().startsWith("http"))
+                .filter(p -> (p.getFileName() != null && (p.getFileName().equalsIgnoreCase(searchDecoded) || p.getFileName().equalsIgnoreCase(fileName) || p.getFileName().equalsIgnoreCase(searchStripped)))
+                        || (!searchBase.isBlank() && p.getPdfUrl() != null && p.getPdfUrl().toLowerCase().contains(searchBase)))
+                .findFirst();
+
+        if (importantPdf.isPresent() && importantPdf.get().getPdfUrl() != null && importantPdf.get().getPdfUrl().startsWith("http")) {
+            return ResponseEntity.status(org.springframework.http.HttpStatus.FOUND)
+                    .header(HttpHeaders.LOCATION, importantPdf.get().getPdfUrl())
                     .build();
         }
 

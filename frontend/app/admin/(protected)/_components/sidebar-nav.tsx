@@ -5,13 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, StickyNote, FileQuestion, Brain,
-  Newspaper, MessageCircleQuestion, Bell, Image, Users,
+  Newspaper, MessageCircleQuestion, Bell, Image, Users, FileText,
 } from "lucide-react";
 
 const navItems = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { label: "Notes", href: "/admin/notes", icon: StickyNote },
   { label: "PYQs", href: "/admin/pyqs", icon: FileQuestion },
+  { label: "Important PDFs", href: "/admin/important-pdfs", icon: FileText },
   { label: "Quizzes", href: "/admin/quizzes", icon: Brain },
   { label: "Blogs", href: "/admin/blogs", icon: Newspaper },
   { label: "Questions", href: "/admin/questions", icon: MessageCircleQuestion, badge: 3 },

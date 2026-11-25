@@ -1,11 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { pdfData } from "@/app/_lib/pdfData";
+import { pdfData, PDFItem } from "@/app/_lib/pdfData";
+import { getApiBaseUrl, resolvePdfUrl } from "@/app/_lib/apiConfig";
+
+export interface ImportantPdfItem {
+  id: string | number;
+  title: string;
+  date: string;
+  fileSize?: string;
+  pdfUrl: string;
+  isNew?: boolean;
+}
 
 const ITEMS_PER_PAGE = 6;
 
 export default function ImportantPDFs() {
+  const [items, setItems] = useState<ImportantPdfItem[]>(pdfData);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [hasSeenModal, setHasSeenModal] = useState(false);
@@ -22,12 +34,38 @@ export default function ImportantPDFs() {
     }
   }, []);
 
-  const totalPages = Math.ceil(pdfData.length / ITEMS_PER_PAGE);
+  // Fetch dynamic notices from backend API
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchImportantPdfs() {
+      try {
+        const backendUrl = getApiBaseUrl();
+        const res = await fetch(`${backendUrl}/api/important-pdfs`);
+        if (res.ok) {
+          const data = await res.json();
+          if (isMounted && Array.isArray(data) && data.length > 0) {
+            setItems(data);
+          }
+        }
+      } catch (err) {
+        console.warn("Could not fetch important PDFs from backend, using default items:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    }
+    fetchImportantPdfs();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / ITEMS_PER_PAGE));
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = pdfData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentItems = items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   // Handle View / Download click
-  const handlePdfAction = (type: "view" | "download", url: string) => {
+  const handlePdfAction = (type: "view" | "download", rawUrl: string) => {
+    const url = resolvePdfUrl(rawUrl);
     if (!hasSeenModal) {
       setPendingAction({ type, url });
       setShowModal(true);
@@ -95,12 +133,6 @@ export default function ImportantPDFs() {
 
   return (
     <>
-
-
-    {/* ADD THIS TEST BANNER */}
-      <div style={{ background: "red", color: "white", padding: "40px", textAlign: "center", fontSize: "28px", fontWeight: "bold", zIndex: 9999 }}>
-        🚨 IMPORTANT PDFS SECTION IS HERE! 🚨
-      </div>
       {/* ===== POPUP MODAL ===== */}
       {showModal && (
         <div
@@ -265,19 +297,24 @@ export default function ImportantPDFs() {
               📌 Notice Board
             </h3>
             <span className="text-sm text-slate-500">
-              {pdfData.length} Documents
+              {items.length} Documents
             </span>
           </div>
 
           {/* Notice Items */}
           <div className="divide-y divide-slate-100">
-            {currentItems.map((item) => {
-              const { month, day, year } = formatDate(item.date);
-              return (
-                <div
-                  key={item.id}
-                  className="flex items-start sm:items-center gap-4 sm:gap-6 px-5 sm:px-8 py-4 sm:py-5 hover:bg-blue-50/30 transition-colors group"
-                >
+            {currentItems.length === 0 ? (
+              <div className="py-12 text-center text-slate-500 text-sm">
+                No documents available at the moment.
+              </div>
+            ) : (
+              currentItems.map((item) => {
+                const { month, day, year } = formatDate(item.date);
+                return (
+                  <div
+                    key={item.id}
+                    className="flex items-start sm:items-center gap-4 sm:gap-6 px-5 sm:px-8 py-4 sm:py-5 hover:bg-blue-50/30 transition-colors group"
+                  >
                   {/* Date Block */}
                   <div className="flex flex-col items-center min-w-[52px] text-center shrink-0">
                     {item.isNew && (
@@ -360,7 +397,7 @@ export default function ImportantPDFs() {
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
 
           {/* Pagination */}

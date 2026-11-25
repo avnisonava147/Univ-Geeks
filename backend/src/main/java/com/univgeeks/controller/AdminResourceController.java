@@ -2,6 +2,7 @@ package com.univgeeks.controller;
 
 import com.univgeeks.dto.*;
 import com.univgeeks.model.Banner;
+import com.univgeeks.model.ImportantPdf;
 import com.univgeeks.model.Note;
 import com.univgeeks.model.Notification;
 import com.univgeeks.model.Pyq;
@@ -9,6 +10,7 @@ import com.univgeeks.service.BannerService;
 import com.univgeeks.service.DashboardService;
 import com.univgeeks.service.FileStorageService;
 import com.univgeeks.service.ImageKitService;
+import com.univgeeks.service.ImportantPdfService;
 import com.univgeeks.service.NoteService;
 import com.univgeeks.service.NotificationService;
 import com.univgeeks.service.PyqService;
@@ -37,6 +39,7 @@ public class AdminResourceController {
     private final DashboardService dashboardService;
     private final FileStorageService fileStorageService;
     private final ImageKitService imageKitService;
+    private final ImportantPdfService importantPdfService;
 
     public AdminResourceController(PyqService pyqService,
                                    NoteService noteService,
@@ -44,7 +47,8 @@ public class AdminResourceController {
                                    NotificationService notificationService,
                                    DashboardService dashboardService,
                                    FileStorageService fileStorageService,
-                                   ImageKitService imageKitService) {
+                                   ImageKitService imageKitService,
+                                   ImportantPdfService importantPdfService) {
         this.pyqService = pyqService;
         this.noteService = noteService;
         this.bannerService = bannerService;
@@ -52,6 +56,7 @@ public class AdminResourceController {
         this.dashboardService = dashboardService;
         this.fileStorageService = fileStorageService;
         this.imageKitService = imageKitService;
+        this.importantPdfService = importantPdfService;
     }
 
     // ==========================================
@@ -490,6 +495,68 @@ public class AdminResourceController {
     @PatchMapping("/admin/notifications/{id}/status")
     public ResponseEntity<Notification> toggleNotificationStatus(@PathVariable String id) {
         Notification updated = notificationService.toggleStatus(id);
+        return ResponseEntity.ok(updated);
+    }
+
+    // ==========================================
+    // Admin Important PDFs Management
+    // ==========================================
+    @GetMapping("/admin/important-pdfs")
+    public ResponseEntity<List<ImportantPdf>> getAllImportantPdfs() {
+        return ResponseEntity.ok(importantPdfService.getAllPdfs());
+    }
+
+    @PostMapping(value = "/admin/important-pdfs", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImportantPdf> createImportantPdfJson(@Valid @RequestBody ImportantPdfRequest request) {
+        ImportantPdf created = importantPdfService.createPdf(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PostMapping(value = "/admin/important-pdfs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ImportantPdf> createImportantPdfMultipart(
+            @RequestParam("title") String title,
+            @RequestParam(value = "date", required = false) String date,
+            @RequestParam(value = "isNew", required = false, defaultValue = "true") Boolean isNew,
+            @RequestParam(value = "pdfUrl", required = false) String pdfUrl,
+            @RequestParam(value = "file", required = false) MultipartFile file) {
+        ImportantPdf created = importantPdfService.createPdfMultipart(title, date, isNew, pdfUrl, file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PutMapping(value = "/admin/important-pdfs/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ImportantPdf> updateImportantPdfJson(
+            @PathVariable String id,
+            @Valid @RequestBody ImportantPdfRequest request) {
+        ImportantPdf updated = importantPdfService.updatePdf(id, request);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PutMapping(value = "/admin/important-pdfs/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ImportantPdf> updateImportantPdfMultipart(
+            @PathVariable String id,
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "date", required = false) String date,
+            @RequestParam(value = "isNew", required = false) Boolean isNew,
+            @RequestParam(value = "pdfUrl", required = false) String pdfUrl,
+            @RequestParam(value = "file", required = false) MultipartFile file) {
+        ImportantPdf updated = importantPdfService.updatePdfMultipart(id, title, date, isNew, pdfUrl, file);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/admin/important-pdfs/{id}")
+    public ResponseEntity<Map<String, String>> deleteImportantPdf(@PathVariable String id) {
+        boolean deleted = importantPdfService.deletePdf(id);
+        if (deleted) {
+            return ResponseEntity.ok(Map.of("message", "Important PDF deleted successfully"));
+        }
+        // Return JSON 404 — NOT Spring's default HTML 404 page ("No static resource ...")
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "Not Found", "message", "No PDF notice found with id: " + id));
+    }
+
+    @PatchMapping("/admin/important-pdfs/{id}/toggle-new")
+    public ResponseEntity<ImportantPdf> toggleImportantPdfIsNew(@PathVariable String id) {
+        ImportantPdf updated = importantPdfService.toggleIsNew(id);
         return ResponseEntity.ok(updated);
     }
 }
