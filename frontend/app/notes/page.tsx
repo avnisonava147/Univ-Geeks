@@ -9,6 +9,13 @@ import SubscribePopup from "./components/SubscribePopup";
 import Class11Popup from "./components/Class11Popup";
 
 
+
+
+import {
+  getImportantPdfs,
+  type ImportantPdf,
+} from "./data/importantPdfsData";
+
 import {
   getSubjects,
   streams,
@@ -187,6 +194,15 @@ export default function NotesPage() {
 
 const [showClass11Popup, setShowClass11Popup] = useState(false);
 const [showSubscribePopup, setShowSubscribePopup] = useState(false);
+
+// Important PDFs section
+const [showImportantPdfs, setShowImportantPdfs] = useState(false);
+
+const [pendingImportantPdf, setPendingImportantPdf] =
+  useState<ImportantPdf | null>(null);
+
+const [pendingImportantPdfAction, setPendingImportantPdfAction] =
+  useState<"view" | "download" | null>(null);
 const [pendingPdfAction, setPendingPdfAction] =
   useState<"view" | "download" | null>(null);
 
@@ -219,7 +235,9 @@ const [activeHeroBanner, setActiveHeroBanner] = useState(0);
     useRef<HTMLElement | null>(null);
 
   const pdfSectionRef =
-    useRef<HTMLElement | null>(null);  
+    useRef<HTMLElement | null>(null);
+    
+  const importantPdfsSectionRef = useRef<HTMLElement | null>(null);  
 
      const scrollToSection = (
   ref: React.RefObject<HTMLElement | null>
@@ -274,6 +292,31 @@ const [activeHeroBanner, setActiveHeroBanner] = useState(0);
   const selectedSubjectData = subjects.find(
   (subject) => subject.name === selectedSubject
 );
+
+
+const activeImportantPdfs = selectedSubject
+  ? getImportantPdfs(
+      selectedClass,
+      selectedStream,
+      selectedSubject
+    )
+  : [];
+
+console.log("Selected Class:", selectedClass);
+console.log("Selected Stream:", selectedStream);
+console.log("Selected Subject:", selectedSubject);
+
+console.log(
+  "Generated PDFs:",
+  getImportantPdfs(
+    selectedClass,
+    selectedStream,
+    selectedSubject || ""
+  )
+);
+
+console.log("Active PDFs:", activeImportantPdfs);
+console.log("PDF Count:", activeImportantPdfs.length);
 
 
   // Search function
@@ -806,8 +849,151 @@ onClick={() => {
     onChapterChange={(chapter) =>
       setSelectedChapter(chapter.id)
     }
+    onImportantPdfsClick={() => {
+      setShowImportantPdfs(true);
+      scrollToSection(importantPdfsSectionRef);
+    }}
   />
 )}
+
+
+{/* IMPORTANT PDFs SECTION */}
+{showImportantPdfs && selectedSubjectData && (
+  <section
+    ref={importantPdfsSectionRef}
+    className="border-b border-slate-200 bg-[#F8FAFF] px-6 py-14"
+  >
+    <div className="mx-auto max-w-7xl">
+
+      {/* Heading and Back Button */}
+      <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#2F5FDE]">
+            Study Resources
+          </p>
+
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-[#16213E]">
+            Important PDFs
+          </h2>
+
+          <p className="mt-2 text-sm text-[#5B6478]">
+            Class {selectedClass}
+            {selectedClass !== "10" && ` • ${selectedStream}`}
+            {" • "}
+            {selectedSubject}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setShowImportantPdfs(false);
+            scrollToSection(chapterSectionRef);
+          }}
+          className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-[#16213E] shadow-sm transition-all duration-300 hover:-translate-x-1 hover:border-[#16213E] hover:shadow-md"
+        >
+          <span>←</span>
+          Back to Notes
+        </button>
+
+      </div>
+
+      {/* PDF Cards */}
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+
+        {activeImportantPdfs.map((pdf, index) => (
+          <div
+            key={pdf.id}
+            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-blue-200 hover:shadow-xl"
+            style={{
+              animation: `fadeInUp 0.5s ease ${index * 0.12}s both`,
+            }}
+          >
+
+            {/* Background Glow */}
+            <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-blue-100/50 blur-3xl transition-all duration-500 group-hover:bg-blue-200/70" />
+
+            <div className="relative">
+
+              {/* PDF Icon */}
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EEF4FF] text-2xl text-[#2F5FDE] transition-all duration-300 group-hover:scale-110">
+                📄
+              </div>
+
+              {/* PDF Information */}
+              <div className="mt-5">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[#2F5FDE]">
+                  PDF Resource
+                </p>
+
+                <h3 className="mt-2 text-xl font-semibold text-[#16213E]">
+                  {pdf.title}
+                </h3>
+
+                <p className="mt-2 min-h-12 text-sm leading-6 text-[#64748B]">
+                  {pdf.description}
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="mt-6 flex flex-wrap gap-3">
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPendingImportantPdf(pdf);
+                    setPendingImportantPdfAction("view");
+                    setPendingPdfAction(null);
+                    setShowSubscribePopup(true);
+                  }}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#16213E] px-4 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#20345F] hover:shadow-lg"
+                >
+                  <span>👁️</span>
+                  View PDF
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPendingImportantPdf(pdf);
+                    setPendingImportantPdfAction("download");
+                    setPendingPdfAction(null);
+                    setShowSubscribePopup(true);
+                  }}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-[#16213E] transition-all duration-300 hover:border-[#16213E] hover:bg-slate-50"
+                >
+                  <span>↓</span>
+                  Download
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+        ))}
+
+      </div>
+
+    </div>
+
+    <style jsx>{`
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    `}</style>
+
+  </section>
+)}
+
 
 {/* STEP 5 - PDF NOTES */}
 {selectedChapterData && (
